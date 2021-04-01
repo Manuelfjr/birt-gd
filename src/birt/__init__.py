@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import os
-import argparse
 
 class BIRTSGD:
     """Beta³-IRT with descending gradient.
@@ -196,7 +195,7 @@ class BIRTSGD:
             self._aj.scatter_sub(tf.math.scalar_mul(self.lr, _aj))
             self._bj.scatter_sub(tf.math.scalar_mul(self.lr, _bj))
         return self
-    def fit(self, X, y):
+    def fit(self, X, y=None):
         """Compute BIRT Descending Gradient
         
         Parameters
@@ -217,13 +216,17 @@ class BIRTSGD:
 
             Training datasets to BIRTSGD model.
         
-        y : list, array or tensor of shape (n_instances*n_models,)
+        y : list, array or tensor of shape (n_instances*n_models,). default: y==None
+            if y == None, use self._transform tu split the data in X and y
 
         Returns
         -------------------------------------------------------
         self
             Adjusted values ​​of the parameters
         """
+        if y == None:
+            X, y = self._transform(X)
+
         np.random.seed(self.n_seed)
         tf.random.set_seed(
             self.n_seed
@@ -300,3 +303,25 @@ class BIRTSGD:
                     )
 
             return y_pred
+
+        def _transform(self, data):
+            """Separates the data set into X, with a list of tuples and Y with a list of p_ {ij}
+            
+            Parameters
+            -------------------------------------------------------
+            data :
+                    all adataset
+            
+            Returns
+            -------------------------------------------------------
+            X : 
+                a list with set of tuples
+            y : 
+                a list with p_{ij}
+            """
+            X, y = [], []
+            for row in range(data.shape[0]):
+                for col in range(data.shape[1]):
+                    X.append((row,col))
+                    y.append(data.iloc[row,col])
+            return X, y

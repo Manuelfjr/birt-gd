@@ -4,7 +4,7 @@
 [![PyPI pyversions](https://img.shields.io/badge/python-v3.8.5-orange?&logo=python)](https://pypi.python.org/pypi/ansicolortags/)
 
 # birt-sgd
-**BIRTSGD:** Evaluation of clustering methods using Beta^3-IRT with descending gradient
+** BIRTSGD ** is a class for evaluating clustering methods using $\beta^3$ -IRT with descending gradient
 
 # Installation
 ## Dependencies 

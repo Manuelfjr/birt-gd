@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="birt-sgd-mfjr", # Replace with your own username
+    name="birt-sgd", # Replace with your own username
     version="1.0.0",
     author="Manuel Ferreira Junior",
     author_email="ferreira.jr.ufpb@gmail.com",

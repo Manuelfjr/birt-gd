@@ -7,7 +7,7 @@
 [![Downloads](https://pepy.tech/badge/pypi-version)](https://pepy.tech/project/pypi-version)    
 -->
 # birt-sgd
-**BIRTSGD** is a class for evaluating clustering methods using $$\beta^3$$ -IRT with descending gradient
+**BIRTSGD** is a class for evaluating clustering methods using  \[\beta^3\] -IRT with descending gradient
 
 # Installation
 ## Dependencies 

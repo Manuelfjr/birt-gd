@@ -2,7 +2,9 @@
 [![Author](https://img.shields.io/badge/author-manuelfjr-blue?&logo=github)](https://github.com/Manuelfjr)
 [![Author](https://img.shields.io/badge/author-tmfilho-blue?&logo=github)](https://github.com/tmfilho)
 [![PyPI pyversions](https://img.shields.io/badge/python-v3.8.5-orange?&logo=python)](https://pypi.python.org/pypi/ansicolortags/)
-
+<!--
+[![Downloads](https://pepy.tech/badge/pypi-version)](https://pepy.tech/project/pypi-version)    
+-->
 # birt-sgd
 ** BIRTSGD ** is a class for evaluating clustering methods using $\beta^3$ -IRT with descending gradient
 

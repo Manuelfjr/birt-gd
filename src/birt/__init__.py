@@ -1,6 +1,5 @@
 import tensorflow as tf
 import pandas as pd
-#import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 import os
@@ -109,7 +108,7 @@ class BIRTSGD:
         -------------------------------------------------------
         tuple of (ability, difficulty, Discrimination aj*, Discrimination bj*)
         """
-        return self._thi, self._delj, self._bj, self._aj, self.costs
+        return self._thi, self._delj, self._bj, self._aj
     
     def _loss(self, y_true, y_pred):
         """Calculate Binary Cross Entropy (loss function)
@@ -259,30 +258,45 @@ class BIRTSGD:
         for _ in tqdm(range(self.epoch)):
             y_pred = []
             self._train(dataset.batch(self.n_batchs).as_numpy_iterator())
-            
-            # for j in range(self.n_instances):
-            #     for i in range(self.n_models):
-            #         y_pred.append(
-            #             self._irt(
-            #                 thi = self._thi.numpy()[i], 
-            #                 delj = self._delj.numpy()[j], 
-            #                 aj = self._aj.numpy()[j], 
-            #                 bj = self._bj.numpy()[j] 
-            #             ).numpy( ) 
-            #         )         
-            
-            # costs.append(self._loss(y, y_pred).numpy())
-            costs.append(-1)
-
-        # plt.figure(figsize = (9,7))
-        # plt.plot(range(len(costs)), costs)
-        # plt.title(f'Epochs: [{self.epoch}]')
-        # if not os.path.exists('.img/'):
-        #     os.makedirs('.img/')
-        # plt.savefig('.img/costs.png')
         
         self._thi, self._delj = tf.math.sigmoid(self._thi).numpy(), tf.math.sigmoid(self._delj).numpy()
         self._bj, self._aj = tf.math.tanh(self._bj).numpy(), tf.math.softplus(self._aj).numpy()
-        self.costs = costs
         
         return self
+
+        def predict(self, thi, delj, bj, aj):
+            """Predict E[pij | thi, delj, aj = aj* * bj*]
+            
+            Parameters
+            -------------------------------------------------------
+            thi : 
+                    Estimated Ability parameter to Beta³-IRT.
+
+            delj : 
+                    Estimated Difficulty parameter to Beta³-IRT.
+
+            aj* : 
+                    Estimated Other parameter of discrimination to Beta³-IRT.
+
+            bj* : 
+                    Estimated Other parameter of discrimination to Beta³-IRT.
+
+            Returns
+            -------------------------------------------------------
+            return 
+                    y_pred = E[pij | thi, delj, aj = aj* * bj*]
+            """
+
+            y_pred = []
+            for d,a,b in zip(delj, aj, bj):
+                for t in thi:
+                    y_pred.append(
+                        self._irt(
+                            thi = thi, 
+                            delj = delj, 
+                            aj = aj, 
+                            bj = bj 
+                        ).numpy( ) 
+                    )
+
+            return y_pred

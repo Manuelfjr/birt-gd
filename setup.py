@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="birt-sgd", # Replace with your own username
-    version="1.0.2",
+    version="1.0.3",
     author="Manuel Ferreira Junior",
     author_email="ferreira.jr.ufpb@gmail.com",
     description=" Evaluation of clustering methods using Beta^3-IRT with descending gradient",

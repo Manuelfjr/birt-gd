@@ -71,16 +71,16 @@ class BIRTSGD:
     >>> Y = [0.98,0.81,0.12,0.567,0.76,0.9]
     >>> bsgd = BIRTSGD(n_models=3, n_instances=2, random_seed=1)
     >>> bsgd.fit(X,Y)
-    100%|██████████| 20/20 [00:00<00:00, 54.84it/s]
-    <BIRTSGD.birt.BIRTSGD at 0x7f53d0534910>
+    100%|██████████| 20/20 [00:00<00:00, 52.81it/s]
+    <birt.BIRTSGD at 0x7f6ce2555f50>
     >>> bsgd._thi
-    <tf.Tensor: shape=(3,), dtype=float32, numpy=array([0.78665066, 0.50258964, 0.545207  ], dtype=float32)>
+    array([0.78665066, 0.50258964, 0.545207  ], dtype=float32)
     >>> bsgd._delj
-    <tf.Variable 'Variable:0' shape=(2,) dtype=float32, numpy=array([-1.0948584 , -0.12482049], dtype=float32)>
+    array([0.25070453, 0.46883532], dtype=float32)
     >>> bsgd._aj
-    <tf.Variable 'Variable:0' shape=(2,) dtype=float32, numpy=array([-1.2563801,  2.2852907], dtype=float32)>
-    >>> bsgd._bi
-    <tf.Variable 'Variable:0' shape=(2,) dtype=float32, numpy=array([0.39330423, 0.6820624 ], dtype=float32)>
+    array([0.25051177, 2.3821855 ], dtype=float32)
+    >>> bsgd._bj
+    array([0.37420523, 0.59285855], dtype=float32)
     """
     def __init__(self, learning_rate=0.1, epochs=20, n_models=20, n_instances=100, n_batchs=5, random_seed=1):
         self.lr = learning_rate

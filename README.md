@@ -11,7 +11,7 @@
 **BIRTSGD** is a class for evaluating clustering methods using  $\beta^3$ -IRT with descending gradient.
 
 The model expects to receive two sets of data, X being a list or array containing tuples of indices, where the first index references the instance __j__ and the second index of the tuple references the model __i__, thus, Y will be a list or array where each input will be $p_{ij}$ ~ $\Beta(\alpha_{ij}, \beta_{ij})$, the probability of the __i__ model correctly classifying the __j__ model, being:
-
+<!--
 $$
 p_{ij} \sim Beta(\alpha_{ij}, \beta_{ij}),
 $$
@@ -28,7 +28,7 @@ where,
 $$
 E[p_{ij} | \theta_i,\delta_j,a_j] = \frac{\alpha_{ij}}{\alpha_{ij} + \beta_{ij}} = \frac{1}{1 - \big(\frac{\delta_{j}}{1 - \delta_{j}}\big)^{a_{j}}\cdot \big(\frac{\theta_{i}}{1 - \theta_{i}}\big)^{ - a_{j}} }
 $$
-
+-->
 # Installation
 ## Dependencies 
 birt-sgd requires:

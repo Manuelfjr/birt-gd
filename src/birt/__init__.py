@@ -5,7 +5,7 @@ from tqdm import tqdm
 import os
 
 class BIRTSGD:
-    """Beta³-IRT with descending gradient.
+    """Beta³-IRT with gradient descent.
 
     Read more in the https://github.com/Manuelfjr/BIRTSGD .
 

@@ -96,6 +96,28 @@ class BIRTSGD:
             'n_batchs':  n_batchs
         }
 
+    def _transform(self, data):
+        """Separates the data set into X, with a list of tuples and Y with a list of p_ {ij}
+            
+        Parameters
+        -------------------------------------------------------
+        data :
+                all adataset
+        
+        Returns
+        -------------------------------------------------------
+        X : 
+            a list with set of tuples
+        y : 
+            a list with p_{ij}
+        """
+        X, y = [], []
+        for row in range(data.shape[0]):
+            for col in range(data.shape[1]):
+                X.append((row,col))
+                y.append(data.iloc[row,col])
+        return X, y
+
     def get_params(self):
         """Get parameters
 
@@ -267,61 +289,39 @@ class BIRTSGD:
         
         return self
 
-        def predict(self, thi, delj, bj, aj):
-            """Predict E[pij | thi, delj, aj = aj* * bj*]
+    def predict(self, thi, delj, bj, aj):
+        """Predict E[pij | thi, delj, aj = aj* * bj*]
             
-            Parameters
-            -------------------------------------------------------
-            thi : 
-                    Estimated Ability parameter to Beta³-IRT.
+        Parameters
+        -------------------------------------------------------
+        thi : 
+                Estimated Ability parameter to Beta³-IRT.
 
-            delj : 
-                    Estimated Difficulty parameter to Beta³-IRT.
+        delj : 
+                Estimated Difficulty parameter to Beta³-IRT.
 
-            aj* : 
-                    Estimated Other parameter of discrimination to Beta³-IRT.
+        aj* : 
+                Estimated Other parameter of discrimination to Beta³-IRT.
 
-            bj* : 
-                    Estimated Other parameter of discrimination to Beta³-IRT.
+        bj* : 
+                Estimated Other parameter of discrimination to Beta³-IRT.
 
-            Returns
-            -------------------------------------------------------
-            return 
-                    y_pred = E[pij | thi, delj, aj = aj* * bj*]
-            """
+        Returns
+        -------------------------------------------------------
+        return 
+                y_pred = E[pij | thi, delj, aj = aj* * bj*]
+        """
 
-            y_pred = []
-            for d,a,b in zip(delj, aj, bj):
-                for t in thi:
-                    y_pred.append(
-                        self._irt(
-                            thi = thi, 
-                            delj = delj, 
-                            aj = aj, 
-                            bj = bj 
-                        ).numpy( ) 
-                    )
+        y_pred = []
+        for d,a,b in zip(delj, aj, bj):
+            for t in thi:
+                y_pred.append(
+                    self._irt(
+                        thi = thi, 
+                        delj = delj, 
+                        aj = aj, 
+                        bj = bj 
+                    ).numpy( ) 
+                )
 
-            return y_pred
-
-        def _transform(self, data):
-            """Separates the data set into X, with a list of tuples and Y with a list of p_ {ij}
-            
-            Parameters
-            -------------------------------------------------------
-            data :
-                    all adataset
-            
-            Returns
-            -------------------------------------------------------
-            X : 
-                a list with set of tuples
-            y : 
-                a list with p_{ij}
-            """
-            X, y = [], []
-            for row in range(data.shape[0]):
-                for col in range(data.shape[1]):
-                    X.append((row,col))
-                    y.append(data.iloc[row,col])
-            return X, y
+        return y_pred

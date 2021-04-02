@@ -305,7 +305,7 @@ class BIRTSGD:
 
         y_pred = []
         for d,a,b in zip(self._delj, self._aj, self._bj):
-            for t in thi:
+            for t in self._thi:
                 y_pred.append(
                     self._irt(
                         thi = t, 

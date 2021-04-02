@@ -5,7 +5,7 @@ from tqdm import tqdm
 import os
 
 class BIRTSGD:
-    """Beta3-IRT with gradient descent.
+    """Beta3-IRT with Gradient descent.
 
     Read more in the https://github.com/Manuelfjr/BIRTSGD .
 
@@ -13,7 +13,7 @@ class BIRTSGD:
     -------------------------------------------------------
 
     learning_rate : float, default=0.1
-        It's a learning rate to descending gradient.
+        It's a learning rate to Gradient descent.
 
     epochs : int, default=20
         Numbers of epochs to fit the model.
@@ -180,7 +180,7 @@ class BIRTSGD:
         return y_est
     
     def _train(self, batches):
-        """Train BIRT Descending Gradient
+        """Train BIRT Gradient Descent
 
         Parameters
         -------------------------------------------------------
@@ -218,7 +218,7 @@ class BIRTSGD:
             self._bj.scatter_sub(tf.math.scalar_mul(self.lr, _bj))
         return self
     def fit(self, X, y=None):
-        """Compute BIRT Descending Gradient
+        """Compute BIRT Gradient Descent
         
         Parameters
         -------------------------------------------------------

@@ -5,10 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="birt-sgd", # Replace with your own username
-    version="0.1.7",
+    version="0.1.8",
     author="Manuel Ferreira Junior",
     author_email="ferreira.jr.ufpb@gmail.com",
-    description=" Evaluation of clustering methods using Beta3-IRT with descending gradient",
+    description="BIRTSGD is an implementation of Beta3-irt using gradient descent.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Manuelfjr/birt-sgd",
@@ -28,6 +28,6 @@ setuptools.setup(
         'tqdm'
     ],
     package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
+    packages=setuptools.find_packages(where="src", exclude="mc_analysis"),
     python_requires=">=3.6",
 )

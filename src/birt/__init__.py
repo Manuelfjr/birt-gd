@@ -5,7 +5,7 @@ from tqdm import tqdm
 import os
 
 class BIRTSGD:
-    """Beta³-IRT with gradient descent.
+    """Beta3-IRT with gradient descent.
 
     Read more in the https://github.com/Manuelfjr/BIRTSGD .
 
@@ -150,21 +150,21 @@ class BIRTSGD:
         return loss(y_true, y_pred)
     
     def _irt(self, thi, delj, aj, bj):
-        """calculating a probability (i) deduction from (j) using Beta³-IRT
+        """calculating a probability (i) deduction from (j) using Beta3-IRT
 
         Parameters
         -------------------------------------------------------
         thi : 
-                Ability parameter to Beta³-IRT.
+                Ability parameter to Beta3-IRT.
 
         delj : 
-                Difficulty parameter to Beta³-IRT.
+                Difficulty parameter to Beta3-IRT.
 
         aj* : 
-                Other parameter of discrimination to Beta³-IRT.
+                Other parameter of discrimination to Beta3-IRT.
 
         bj* : 
-                Other parameter of discrimination to Beta³-IRT.
+                Other parameter of discrimination to Beta3-IRT.
 
         Returns
         -------------------------------------------------------
@@ -289,22 +289,13 @@ class BIRTSGD:
         
         return self
 
-    def predict(self, thi, delj, bj, aj):
-        """Predict E[pij | thi, delj, aj = aj* * bj*]
+    def predict(self, X=None):
+        """Predict E[pij | thi, delj, aj = aj* * bj*] = pij
             
         Parameters
         -------------------------------------------------------
-        thi : 
-                Estimated Ability parameter to Beta³-IRT.
-
-        delj : 
-                Estimated Difficulty parameter to Beta³-IRT.
-
-        aj* : 
-                Estimated Other parameter of discrimination to Beta³-IRT.
-
-        bj* : 
-                Estimated Other parameter of discrimination to Beta³-IRT.
+        X : 
+            None
 
         Returns
         -------------------------------------------------------
@@ -313,14 +304,14 @@ class BIRTSGD:
         """
 
         y_pred = []
-        for d,a,b in zip(delj, aj, bj):
+        for d,a,b in zip(self._delj, self._aj, self._bj):
             for t in thi:
                 y_pred.append(
                     self._irt(
-                        thi = thi, 
-                        delj = delj, 
-                        aj = aj, 
-                        bj = bj 
+                        thi = t, 
+                        delj = d, 
+                        aj = a, 
+                        bj = b 
                     ).numpy( ) 
                 )
 

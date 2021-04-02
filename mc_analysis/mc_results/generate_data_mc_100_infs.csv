@@ -1,0 +1,2 @@
+,dataset_name,learning_rate,mc_iterations,n_epochs,n_batchs,n_models,n_instances
+0,generated_data_mc,0.1,100,500,50,20,100

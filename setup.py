@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/Manuelfjr/birt-sgd",
     project_urls={
         "Bug Tracker": "https://github.com/pypa/sampleproject/issues",
-        "Source Code": "https://github.com/Manuelfjr/birt-sgd"
+        "Source Code": "https://github.com/Manuelfjr/birt-sgd/src/birt/__init__.py"
     },
     classifiers=[
         "Programming Language :: Python :: 3",

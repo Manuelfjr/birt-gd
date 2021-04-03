@@ -5,8 +5,15 @@
 [![PyPI pyversions](https://img.shields.io/badge/python-v3.8.5-orange?&logo=python)](https://pypi.python.org/pypi/ansicolortags/)
 [![GitHub release](https://img.shields.io/github/release/Manuelfjr/birt-sgd.svg)](https://GitHub.com/Manuelfjr/birt-sgd/releases/)
 <!--
-[![Downloads](https://pepy.tech/badge/pypi-version)](https://pepy.tech/project/pypi-version)    
+[![Downloads](https://static.pepy.tech/personalized-badge/pandas?period=total&units=international_system&left_color=grey&right_color=red&left_text=downloads)](https://pepy.tech/project/pandas)
 -->
+<!--
+[![Github All Releases](https://img.shields.io/github/downloads/Manuelfjr/ST/total.svg)]()
+-->
+<!--
+[![Downloads](https://pepy.tech/badge/pandas)](https://pepy.tech/project/pandas)    
+-->
+
 # birt-sgd
 **BIRTSGD** is an implementation of Beta3-irt using gradient descent.
 

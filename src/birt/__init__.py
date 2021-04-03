@@ -217,6 +217,7 @@ class BIRTSGD:
             self._aj.scatter_sub(tf.math.scalar_mul(self.lr, _aj))
             self._bj.scatter_sub(tf.math.scalar_mul(self.lr, _bj))
         return self
+    
     def fit(self, X, y=None):
         """Compute BIRT Gradient Descent
         
@@ -281,7 +282,6 @@ class BIRTSGD:
         costs = []
         
         for _ in tqdm(range(self.epoch)):
-            y_pred = []
             self._train(dataset.batch(self.n_batchs).as_numpy_iterator())
         
         self._thi, self._delj = tf.math.sigmoid(self._thi).numpy(), tf.math.sigmoid(self._delj).numpy()

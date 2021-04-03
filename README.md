@@ -1,15 +1,48 @@
-[![license: MIT](https://img.shields.io/badge/license-MIT-red.svg?&logo=license)](https://opensource.org/licenses/MIT)
+[![license: MIT](https://img.shields.io/badge/license-MIT-red.svg?&logo=license&color=blue)](https://opensource.org/licenses/MIT)
 [![Docs](https://img.shields.io/badge/docs-birtsgd-blue?&logo)](https://github.com/Manuelfjr/birt-sgd)
 [![Author](https://img.shields.io/badge/author-manuelfjr-blue?&logo=github)](https://github.com/Manuelfjr)
 [![Author2](https://img.shields.io/badge/author-tmfilho-blue?&logo=github)](https://github.com/tmfilho)
-[![PyPI pyversions](https://img.shields.io/badge/python-v3.8.5-orange?&logo=python)](https://pypi.python.org/pypi/ansicolortags/)
+
+<!-- PyPi Status
+![PyPI - Status](https://img.shields.io/pypi/status/pandas)
+-->
+
+<!-- PyPi Downloads
+[![PyPi - Downloads](https://pypip.in/d/pandas/badge.png?&color=blue&logo=python)](https://pypi.org/project/pandas/#files)
+
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/scikit-learn?style=flat)](https://pypi.org/project/pandas/#files)
+-->
+
+<!-- Latest PyPI version
+[![Latest PyPI version](https://img.shields.io/pypi/v/birt-sgd?logo=pypi)](https://pypi.python.org/pypi/birt-sgd)
+-->
+
+<!-- Release
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/pandas-dev/pandas)](https://GitHub.com/pandas-dev/pandas/releases/)
+
 [![GitHub release](https://img.shields.io/github/release/Manuelfjr/birt-sgd.svg)](https://GitHub.com/Manuelfjr/birt-sgd/releases/)
-<!--
+-->
+
+<!-- Static download of pepy
 [![Downloads](https://static.pepy.tech/personalized-badge/pandas?period=total&units=international_system&left_color=grey&right_color=red&left_text=downloads)](https://pepy.tech/project/pandas)
 -->
-<!--
-[![Github All Releases](https://img.shields.io/github/downloads/Manuelfjr/ST/total.svg)]()
+
+<!-- Github downloads
+[![Github All Releases](https://img.shields.io/github/downloads/pandas-dev/pandas/total.svg?&logo=github&color=blue)]()
 -->
+
+<!-- Lines of code
+![Lines of code](https://img.shields.io/tokei/lines/github/Manuelfjr/birt-sgd)
+-->
+
+<!-- Code size
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/pandas-dev/pandas)
+-->
+
+<!-- Github contributors
+![GitHub contributors](https://img.shields.io/github/contributors/pandas-dev/pandas)
+-->
+
 <!--
 [![Downloads](https://pepy.tech/badge/pandas)](https://pepy.tech/project/pandas)    
 -->

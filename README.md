@@ -51,10 +51,23 @@
 [![Downloads](https://pepy.tech/badge/pandas)](https://pepy.tech/project/pandas)    
 -->
 
-# birt-sgd
+# [birt-sgd](https://test.pypi.org/project/birt-sgd/)
 **BIRTSGD** is an implementation of Beta3-irt using gradient descent.
 
-The model expects to receive two sets of data, X being a list or array containing tuples of indices, where the first index references the instance __j__ and the second index of the tuple references the model __i__, thus, Y will be a list or array where each input will be $p_{ij}$ ~ $\Beta(\alpha_{ij}, \beta_{ij})$, the probability of the __i__ model correctly classifying the __j__ model.
+The model expects to receive two sets of data, *X* being a list or array containing tuples of indices, where the first index references the instance *j* and the second index of the tuple references the model *i*, thus, *Y* will be a list or array where each input will be <img src="https://latex.codecogs.com/svg.latex?&space;p_{ij} \sim B(\alpha_{ij}, \beta_{ij})" title="p_{ij} \sim B(\alpha_{ij}, \beta_{ij})" />, the probability of the *i* model correctly classifying the *j* model. Being:   
+
+<img src="https://latex.codecogs.com/svg.latex?&space;p_{ij} \sim B(\alpha_{ij}, \beta_{ij}), " title="p_{ij} \sim B(\alpha_{ij}, \beta_{ij}), " /><br>
+
+<img src="https://latex.codecogs.com/svg.latex?&space;\alpha_{ij} = F_{\alpha}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{\theta_{i}}{\delta_{j}}\bigg)^{a_{j}}, " title="\alpha_{ij} = F_{\alpha}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{\theta_{i}}{\delta_{j}}\bigg)^{a_{j}}, " /><br>
+
+<img src="https://latex.codecogs.com/svg.latex?&space;\beta_{ij} = F_{\beta}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{1 - \theta_{i}}{1 - \delta_{j}}\bigg)^{a_{j}}," title="\beta_{ij} = F_{\beta}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{1 - \theta_{i}}{1 - \delta_{j}}\bigg)^{a_{j}}, " /><br>
+
+<img src="https://latex.codecogs.com/svg.latex?&space;\theta_{i} \sim B(1,1), \delta_{j} \sim B(1,1), a_{j} \sim N(1, \sigma^{2}_{0})," title="\theta_{i} \sim B(1,1), \delta_{j} \sim B(1,1), a_{j} \sim N(1, \sigma^{2}_{0}), " /><br>
+
+where,
+
+<img src="https://latex.codecogs.com/svg.latex?&space;E[p_{ij} | \theta_i,\delta_j,a_j] = \frac{\alpha_{ij}}{\alpha_{ij} + \beta_{ij}} = \frac{1}{1 - \big(\frac{\delta_{j}}{1 - \delta_{j}}\big)^{a_{j}}\cdot \big(\frac{\theta_{i}}{1 - \theta_{i}}\big)^{ - a_{j}} }," title="E[p_{ij} | \theta_i,\delta_j,a_j] = \frac{\alpha_{ij}}{\alpha_{ij} + \beta_{ij}} = \frac{1}{1 - \big(\frac{\delta_{j}}{1 - \delta_{j}}\big)^{a_{j}}\cdot \big(\frac{\theta_{i}}{1 - \theta_{i}}\big)^{ - a_{j}} }, " /><br>
+
 <!--
 $$
 p_{ij} \sim Beta(\alpha_{ij}, \beta_{ij}),

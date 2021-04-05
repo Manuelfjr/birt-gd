@@ -40,24 +40,20 @@ class BIRTSGD:
         It's a initial kick to difficulties parameter.
 
     self._aj : ResourceVariable of shape (n_instances,)
-        It's a initial kick to other parameter of discrimination (Discrimination is: self.sig_aj*self.sig_bj).
-
+        It's a initial kick to other parameter of discrimination (Discrimination is: self._aj*self._bj).
+    
     self._bj : ResourceVariable of shape (n_instances,)
-        It's a initial kick to other parameter of discrimination (Discrimination is: self.sig_aj*self.sig_bj).
-
-    self.sig_thi : EagerTensor of shape (n_models,)
-        Ability parameter estimated after epochs and transformed with sigmoid activation function.
-
-    self.sig_delj : EagerTensor of shape (n_instances,)
-        Difficulty parameter estimated after epochs and transformed with sigmoid activation function.
+        It's a initial kick to other parameter of discrimination (Discrimination is: self._aj*self._bj).
     
-    self.sig_aj : EagerTensor of shape (n_instances,)
-        Othe parameter of discrimination estimated after epochs and transformed with sofplus activation function.
-        (Discrimination is self.sig_aj*self.sig_bj)
+    self._abilities : ResourceVariable of shape (n_models,)
+        It is the optimized estimate for the abilitie parameter.
     
-    self.sig_bj : EagerTensor os shape (n_instances,)
-        Othe parameter of discrimination estimated after epochs and transformed with hyperbolic tangent activation function.
-        (Discrimination is self.sig_aj*self.sig_bj)
+    self._difficulties : ResourceVariable of shape (n_instances,)
+        It is the optimized estimate for the difficulties parameter.
+
+    self._discrimination : ResourceVariable of shape (n_instances,)
+        It is the optimized estimate for the discrimination parameter.
+
 
     Notes
     -------------------------------------------------------
@@ -70,16 +66,14 @@ class BIRTSGD:
     >>> Y = [0.98,0.81,0.12,0.567,0.76,0.9]
     >>> bsgd = BIRTSGD(n_models=3, n_instances=2, random_seed=1)
     >>> bsgd.fit(X,Y)
-    100%|██████████| 20/20 [00:00<00:00, 52.81it/s]
+    100%|██████████| 20/20 [00:00<00:00, 52.58it/s]
     <birt.BIRTSGD at 0x7f6ce2555f50>
-    >>> bsgd._thi
-    array([0.78665066, 0.50258964, 0.545207  ], dtype=float32)
-    >>> bsgd._delj
-    array([0.25070453, 0.46883532], dtype=float32)
-    >>> bsgd._aj
-    array([0.25051177, 2.3821855 ], dtype=float32)
-    >>> bsgd._bj
-    array([0.37420523, 0.59285855], dtype=float32)
+    >>> bsgd._abilities
+    array([0.78665066, 0.5025896 , 0.545207  ], dtype=float32)
+    >>> bsgd._difficulties
+    array([0.25070453, 0.46883535], dtype=float32)
+    >>> bsgd._discrimination
+    array([0.09374281, 1.4122988 ], dtype=float32)
     """
     def __init__(self, learning_rate=0.1, epochs=20, n_models=20, n_instances=100, n_batchs=5, random_seed=1):
         self.lr = learning_rate
@@ -127,9 +121,9 @@ class BIRTSGD:
 
         Returns
         -------------------------------------------------------
-        tuple of (ability, difficulty, Discrimination aj*, Discrimination bj*)
+        tuple of (abilities, difficulties, discrimination)
         """
-        return self._thi, self._delj, self._bj, self._aj
+        return self._abilities, self._difficulties, self._discrimination
     
     def _loss(self, y_true, y_pred):
         """Calculate Binary Cross Entropy (loss function)
@@ -155,20 +149,20 @@ class BIRTSGD:
         Parameters
         -------------------------------------------------------
         thi : 
-                Ability parameter to Beta3-IRT.
+                Parameter to be estimated from the abilitie for Beta3-IRT
 
         delj : 
-                Difficulty parameter to Beta3-IRT.
+                Parameter to be estimated from the difficulty for Beta3-IRT
 
-        aj* : 
-                Other parameter of discrimination to Beta3-IRT.
+        aj : 
+                Other parameter of discrimination to be estimated to Beta3-IRT.
 
-        bj* : 
-                Other parameter of discrimination to Beta3-IRT.
+        bj : 
+                Other parameter of discrimination to be estimated to Beta3-IRT.
 
         Returns
         -------------------------------------------------------
-        Calculate E[pij | thi, delj, aj = aj* * bj*]
+        Calculate E[pij | abilities, difficulties, discrimination = aj * bj]
     
         """
         sig_thi, sig_delj = tf.math.sigmoid(thi), tf.math.sigmoid(delj)
@@ -284,13 +278,13 @@ class BIRTSGD:
         for _ in tqdm(range(self.epoch)):
             self._train(dataset.batch(self.n_batchs).as_numpy_iterator())
         
-        self._thi, self._delj = tf.math.sigmoid(self._thi).numpy(), tf.math.sigmoid(self._delj).numpy()
-        self._bj, self._aj = tf.math.tanh(self._bj).numpy(), tf.math.softplus(self._aj).numpy()
+        self._abilities, self._difficulties = tf.math.sigmoid(self._thi).numpy(), tf.math.sigmoid(self._delj).numpy()
+        self._discrimination = tf.math.tanh(self._bj).numpy()*tf.math.softplus(self._aj).numpy()
         
         return self
 
     def predict(self, X=None):
-        """Predict E[pij | thi, delj, aj = aj* * bj*] = pij
+        """Predict E[pij | abilities, difficulties, discrimination = aj * bj] = pij
             
         Parameters
         -------------------------------------------------------
@@ -300,7 +294,7 @@ class BIRTSGD:
         Returns
         -------------------------------------------------------
         return 
-                y_pred = E[pij | thi, delj, aj = aj* * bj*]
+                y_pred = E[pij | abilities, difficulties, discrimination = aj * bj]
         """
 
         y_pred = []

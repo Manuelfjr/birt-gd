@@ -7,7 +7,6 @@ import argparse
 from DataTreat import Datasets
 from birt import BIRTSGD
 
-
 # Arguments
 def parse_arguments():
     parser = argparse.ArgumentParser(description='''Runs all the code''',
@@ -66,6 +65,16 @@ if __name__ == '__main__':
                 )
         
         X, y = Data.data_generate(scale = vars(args)['scale'])
+        Data.data_generate_write(
+            X, 
+            y,
+            params={ 
+            '_thi': Data._thi,
+            '_delj': Data._delj,
+            '_aj': Data._aj,
+            'n_iter':n_iter
+            }
+        )
         n_models, n_instances = vars(args)['n_models'], vars(args)['n_instances']
         
         irt = BIRTSGD(
@@ -74,7 +83,7 @@ if __name__ == '__main__':
             n_batchs = vars(args)['n_batchs'], random_seed= random_seed[n_iter]
         )
 
-        _thi, _delj, _bj, _aj = irt.fit(X, y).get_params()
+        _thi, _delj, _aj = irt.fit(X, y).get_params()
 
         #generated
         params = {
@@ -85,7 +94,7 @@ if __name__ == '__main__':
             'y': y,
             '_thi': _thi,
             '_delj': _delj,
-            '_aj': _aj * _bj,
+            '_aj': _aj,
             'mc_iterations': mc,
             'epochs': vars(args)['epochs'],
             'learning_rate': vars(args)['learning_rate'],

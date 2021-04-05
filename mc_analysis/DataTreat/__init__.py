@@ -47,6 +47,25 @@ class Datasets:
 
         #print(X)
         return X, y
+        
+    def data_generate_write(self, X, y, params):
+        names = ['mc_results/params', 'mc_results/data', params['n_iter']]
+        data = pd.DataFrame( np.reshape(y, (X[-1][0] + 1, X[-1][1] + 1)) )
+        df_abilities = pd.DataFrame(params['_thi'], columns=['_abilities'])
+        df_j = pd.DataFrame(
+            {
+                "_difficulties": params['_delj'],
+                "_discrimination": params['_aj']
+            }
+        )
+        if (not os.path.exists(names[0]) ):
+            os.makedirs(names[0])
+        if (not os.path.exists(names[1]) ):
+            os.makedirs(names[1])
+
+        data.to_csv(names[1] + f'/generate_data_iter_mc{names[-1]}.csv')
+        df_abilities.to_csv(names[0] + f'/generate_abilities_iter_mc{names[-1]}.csv')
+        df_j.to_csv(names[0] + f'/generate_diff_disc_iter_mc{names[-1]}.csv')
     
     def mc_write(self, param, path, **kwargs):
         path_generate = path

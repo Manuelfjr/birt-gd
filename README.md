@@ -80,7 +80,7 @@ birt-sgd requires:
 ## User installation
 
 ```bash
-pip install birt-sgd
+pip install -i https://test.pypi.org/simple/ birt-sgd
 ```
 
 ## Source code 
@@ -109,23 +109,18 @@ Import the **BIRTSGD's class**
 ```
 
 ```py 
->>> bsgd._thi
-array([0.78665066, 0.50258964, 0.545207  ], dtype=float32)
+>>> bsgd._abilities
+array([0.78665066, 0.5025896 , 0.545207  ], dtype=float32)
 ```
 
 ```py
->>> bsgd._delj
-array([0.25070453, 0.46883532], dtype=float32)
+>>> bsgd._difficulties
+array([0.25070453, 0.46883535], dtype=float32)
 ```
 
 ```py
->>> bsgd._aj
-array([0.25051177, 2.3821855 ], dtype=float32)
-```
-
-```py
->>> bsgd._bj
-array([0.37420523, 0.59285855], dtype=float32)  
+>>> bsgd._discrimination
+array([0.09374281, 1.4122988 ], dtype=float32)
 ```
 
 # Help and Support

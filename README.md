@@ -71,40 +71,7 @@ p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>)
 where,
 
 E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>] = (&alpha;<sub>ij</sub>)/( &alpha;<sub>ij</sub> + &beta;<sub>ij</sub>) = 1/(1 + ( (&delta;<sub>ij</sub>)/(1 - &delta;<sub>ij</sub>) )<sup>a<sub>ij</sub></sup> &#xd7; ( (&theta;<sub>ij</sub>)/(1 - &theta;<sub>ij</sub>) )<sup> - a<sub>ij</sub></sup> )
-<!--
-Being:   
 
-<img src="https://latex.codecogs.com/svg.latex?&space;p_{ij} \sim B(\alpha_{ij}, \beta_{ij}), " title="p_{ij} \sim B(\alpha_{ij}, \beta_{ij}), " /><br>
-
-<img src="https://latex.codecogs.com/svg.latex?&space;\alpha_{ij} = F_{\alpha}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{\theta_{i}}{\delta_{j}}\bigg)^{a_{j}}, " title="\alpha_{ij} = F_{\alpha}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{\theta_{i}}{\delta_{j}}\bigg)^{a_{j}}, " /><br>
-
-<img src="https://latex.codecogs.com/svg.latex?&space;\beta_{ij} = F_{\beta}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{1 - \theta_{i}}{1 - \delta_{j}}\bigg)^{a_{j}}," title="\beta_{ij} = F_{\beta}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{1 - \theta_{i}}{1 - \delta_{j}}\bigg)^{a_{j}}, " /><br>
-
-<img src="https://latex.codecogs.com/svg.latex?&space;\theta_{i} \sim B(1,1), \delta_{j} \sim B(1,1), a_{j} \sim N(1, \sigma^{2}_{0})," title="\theta_{i} \sim B(1,1), \delta_{j} \sim B(1,1), a_{j} \sim N(1, \sigma^{2}_{0}), " /><br>
-
-where,
-
-<img src="https://latex.codecogs.com/svg.latex?&space;E[p_{ij} | \theta_i,\delta_j,a_j] = \frac{\alpha_{ij}}{\alpha_{ij} + \beta_{ij}} = \frac{1}{1 - \big(\frac{\delta_{j}}{1 - \delta_{j}}\big)^{a_{j}}\cdot \big(\frac{\theta_{i}}{1 - \theta_{i}}\big)^{ - a_{j}} }," title="E[p_{ij} | \theta_i,\delta_j,a_j] = \frac{\alpha_{ij}}{\alpha_{ij} + \beta_{ij}} = \frac{1}{1 - \big(\frac{\delta_{j}}{1 - \delta_{j}}\big)^{a_{j}}\cdot \big(\frac{\theta_{i}}{1 - \theta_{i}}\big)^{ - a_{j}} }, " /><br>
--->
-
-<!--
-$$
-p_{ij} \sim Beta(\alpha_{ij}, \beta_{ij}),
-$$
-$$
-\alpha_{ij} = F_{\alpha}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{\theta_{i}}{\delta_{j}}\bigg)^{a_{j}},
-$$
-$$
-\beta_{ij} = F_{\beta}(\theta_{i}, \delta_{j}, a_{j}) = \bigg(\frac{1 - \theta_{i}}{1 - \delta_{j}}\bigg)^{a_{j}},
-$$
-$$
-\theta_{i} \sim B(1,1), \delta_{j} \sim B(1,1), a_{j} \sim N(1, \sigma^{2}_{0})
-$$
-where,
-$$
-E[p_{ij} | \theta_i,\delta_j,a_j] = \frac{\alpha_{ij}}{\alpha_{ij} + \beta_{ij}} = \frac{1}{1 - \big(\frac{\delta_{j}}{1 - \delta_{j}}\big)^{a_{j}}\cdot \big(\frac{\theta_{i}}{1 - \theta_{i}}\big)^{ - a_{j}} }
-$$
--->
 # Installation
 ## Dependencies 
 birt-sgd requires:

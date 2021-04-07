@@ -96,14 +96,55 @@ class BIRTSGD:
         Parameters
         -------------------------------------------------------
         data :
-                all adataset
+                all adataset (DataFrame type), like:
+                model_00  | model_01  | model_02  | ... | model_n
+                -------------------------------------------------
+                p00       | p10       | p20       | ... | pi0  
+                -------------------------------------------------
+                p01       | p11       | p21       | ... | pi1  
+                -------------------------------------------------
+                p02       | p12       | p22       | ... | pi2
+                -------------------------------------------------
+                ...
+                ...
+                ...
+                -------------------------------------------------
+                p0j       | p1j       | p2j       | ... | pij  
         
         Returns
         -------------------------------------------------------
         X : 
-            a list with set of tuples
+            a list with set of tuples (n_instance=i, n_model=j), like:
+            [
+                (0, 0),
+                (0, 1),
+                (0, 2),
+                ...
+                (0, i),
+                (1, 0),
+                (1, 1),
+                (1, 2),
+                ... 
+                (1, i),
+                ...
+                (j, i)
+            ]
         y : 
-            a list with p_{ij}
+            a list with p_{ij} ( len(y) == n_instance * n_model ), like:
+            [
+                p00,
+                p01,
+                p02,
+                ...,
+                p0i,
+                p10,
+                p11,
+                p12,
+                ...,
+                p1i,
+                ...,
+                pij
+            ]
         """
         X, y = [], []
         for row in range(data.shape[0]):
@@ -163,7 +204,6 @@ class BIRTSGD:
         Returns
         -------------------------------------------------------
         Calculate E[pij | abilities, difficulties, discrimination = aj * bj]
-    
         """
         sig_thi, sig_delj = tf.math.sigmoid(thi), tf.math.sigmoid(delj)
         tanh_bj, soft_aj = tf.math.tanh(bj), tf.math.softplus(aj)
@@ -172,6 +212,28 @@ class BIRTSGD:
         betaij = ( ((1 - sig_thi)/(1 - sig_delj))**(tanh_bj*soft_aj) )
         y_est = alphaij/(alphaij + betaij)
         return y_est
+    
+    def irt(self, abilities, difficulties, discrimination):
+        """calculating a probability (i) deduction from (j) using Beta3-IRT
+
+        Parameters
+        -------------------------------------------------------
+        abilities : 
+                Optimized ability estimation by gradient descent using Beta3-IRT
+
+        difficulties : 
+                Optimized difficulties estimation by gradient descent using Beta3-IRT
+
+        discrimination : 
+                Optimized discrimination estimation by gradient descent using Beta3-IRT
+
+        Returns
+        -------------------------------------------------------
+        Calculate E[pij | abilities, difficulties, discrimination]
+        """
+        alphaij = (abilities/difficulties)**(discrimination)
+        betaij = ( ((1 - abilities)/(1 - difficulties))**(discrimination) )
+        return alphaij/(alphaij + betaij)
     
     def _train(self, batches):
         """Train BIRT Gradient Descent
@@ -284,7 +346,7 @@ class BIRTSGD:
         return self
 
     def predict(self, X=None):
-        """Predict E[pij | abilities, difficulties, discrimination = aj * bj] = pij
+        """Predict E[pij | abilities, difficulties, discrimination] = pij
             
         Parameters
         -------------------------------------------------------
@@ -294,19 +356,18 @@ class BIRTSGD:
         Returns
         -------------------------------------------------------
         return 
-                y_pred = E[pij | abilities, difficulties, discrimination = aj * bj]
+                y_pred = E[pij | abilities, difficulties, discrimination]
         """
 
         y_pred = []
-        for d,a,b in zip(self._delj, self._aj, self._bj):
-            for t in self._thi:
+        for d,a in zip(self._difficulties, self._discrimination):
+            for t in self._abilities:
                 y_pred.append(
-                    self._irt(
-                        thi = t, 
-                        delj = d, 
-                        aj = a, 
-                        bj = b 
-                    ).numpy( ) 
+                    self.irt(
+                        abilities = t, 
+                        difficulties = d, 
+                        discrimination = a
+                    )
                 )
 
         return y_pred

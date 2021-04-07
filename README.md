@@ -62,15 +62,15 @@ The model expects to receive two sets of data, *X* being a list or array contain
 
 p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>)
 
-&alpha;<sub>ij</sub> = F<sub>&alpha;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = (&theta;<sub>ij</sub>/&delta;<sub>ij</sub>)<sup>a<sub>j</sub></sup>
+&alpha;<sub>ij</sub> = F<sub>&alpha;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = (&theta;<sub>i</sub>/&delta;<sub>j</sub>)<sup>a<sub>j</sub></sup>
 
-&beta;<sub>ij</sub> = F<sub>&beta;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = ( (1 - &theta;<sub>ij</sub>)/(1 - &delta;<sub>ij</sub>) )<sup>a<sub>j</sub></sup>
+&beta;<sub>ij</sub> = F<sub>&beta;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = ( (1 - &theta;<sub>i</sub>)/(1 - &delta;<sub>j</sub>) )<sup>a<sub>j</sub></sup>
 
 &theta;<sub>i</sub> ~ &Beta;(1,1), &delta;<sub>j</sub> ~ &Beta;(1,1), a<sub>j</sub> ~ N(1, &sigma;<sup>2</sup><sub>0</sub>)
 
 where,
 
-E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>] = (&alpha;<sub>ij</sub>)/( &alpha;<sub>ij</sub> + &beta;<sub>ij</sub>) = 1/(1 + ( (&delta;<sub>ij</sub>)/(1 - &delta;<sub>ij</sub>) )<sup>a<sub>ij</sub></sup> &#xd7; ( (&theta;<sub>ij</sub>)/(1 - &theta;<sub>ij</sub>) )<sup> - a<sub>ij</sub></sup> )
+E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>] = (&alpha;<sub>ij</sub>)/( &alpha;<sub>ij</sub> + &beta;<sub>ij</sub>) = 1/(1 + ( (&delta;<sub>j</sub>)/(1 - &delta;<sub>j</sub>) )<sup>a<sub>j</sub></sup> &#xd7; ( (&theta;<sub>i</sub>)/(1 - &theta;<sub>i</sub>) )<sup> - a<sub>j</sub></sup> )
 
 # Installation
 ## Dependencies 

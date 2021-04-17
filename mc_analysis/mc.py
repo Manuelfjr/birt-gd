@@ -32,7 +32,7 @@ def parse_arguments():
                         type=int,
                         default=20,
                         help= '''Epochs to gradient descent.''')
-    parser.add_argument('-b', '--n_batchs', dest='n_batchs',
+    parser.add_argument('-b', '--batch_size', dest='batch_size',
                         type=int,
                         default=5,
                         help= '''Number of batchs to gradient descent.''')
@@ -44,6 +44,14 @@ def parse_arguments():
                         type=int,
                         default=100,
                         help= '''Number of instances.''')
+    parser.add_argument('-t', '--n_inits', dest='n_inits',
+                        type=int,
+                        default=10,
+                        help= '''Number of initializations.''')
+    parser.add_argument('-w', '--n_workers', dest='n_workers',
+                        type=int,
+                        default=-1,
+                        help= '''Number of cpu workers.''')
 
     return parser.parse_args()
 
@@ -78,13 +86,19 @@ if __name__ == '__main__':
         n_models, n_instances = vars(args)['n_models'], vars(args)['n_instances']
         
         irt = BIRTSGD(
-            learning_rate = vars(args)['learning_rate'], epochs = vars(args)['epochs'],
+            learning_rate = vars(args)['learning_rate'], 
+            epochs = vars(args)['epochs'],
             n_models = n_models, n_instances = n_instances,
-            n_batchs = vars(args)['n_batchs'], random_seed= random_seed[n_iter]
+            batch_size = vars(args)['batch_size'], 
+            n_inits = vars(args)['n_inits'], 
+            n_workers = vars(args)['n_workers'], 
+            random_seed = random_seed[n_iter]
         )
 
         _thi, _delj, _aj = irt.fit(X, y).get_params()
 
+        # from IPython import embed
+        # embed()
         #generated
         params = {
             'dataset_name': 'generated_data_mc',
@@ -98,7 +112,7 @@ if __name__ == '__main__':
             'mc_iterations': mc,
             'epochs': vars(args)['epochs'],
             'learning_rate': vars(args)['learning_rate'],
-            'batchs': vars(args)['n_batchs'],
+            'batchs': vars(args)['batch_size'],
             }
 
         Data.mc_write(param = params, path = MC_PATH, mc = n_iter)

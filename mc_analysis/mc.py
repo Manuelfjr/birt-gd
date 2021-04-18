@@ -59,7 +59,7 @@ if __name__ == '__main__':
     args = parse_arguments()
     mc = vars(args)['mc_interations']
 
-    MC_PATH = 'mc_results/'
+    MC_PATH = 'mc_results'
 
     if vars(args)['random_seed'] == -1:
         random_seed = list(np.random.randint(low=0, high=( (2)**(32) - 1 ), size=mc))

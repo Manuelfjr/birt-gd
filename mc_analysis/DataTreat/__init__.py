@@ -72,16 +72,17 @@ class Datasets:
         #self.write(param, path)
         if not os.path.exists(path_generate):
             os.makedirs(path_generate)
-            df = pd.DataFrame(
-                {
-                    'p.value_thi': ks_2samp(param['thi'],param['_thi']).pvalue,
-                    'p.value_delj': ks_2samp(param['delj'],param['_delj']).pvalue,
-                    'p.value_aj': ks_2samp(param['aj'],param['_aj']).pvalue,
-                    'corr_thi_to_pred_thi': pearsonr(param['thi'],param['_thi'])[0],
-                    'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj'])[0],
-                    'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])[0]
-                }
-            )
+
+        if kwargs['mc'] == 0:
+            data = {
+                'p.value_thi': [ks_2samp(param['thi'],param['_thi']).pvalue],
+                'p.value_delj': [ks_2samp(param['delj'],param['_delj']).pvalue],
+                'p.value_aj': [ks_2samp(param['aj'],param['_aj']).pvalue],
+                'corr_thi_to_pred_thi': pearsonr(param['thi'],param['_thi'])[0],
+                'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj'])[0],
+                'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])[0]
+            }
+            df = pd.DataFrame(data)
 
             df_infs = pd.DataFrame(
                 {

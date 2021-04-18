@@ -51,7 +51,7 @@ def parse_arguments():
     parser.add_argument('-w', '--n_workers', dest='n_workers',
                         type=int,
                         default=-1,
-                        help= '''Number of cpu workers.''')
+                        help= '''Number of cpu workers.''')  
 
     return parser.parse_args()
 
@@ -92,7 +92,8 @@ if __name__ == '__main__':
             batch_size = vars(args)['batch_size'], 
             n_inits = vars(args)['n_inits'], 
             n_workers = vars(args)['n_workers'], 
-            random_seed = random_seed[n_iter]
+            random_seed = random_seed[n_iter],
+            pl=False
         )
 
         _thi, _delj, _aj = irt.fit(X, y).get_params()
@@ -112,8 +113,8 @@ if __name__ == '__main__':
             'mc_iterations': mc,
             'epochs': vars(args)['epochs'],
             'learning_rate': vars(args)['learning_rate'],
-            'batchs': vars(args)['batch_size'],
+            'batchs': vars(args)['batch_size']
             }
-
+        
         Data.mc_write(param = params, path = MC_PATH, mc = n_iter)
 

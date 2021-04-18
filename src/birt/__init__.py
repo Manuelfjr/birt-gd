@@ -35,29 +35,23 @@ class BIRTSGD:
     
     pl : Boolean, default=False
         Determines if discrimination is 1 (discrimination=1). If True, Use model 1PL.
+    
+    n_inits : int, default=10
+        Determines the number of initializations.
+        
+    n_workers : int, default=-1
+        Determines the number of CPUs to use.
 
     
     Attributes
     -------------------------------------------------------
-    self._thi : ResourceVariable of shape (n_models,)
-        It's a initial kick to ability parameter .
-    
-    self._delj : ResourceVariable of shape (n_instances,)
-        It's a initial kick to difficulties parameter.
-
-    self._aj : ResourceVariable of shape (n_instances,)
-        It's a initial kick to other parameter of discrimination (Discrimination is: self._aj*self._bj).
-    
-    self._bj : ResourceVariable of shape (n_instances,)
-        It's a initial kick to other parameter of discrimination (Discrimination is: self._aj*self._bj).
-    
     self.abilities : ResourceVariable of shape (n_models,)
         It is the optimized estimate for the abilitie parameter.
     
     self.difficulties : ResourceVariable of shape (n_instances,)
         It is the optimized estimate for the difficulties parameter.
 
-    self._discrimination : ResourceVariable of shape (n_instances,)
+    self.discriminations : ResourceVariable of shape (n_instances,)
         It is the optimized estimate for the discrimination parameter.
 
 
@@ -78,7 +72,7 @@ class BIRTSGD:
     array([0.78665066, 0.5025896 , 0.545207  ], dtype=float32)
     >>> bsgd.difficulties
     array([0.25070453, 0.46883535], dtype=float32)
-    >>> bsgd.discrimination
+    >>> bsgd.discriminations
     array([0.09374281, 1.4122988 ], dtype=float32)
     """
     def __init__(
@@ -177,9 +171,13 @@ class BIRTSGD:
 
         Returns
         -------------------------------------------------------
-        tuple of (abilities, difficulties, discrimination)
+        tuple of (abilities, difficulties, discrimination) or (abilities, difficulties),
+        if self.pl == True.
         """
-        return self.abilities, self.difficulties, self.discriminations
+        if self.pl == False:
+            return self.abilities, self.difficulties, self.discriminations
+        else:
+            return self.abilities, self.difficulties
     
     def fit(self, X, y=None):
         """Compute BIRT Gradient Descent
@@ -219,13 +217,13 @@ class BIRTSGD:
                 X, y, self.n_models, 
                 self.n_instances,
                 self.epochs, self.batch_size, 
-                self.lr, seed, None
+                self.lr, seed, self.pl,None
             ) for seed in range(
                 self.n_seed, self.n_seed + self.n_inits
             )
         ]
 
-        if self.n_workers == -1:
+      	if self.n_workers == -1:
             n_workers = cpu_count()
 
         if self.n_workers == 1:
@@ -243,25 +241,36 @@ class BIRTSGD:
         for res in results:
             abi.append(res[0])
             dif.append(res[1])
-            dis_b.append(res[2])
-            dis_a.append(res[3])
+            if self.pl == False:
+                dis_b.append(res[2])
+                dis_a.append(res[3])
 
         abi = tf.math.reduce_mean(tf.stack(abi, axis=1), axis=1)
         dif = tf.math.reduce_mean(tf.stack(dif, axis=1), axis=1)
-        dis_b = tf.math.reduce_mean(tf.stack(dis_b, axis=1), axis=1)
-        dis_a = tf.math.reduce_mean(tf.stack(dis_a, axis=1), axis=1)
-
-        abi, dif, dis_b, dis_a = _fit((
-            X, y, self.n_models, 
-            self.n_instances,
-            self.epochs, self.batch_size, 
-            self.lr, self.n_seed + self.n_inits, [abi, dif, dis_b, dis_a]
-        ))
-
-        self.abilities = tf.math.sigmoid(abi).numpy()
-        self.difficulties = tf.math.sigmoid(dif).numpy()
-        self.discriminations = tf.math.tanh(dis_b) * tf.math.softplus(dis_a)
-        self.discriminations = self.discriminations.numpy()
+        if self.pl == False:
+            dis_b = tf.math.reduce_mean(tf.stack(dis_b, axis=1), axis=1)
+            dis_a = tf.math.reduce_mean(tf.stack(dis_a, axis=1), axis=1)
+        
+        if self.pl == False:
+            abi, dif, dis_b, dis_a = _fit((
+                X, y, self.n_models, 
+                self.n_instances,
+                self.epochs, self.batch_size, 
+                self.lr, self.n_seed + self.n_inits, self.pl, [abi, dif, dis_b, dis_a]
+            ))
+            self.abilities = tf.math.sigmoid(abi).numpy()
+            self.difficulties = tf.math.sigmoid(dif).numpy()
+            self.discriminations = tf.math.tanh(dis_b) * tf.math.softplus(dis_a)
+            self.discriminations = self.discriminations.numpy()
+        else:
+            abi, dif = _fit((
+                X, y, self.n_models, 
+                self.n_instances,
+                self.epochs, self.batch_size, 
+                self.lr, self.n_seed + self.n_inits, self.pl,[abi, dif]
+            ))
+            self.abilities = tf.math.sigmoid(abi).numpy()
+            self.difficulties = tf.math.sigmoid(dif).numpy()
 
         return self
     
@@ -300,9 +309,13 @@ class BIRTSGD:
         return 
                 y_pred = E[pij | abilities, difficulties, discrimination]
         """
+        if self.pl == False:
+            discriminations = self.discriminations 
+        else:
+            discriminations = [1]*len(self.difficulties)
 
         y_pred = []
-        for d,a in zip(self.difficulties, self.discriminations):
+        for d,a in zip(self.difficulties, discriminations):
             for t in self.abilities:
                 y_pred.append(
                     self.irt(
@@ -313,7 +326,6 @@ class BIRTSGD:
                 )
 
         return y_pred
-
 
 def _loss(y_true, y_pred):
     """Calculate Binary Cross Entropy (loss function)
@@ -362,6 +374,27 @@ def _irt(thi, delj, aj, bj):
     y_est = alphaij/(alphaij + betaij)
     return y_est
 
+def _irt_pl(thi, delj):
+    """calculating a probability (i) deduction from (j) using Beta3-IRT
+
+    Parameters
+    -------------------------------------------------------
+    thi : 
+            Parameter to be estimated from the abilitie for Beta3-IRT
+
+    delj : 
+            Parameter to be estimated from the difficulty for Beta3-IRT
+
+    Returns
+    -------------------------------------------------------
+    Calculate E[pij | abilities, difficulties, discrimination = 1]
+    """
+    sig_thi, sig_delj = tf.math.sigmoid(thi), tf.math.sigmoid(delj)
+
+    alphaij = (sig_thi/sig_delj)**(1)
+    betaij = ( ((1 - sig_thi)/(1 - sig_delj))**(1) )
+    y_est = alphaij/(alphaij + betaij)
+    return y_est
 
 def _fit(args):
     """Train BIRT Gradient Descent
@@ -375,7 +408,7 @@ def _fit(args):
     self
     """
 
-    (X, y, n_models, n_instances, epochs, batch_size, lr, random_seed, params) = args
+    (X, y, n_models, n_instances, epochs, batch_size, lr, random_seed, pl, params) = args
 
     np.random.seed(random_seed)
     tf.random.set_seed(
@@ -393,16 +426,16 @@ def _fit(args):
             np.random.normal(0,1, size=n_instances), 
             trainable=True, dtype=tf.float32
         )
+        if pl == False:
+            bj = tf.Variable(
+                np.abs(np.random.normal(1, 1, size=n_instances)), 
+                trainable=True, dtype=tf.float32
+            )
 
-        bj = tf.Variable(
-            np.abs(np.random.normal(1, 1, size=n_instances)), 
-            trainable=True, dtype=tf.float32
-        )
-
-        aj = tf.Variable(
-            np.random.normal(1, 1, size=n_instances), 
-            trainable=True, dtype=tf.float32
-        )
+            aj = tf.Variable(
+                np.random.normal(1, 1, size=n_instances), 
+                trainable=True, dtype=tf.float32
+            )
     
     else:
         thi = tf.Variable(
@@ -414,55 +447,86 @@ def _fit(args):
             params[1], 
             trainable=True, dtype=tf.float32
         )
+        if pl == False:
+            bj = tf.Variable(
+                params[2], 
+                trainable=True, dtype=tf.float32
+            )
 
-        bj = tf.Variable(
-            params[2], 
-            trainable=True, dtype=tf.float32
-        )
-
-        aj = tf.Variable(
-            params[3], 
-            trainable=True, dtype=tf.float32
-        )
+            aj = tf.Variable(
+                params[3], 
+                trainable=True, dtype=tf.float32
+            )
 
     dataset = tf.data.Dataset.from_tensor_slices(
         np.hstack((X, np.array(y).reshape(-1, 1)))
     ).shuffle(len(X), reshuffle_each_iteration=True)
 
-    variables = [
-        thi,
-        delj,
-        aj,
-        bj
-    ]
+    if pl == False:
+        variables = [
+                thi,
+                delj,
+                aj,
+                bj
+            ]
+        
+        for _ in tqdm(range(epochs)):
+            batches = dataset.batch(batch_size).as_numpy_iterator()
+            for batch in batches:
+
+                with tf.GradientTape() as g:
+                    g.watch(variables)  # Precisa dizer para a tape observar as variaveis
+                    t = tf.gather(thi, batch[:,1].astype(int))
+                    d = tf.gather(delj, batch[:,0].astype(int))
+                    a = tf.gather(aj, batch[:,0].astype(int))
+                    b = tf.gather(bj, batch[:,0].astype(int))
+                    y_pred = _irt(thi = t, delj = d, aj = a, bj = b)
+
+                    current_loss = _loss(
+                        batch[:, 2].astype(np.float32), y_pred
+                    )
+                _thi, _delj, _aj, _bj = g.gradient(current_loss, variables)
+                
+                thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
+                delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
+                aj.scatter_sub(tf.math.scalar_mul(lr, _aj))
+                bj.scatter_sub(tf.math.scalar_mul(lr, _bj))
+
+        # abilities, difficulties = tf.math.sigmoid(thi).numpy(), tf.math.sigmoid(delj).numpy()
+        # discriminations = tf.math.tanh(bj).numpy()*tf.math.softplus(aj).numpy()
+        
+        parameters = thi, delj, bj, aj
+    else:
+        variables = [
+                thi,
+                delj
+            ]
+        
+        for _ in tqdm(range(epochs)):
+            batches = dataset.batch(batch_size).as_numpy_iterator()
+            for batch in batches:
+
+                with tf.GradientTape() as g:
+                    g.watch(variables)  # Precisa dizer para a tape observar as variaveis
+                    t = tf.gather(thi, batch[:,1].astype(int))
+                    d = tf.gather(delj, batch[:,0].astype(int))
+                    y_pred = _irt_pl(thi = t, delj = d)
+
+                    current_loss = _loss(
+                        batch[:, 2].astype(np.float32), y_pred
+                    )
+                _thi, _delj = g.gradient(current_loss, variables)
+                
+                thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
+                delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
+
+        # abilities, difficulties = tf.math.sigmoid(thi).numpy(), tf.math.sigmoid(delj).numpy()
+        # discriminations = tf.math.tanh(bj).numpy()*tf.math.softplus(aj).numpy()
+        
+        parameters = thi, delj
+
+    return parameters
     
-    for _ in tqdm(range(epochs)):
-        batches = dataset.batch(batch_size).as_numpy_iterator()
-        for batch in batches:
-
-            with tf.GradientTape() as g:
-                g.watch(variables)  # Precisa dizer para a tape observar as variaveis
-                t = tf.gather(thi, batch[:,1].astype(int))
-                d = tf.gather(delj, batch[:,0].astype(int))
-                a = tf.gather(aj, batch[:,0].astype(int))
-                b = tf.gather(bj, batch[:,0].astype(int))
-                y_pred = _irt(thi = t, delj = d, aj = a, bj = b)
-
-                current_loss = _loss(
-                    batch[:, 2].astype(np.float32), y_pred
-                )
-            _thi, _delj, _aj, _bj = g.gradient(current_loss, variables)
-
-            thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
-            delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
-            aj.scatter_sub(tf.math.scalar_mul(lr, _aj))
-            bj.scatter_sub(tf.math.scalar_mul(lr, _bj))
-
-    # abilities, difficulties = tf.math.sigmoid(thi).numpy(), tf.math.sigmoid(delj).numpy()
-    # discriminations = tf.math.tanh(bj).numpy()*tf.math.softplus(aj).numpy()
-    
-    return thi, delj, bj, aj
-
         
     
    

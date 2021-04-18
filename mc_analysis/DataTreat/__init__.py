@@ -72,12 +72,11 @@ class Datasets:
         #self.write(param, path)
         if not os.path.exists(path_generate):
             os.makedirs(path_generate)
-        if kwargs['mc'] == 0:
             df = pd.DataFrame(
                 {
-                    'p.value_thi': ks_2samp(param['thi'],param['_thi'])[1],
-                    'p.value_delj': ks_2samp(param['delj'],param['_delj'])[1],
-                    'p.value_aj': ks_2samp(param['aj'],param['_aj'])[1],
+                    'p.value_thi': ks_2samp(param['thi'],param['_thi']).pvalue,
+                    'p.value_delj': ks_2samp(param['delj'],param['_delj']).pvalue,
+                    'p.value_aj': ks_2samp(param['aj'],param['_aj']).pvalue,
                     'corr_thi_to_pred_thi': pearsonr(param['thi'],param['_thi'])[0],
                     'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj'])[0],
                     'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])[0]
@@ -102,13 +101,13 @@ class Datasets:
             df = pd.read_csv(path_generate + '/generate_data_mc_{}.csv'.format(param['mc_iterations']), index_col=0)
 
             df.loc[ kwargs['mc'] ] = [
-                ks_2samp(param['thi'],param['_thi'])[1],
-                ks_2samp(param['delj'],param['_delj'])[1],
-                ks_2samp(param['aj'],param['_aj'])[1],
+                ks_2samp(param['thi'],param['_thi']).pvalue,
+                ks_2samp(param['delj'],param['_delj']).pvalue,
+                ks_2samp(param['aj'],param['_aj']).pvalue,
 
                 pearsonr(param['thi'],param['_thi'])[0],
                 pearsonr(param['delj'],param['_delj'])[0],
                 pearsonr(param['aj'],param['_aj'])[0]
             ]
-            
+
             df.to_csv(path_generate + '/generate_data_mc_{}.csv'.format(param['mc_iterations']))

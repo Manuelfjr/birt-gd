@@ -75,12 +75,12 @@ class Datasets:
         if kwargs['mc'] == 0:
             df = pd.DataFrame(
                 {
-                    'p.value_thi': ks_2samp(param['thi'],param['_thi']),
-                    'p.value_delj': ks_2samp(param['delj'],param['_delj']),
-                    'p.value_aj': ks_2samp(param['aj'],param['_aj']),
-                    'corr_thi_to_pred_thi': pearsonr(param['thi'],param['_thi']),
-                    'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj']),
-                    'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])
+                    'p.value_thi': ks_2samp(param['thi'],param['_thi'])[1],
+                    'p.value_delj': ks_2samp(param['delj'],param['_delj'])[1],
+                    'p.value_aj': ks_2samp(param['aj'],param['_aj'])[1],
+                    'corr_thi_to_pred_thi': pearsonr(param['thi'],param['_thi'])[0],
+                    'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj'])[0],
+                    'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])[0]
                 }
             )
 
@@ -112,11 +112,3 @@ class Datasets:
             ]
             
             df.to_csv(path_generate + '/generate_data_mc_{}.csv'.format(param['mc_iterations']))
-
-    def data_split(self):
-        X, y = [], []
-        for row in range(self.data.shape[0]):
-            for col in range(self.data.shape[1]):
-                X.append((row,col))
-                y.append(self.data.iloc[row,col])
-        return X, y

@@ -28,10 +28,13 @@ class BIRTSGD:
         Numbers of instances to fit the models.
 
     batch_size : int, default=5
-        Batch size for each iteration of the model fit. (batch_size <= n_instances)
+        Batch size for each iteration of the model fit. (batch_size <= n_instances).
 
     random_seed : int, default=1
         Determines a random state to generation initial kicks.
+    
+    pl : Boolean, default=False
+        Determines if discrimination is 1 (discrimination=1). If True, Use model 1PL.
 
     
     Attributes
@@ -48,10 +51,10 @@ class BIRTSGD:
     self._bj : ResourceVariable of shape (n_instances,)
         It's a initial kick to other parameter of discrimination (Discrimination is: self._aj*self._bj).
     
-    self._abilities : ResourceVariable of shape (n_models,)
+    self.abilities : ResourceVariable of shape (n_models,)
         It is the optimized estimate for the abilitie parameter.
     
-    self._difficulties : ResourceVariable of shape (n_instances,)
+    self.difficulties : ResourceVariable of shape (n_instances,)
         It is the optimized estimate for the difficulties parameter.
 
     self._discrimination : ResourceVariable of shape (n_instances,)
@@ -71,11 +74,11 @@ class BIRTSGD:
     >>> bsgd.fit(X,Y)
     100%|██████████| 20/20 [00:00<00:00, 52.58it/s]
     <birt.BIRTSGD at 0x7f6ce2555f50>
-    >>> bsgd._abilities
+    >>> bsgd.abilities
     array([0.78665066, 0.5025896 , 0.545207  ], dtype=float32)
-    >>> bsgd._difficulties
+    >>> bsgd.difficulties
     array([0.25070453, 0.46883535], dtype=float32)
-    >>> bsgd._discrimination
+    >>> bsgd.discrimination
     array([0.09374281, 1.4122988 ], dtype=float32)
     """
     def __init__(
@@ -83,7 +86,7 @@ class BIRTSGD:
         epochs=20, n_models=20, 
         n_instances=100, batch_size=5, 
         n_inits=10, n_workers=-1,
-        random_seed=1
+        random_seed=1, pl=False
     ):
         self.lr = learning_rate
         self.epochs = epochs
@@ -93,6 +96,7 @@ class BIRTSGD:
         self.n_seed = random_seed
         self.n_inits = n_inits
         self.n_workers = n_workers
+        self.pl = pl
         self._params = {
             'learning_rate': learning_rate,
             'epochs': epochs,
@@ -234,7 +238,7 @@ class BIRTSGD:
             map_f = p.map
 
         results = map_f(_fit, args)
-        
+
         abi, dif, dis_b, dis_a = [], [], [], []
         for res in results:
             abi.append(res[0])
@@ -298,8 +302,8 @@ class BIRTSGD:
         """
 
         y_pred = []
-        for d,a in zip(self._difficulties, self._discrimination):
-            for t in self._abilities:
+        for d,a in zip(self.difficulties, self.discriminations):
+            for t in self.abilities:
                 y_pred.append(
                     self.irt(
                         abilities = t, 

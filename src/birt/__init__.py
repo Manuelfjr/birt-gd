@@ -211,7 +211,6 @@ class BIRTSGD:
         if y == None:
             X, y = self._transform(X)
 
-
         args = [
             (
                 X, y, self.n_models, 
@@ -223,7 +222,7 @@ class BIRTSGD:
             )
         ]
 
-      	if self.n_workers == -1:
+        if self.n_workers == -1:
             n_workers = cpu_count()
 
         if self.n_workers == 1:

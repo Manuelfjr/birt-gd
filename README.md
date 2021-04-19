@@ -109,17 +109,17 @@ Import the **BIRTSGD's class**
 ```
 
 ```py 
->>> bsgd._abilities
+>>> bsgd.abilities
 array([0.78665066, 0.5025896 , 0.545207  ], dtype=float32)
 ```
 
 ```py
->>> bsgd._difficulties
+>>> bsgd.difficulties
 array([0.25070453, 0.46883535], dtype=float32)
 ```
 
 ```py
->>> bsgd._discrimination
+>>> bsgd.discriminations
 array([0.09374281, 1.4122988 ], dtype=float32)
 ```
 

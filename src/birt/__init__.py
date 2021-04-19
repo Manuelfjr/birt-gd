@@ -33,8 +33,8 @@ class BIRTSGD:
     random_seed : int, default=1
         Determines a random state to generation initial kicks.
     
-    pl : Boolean, default=False
-        Determines if discrimination is 1 (discrimination=1). If True, Use model 1PL.
+    fixed_discrimination : Boolean, default=False
+        Determines if discrimination is 1 (discrimination=1). If False, discrimination=1.
     
     n_inits : int, default=10
         Determines the number of initializations.
@@ -80,7 +80,7 @@ class BIRTSGD:
         epochs=20, n_models=20, 
         n_instances=100, batch_size=5, 
         n_inits=10, n_workers=-1,
-        random_seed=1, pl=False
+        random_seed=1, fixed_discrimination=False
     ):
         self.lr = learning_rate
         self.epochs = epochs
@@ -90,7 +90,7 @@ class BIRTSGD:
         self.n_seed = random_seed
         self.n_inits = n_inits
         self.n_workers = n_workers
-        self.pl = pl
+        self.fixed_discrimination = fixed_discrimination
         self._params = {
             'learning_rate': learning_rate,
             'epochs': epochs,
@@ -172,9 +172,9 @@ class BIRTSGD:
         Returns
         -------------------------------------------------------
         tuple of (abilities, difficulties, discrimination) or (abilities, difficulties),
-        if self.pl == True.
+        if self.fixed_discrimination == True.
         """
-        if self.pl == False:
+        if self.fixed_discrimination == False:
             return self.abilities, self.difficulties, self.discriminations
         else:
             return self.abilities, self.difficulties
@@ -216,7 +216,7 @@ class BIRTSGD:
                 X, y, self.n_models, 
                 self.n_instances,
                 self.epochs, self.batch_size, 
-                self.lr, seed, self.pl,None
+                self.lr, seed, self.fixed_discrimination,None
             ) for seed in range(
                 self.n_seed, self.n_seed + self.n_inits
             )
@@ -240,22 +240,22 @@ class BIRTSGD:
         for res in results:
             abi.append(res[0])
             dif.append(res[1])
-            if self.pl == False:
+            if self.fixed_discrimination == False:
                 dis_b.append(res[2])
                 dis_a.append(res[3])
 
         abi = tf.math.reduce_mean(tf.stack(abi, axis=1), axis=1)
         dif = tf.math.reduce_mean(tf.stack(dif, axis=1), axis=1)
-        if self.pl == False:
+        if self.fixed_discrimination == False:
             dis_b = tf.math.reduce_mean(tf.stack(dis_b, axis=1), axis=1)
             dis_a = tf.math.reduce_mean(tf.stack(dis_a, axis=1), axis=1)
         
-        if self.pl == False:
+        if self.fixed_discrimination == False:
             abi, dif, dis_b, dis_a = _fit((
                 X, y, self.n_models, 
                 self.n_instances,
                 self.epochs, self.batch_size, 
-                self.lr, self.n_seed + self.n_inits, self.pl, [abi, dif, dis_b, dis_a]
+                self.lr, self.n_seed + self.n_inits, self.fixed_discrimination, [abi, dif, dis_b, dis_a]
             ))
             self.abilities = tf.math.sigmoid(abi).numpy()
             self.difficulties = tf.math.sigmoid(dif).numpy()
@@ -266,7 +266,7 @@ class BIRTSGD:
                 X, y, self.n_models, 
                 self.n_instances,
                 self.epochs, self.batch_size, 
-                self.lr, self.n_seed + self.n_inits, self.pl,[abi, dif]
+                self.lr, self.n_seed + self.n_inits, self.fixed_discrimination,[abi, dif]
             ))
             self.abilities = tf.math.sigmoid(abi).numpy()
             self.difficulties = tf.math.sigmoid(dif).numpy()
@@ -308,7 +308,7 @@ class BIRTSGD:
         return 
                 y_pred = E[pij | abilities, difficulties, discrimination]
         """
-        if self.pl == False:
+        if self.fixed_discrimination == False:
             discriminations = self.discriminations 
         else:
             discriminations = [1]*len(self.difficulties)
@@ -373,7 +373,7 @@ def _irt(thi, delj, aj, bj):
     y_est = alphaij/(alphaij + betaij)
     return y_est
 
-def _irt_pl(thi, delj):
+def _irt_fixed_discrimination(thi, delj):
     """calculating a probability (i) deduction from (j) using Beta3-IRT
 
     Parameters
@@ -407,7 +407,7 @@ def _fit(args):
     self
     """
 
-    (X, y, n_models, n_instances, epochs, batch_size, lr, random_seed, pl, params) = args
+    (X, y, n_models, n_instances, epochs, batch_size, lr, random_seed, fixed_discrimination, params) = args
 
     np.random.seed(random_seed)
     tf.random.set_seed(
@@ -425,7 +425,7 @@ def _fit(args):
             np.random.normal(0,1, size=n_instances), 
             trainable=True, dtype=tf.float32
         )
-        if pl == False:
+        if fixed_discrimination == False:
             bj = tf.Variable(
                 np.abs(np.random.normal(1, 1, size=n_instances)), 
                 trainable=True, dtype=tf.float32
@@ -446,7 +446,7 @@ def _fit(args):
             params[1], 
             trainable=True, dtype=tf.float32
         )
-        if pl == False:
+        if fixed_discrimination == False:
             bj = tf.Variable(
                 params[2], 
                 trainable=True, dtype=tf.float32
@@ -461,7 +461,7 @@ def _fit(args):
         np.hstack((X, np.array(y).reshape(-1, 1)))
     ).shuffle(len(X), reshuffle_each_iteration=True)
 
-    if pl == False:
+    if fixed_discrimination == False:
         variables = [
                 thi,
                 delj,
@@ -509,7 +509,7 @@ def _fit(args):
                     g.watch(variables)  # Precisa dizer para a tape observar as variaveis
                     t = tf.gather(thi, batch[:,1].astype(int))
                     d = tf.gather(delj, batch[:,0].astype(int))
-                    y_pred = _irt_pl(thi = t, delj = d)
+                    y_pred = _irt_fixed_discrimination(thi = t, delj = d)
 
                     current_loss = _loss(
                         batch[:, 2].astype(np.float32), y_pred

@@ -251,12 +251,14 @@ class BIRTSGD:
             dis_a = tf.math.reduce_mean(tf.stack(dis_a, axis=1), axis=1)
         
         if self.fixed_discrimination == False:
-            abi, dif, dis_b, dis_a = _fit((
-                X, y, self.n_models, 
-                self.n_instances,
-                self.epochs, self.batch_size, 
-                self.lr, self.n_seed + self.n_inits, self.fixed_discrimination, [abi, dif, dis_b, dis_a]
-            ))
+            if self.n_inits > 1:
+                abi, dif, dis_b, dis_a = _fit((
+                    X, y, self.n_models, 
+                    self.n_instances,
+                    self.epochs, self.batch_size, 
+                    self.lr, self.n_seed + self.n_inits, self.fixed_discrimination, 
+                    [abi, dif, dis_b, dis_a]
+                ))
             self.abilities = tf.math.sigmoid(abi).numpy()
             self.difficulties = tf.math.sigmoid(dif).numpy()
             self.discriminations = tf.math.tanh(dis_b) * tf.math.softplus(dis_a)

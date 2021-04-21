@@ -102,14 +102,14 @@ class Datasets:
             # )
 
             df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_model'], param['n_instances'], param['batchs'], param['epochs'],
+                param['mc_iterations'], param['n_models'], param['n_instances'], param['batchs'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 )
                 )
             #df_infs.to_csv( path_generate + '/generate_data_mc_{}_infs.csv'.format(param['mc_iterations']) )
         else:
             df = pd.read_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_model'], param['n_instances'], param['batchs'], param['epochs'],
+                param['mc_iterations'], param['n_models'], param['n_instances'], param['batchs'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 ),
                 index_col=0)
@@ -129,7 +129,7 @@ class Datasets:
             ]
 
             df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_model'], param['n_instances'], param['batchs'], param['epochs'],
+                param['mc_iterations'], param['n_models'], param['n_instances'], param['batchs'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 )
                 )

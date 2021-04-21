@@ -1,7 +1,7 @@
 import tensorflow as tf
 import pandas as pd
 import numpy as np
-from scipy.stats import pearsonr, ks_2samp
+from scipy.stats import pearsonr, ks_2samp, wilcoxon
 import os 
 
 class Datasets:
@@ -75,40 +75,61 @@ class Datasets:
 
         if kwargs['mc'] == 0:
             data = {
-                'p.value_thi': [ks_2samp(param['thi'],param['_thi']).pvalue],
-                'p.value_delj': [ks_2samp(param['delj'],param['_delj']).pvalue],
-                'p.value_aj': [ks_2samp(param['aj'],param['_aj']).pvalue],
+                'p.value_thi.ks': [ks_2samp(param['thi'],param['_thi']).pvalue],
+                'p.value_delj.ks': [ks_2samp(param['delj'],param['_delj']).pvalue],
+                'p.value_aj.ks': [ks_2samp(param['aj'],param['_aj']).pvalue],
+
+                'p.value_thi.wilcoxon': [wilcoxon(param['thi'],param['_thi']).pvalue],
+                'p.value_delj.wilcoxon': [wilcoxon(param['delj'],param['_delj']).pvalue],
+                'p.value_aj.wilcoxon': [wilcoxon(param['aj'],param['_aj']).pvalue],
+
                 'corr_thi_to_pred_thi': pearsonr(param['thi'],param['_thi'])[0],
                 'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj'])[0],
                 'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])[0]
             }
             df = pd.DataFrame(data)
 
-            df_infs = pd.DataFrame(
-                {
-                    'dataset_name': [param['dataset_name']],
-                    'learning_rate': [param['learning_rate']],
-                    'mc_iterations': [param['mc_iterations']],
-                    'n_epochs': [param['epochs']],
-                    'n_batchs': [param['batchs']],
-                    'n_models': [len(param['thi'])],
-                    'n_instances': [len(param['delj'])]
-                }
-            )
+            # df_infs = pd.DataFrame(
+            #     {
+            #         'dataset_name': [param['dataset_name']],
+            #         'learning_rate': [param['learning_rate']],
+            #         'mc_iterations': [param['mc_iterations']],
+            #         'n_epochs': [param['epochs']],
+            #         'n_batchs': [param['batchs']],
+            #         'n_models': [len(param['thi'])],
+            #         'n_instances': [len(param['delj'])]
+            #     }
+            # )
 
-            df.to_csv( path_generate + '/generate_data_mc_{}.csv'.format(param['mc_iterations']) )
-            df_infs.to_csv( path_generate + '/generate_data_mc_{}_infs.csv'.format(param['mc_iterations']) )
+            df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
+                param['mc_iterations'], param['n_model'], param['n_instances'], param['batchs'], param['epochs'],
+                param['n_inits'], param['learning_rate']
+                )
+                )
+            #df_infs.to_csv( path_generate + '/generate_data_mc_{}_infs.csv'.format(param['mc_iterations']) )
         else:
-            df = pd.read_csv(path_generate + '/generate_data_mc_{}.csv'.format(param['mc_iterations']), index_col=0)
+            df = pd.read_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
+                param['mc_iterations'], param['n_model'], param['n_instances'], param['batchs'], param['epochs'],
+                param['n_inits'], param['learning_rate']
+                ),
+                index_col=0)
 
             df.loc[ kwargs['mc'] ] = [
                 ks_2samp(param['thi'],param['_thi']).pvalue,
                 ks_2samp(param['delj'],param['_delj']).pvalue,
                 ks_2samp(param['aj'],param['_aj']).pvalue,
 
+                wilcoxon(param['thi'],param['_thi']).pvalue,
+                wilcoxon(param['delj'],param['_delj']).pvalue,
+                wilcoxon(param['aj'],param['_aj']).pvalue,
+
                 pearsonr(param['thi'],param['_thi'])[0],
                 pearsonr(param['delj'],param['_delj'])[0],
                 pearsonr(param['aj'],param['_aj'])[0]
             ]
 
-            df.to_csv(path_generate + '/generate_data_mc_{}.csv'.format(param['mc_iterations']))
+            df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
+                param['mc_iterations'], param['n_model'], param['n_instances'], param['batchs'], param['epochs'],
+                param['n_inits'], param['learning_rate']
+                )
+                )

@@ -111,7 +111,10 @@ if __name__ == '__main__':
             '_delj': _delj,
             '_aj': _aj,
             'mc_iterations': mc,
+            'n_models': vars(args)['n_models'],
+            'n_instances': vars(args)['n_instances'],
             'epochs': vars(args)['epochs'],
+            'n_inits': vars(args)['n_inits'],
             'learning_rate': vars(args)['learning_rate'],
             'batchs': vars(args)['batch_size']
             }

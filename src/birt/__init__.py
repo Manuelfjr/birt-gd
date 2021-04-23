@@ -265,10 +265,11 @@ class BIRTSGD:
             self.discriminations = self.discriminations.numpy()
         else:
             abi, dif = _fit((
-                X, y, self.n_models, 
+                X, y, self.n_models,
                 self.n_instances,
                 self.epochs, self.batch_size, 
-                self.lr, self.n_seed + self.n_inits, self.fixed_discrimination,[abi, dif]
+                self.lr, self.n_seed + self.n_inits, self.fixed_discrimination,
+                [abi, dif]
             ))
             self.abilities = tf.math.sigmoid(abi).numpy()
             self.difficulties = tf.math.sigmoid(dif).numpy()

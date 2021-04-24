@@ -477,7 +477,7 @@ def _fit(args):
             for batch in batches:
 
                 with tf.GradientTape() as g:
-                    g.watch(variables)  # Precisa dizer para a tape observar as variaveis
+                    g.watch(variables)
                     t = tf.gather(thi, batch[:,1].astype(int))
                     d = tf.gather(delj, batch[:,0].astype(int))
                     a = tf.gather(aj, batch[:,0].astype(int))
@@ -509,7 +509,7 @@ def _fit(args):
             for batch in batches:
 
                 with tf.GradientTape() as g:
-                    g.watch(variables)  # Precisa dizer para a tape observar as variaveis
+                    g.watch(variables)  
                     t = tf.gather(thi, batch[:,1].astype(int))
                     d = tf.gather(delj, batch[:,0].astype(int))
                     y_pred = _irt_fixed_discrimination(thi = t, delj = d)

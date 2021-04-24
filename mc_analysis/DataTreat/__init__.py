@@ -1,7 +1,7 @@
 import tensorflow as tf
 import pandas as pd
 import numpy as np
-from scipy.stats import pearsonr, ks_2samp, wilcoxon
+from scipy.stats import pearsonr, ks_2samp, wilcoxon, ttest_ind
 import os 
 
 class Datasets:
@@ -66,7 +66,10 @@ class Datasets:
         data.to_csv(names[1] + f'/generate_data_iter_mc{names[-1]}.csv')
         df_abilities.to_csv(names[0] + f'/generate_abilities_iter_mc{names[-1]}.csv')
         df_j.to_csv(names[0] + f'/generate_diff_disc_iter_mc{names[-1]}.csv')
-    
+      
+    def RSE(self, y_true, y_pred):
+    	return sum( (y_pred - y_true)**(2) )/sum( (y_true - np.mean(y_true))**(2) )
+    	
     def mc_write(self, param, path, **kwargs):
         path_generate = path
         #self.write(param, path)
@@ -82,6 +85,10 @@ class Datasets:
                 'p.value_thi.wilcoxon': [wilcoxon(param['thi'],param['_thi']).pvalue],
                 'p.value_delj.wilcoxon': [wilcoxon(param['delj'],param['_delj']).pvalue],
                 'p.value_aj.wilcoxon': [wilcoxon(param['aj'],param['_aj']).pvalue],
+                
+                'RSE_thi': [self.RSE(param['thi'], param['_thi'])],
+                'RSE_delj': [self.RSE(param['delj'], param['_delj'])],
+                'RSE_aj': [self.RSE(param['aj'], param['_aj'])],
 
                 'corr_thi_to_pred_thi': pearsonr(param['thi'],param['_thi'])[0],
                 'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj'])[0],
@@ -122,6 +129,10 @@ class Datasets:
                 wilcoxon(param['thi'],param['_thi']).pvalue,
                 wilcoxon(param['delj'],param['_delj']).pvalue,
                 wilcoxon(param['aj'],param['_aj']).pvalue,
+                
+                self.RSE(param['thi'], param['_thi']),
+                self.RSE(param['delj'], param['_delj']),
+                self.RSE(param['aj'], param['_aj']),
 
                 pearsonr(param['thi'],param['_thi'])[0],
                 pearsonr(param['delj'],param['_delj'])[0],

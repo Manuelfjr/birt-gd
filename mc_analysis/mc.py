@@ -62,7 +62,8 @@ if __name__ == '__main__':
     MC_PATH = 'mc_results'
 
     if vars(args)['random_seed'] == -1:
-        random_seed = list(np.random.randint(low=0, high=( (2)**(32) - 1 ), size=mc))
+        #random_seed = list(np.random.randint(low=0, high=( (2)**(32) - 1 ), size=mc))
+        random_seed = list(np.arange(0,mc))
     else:
         random_seed = [vars(args)['random_seed']]
 

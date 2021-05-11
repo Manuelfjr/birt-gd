@@ -122,24 +122,8 @@ class BIRTSGD:
         
         Parameters
         -------------------------------------------------------
-        X : list, array or tensor of shape (n_instances*n_models)
-
-            X = [
-                (0_instance, 0_model), 
-                (0_instance, 1_model), 
-                (0_instance, 2_model), 
-                ...
-                (0_instance, n_model),
-                (1_instance, 0_model),
-                (1_instance, 1_model),
-                ...
-                (n_instance, n_model)
-                ]
-
-            Training datasets to BIRTSGD model.
-        
-        y : list, array or tensor of shape (n_instances*n_models,). default: y==None
-            if y == None, use self._transform tu split the data in X and y
+        X : list, array or tensor of shape (n_instances,n_models)
+            
 
         Returns
         -------------------------------------------------------
@@ -227,10 +211,10 @@ def _loss(y_true, y_pred):
     Parameters
     -------------------------------------------------------
     y_true : tf.Tensor 
-            It's a real value to y
+            Real valued Tensor containing the ground truth
 
     y_pred : tf.Tensor
-            It's a real value to y predict
+            Real valued Tensor containing predictions
 
     Returns 
     -------------------------------------------------------
@@ -240,7 +224,7 @@ def _loss(y_true, y_pred):
     return loss(y_true, y_pred)
 
 def _irt(thi, delj, aj, bj):
-    """calculating a probability (i) deduction from (j) using Beta3-IRT
+    """Calculating a probability (i) deduction from (j) using Beta3-IRT
 
     Parameters
     -------------------------------------------------------

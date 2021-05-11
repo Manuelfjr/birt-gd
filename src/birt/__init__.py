@@ -1,5 +1,5 @@
 import os
-from multiprocessing import cpu_count, Pool, Process, Queue
+from multiprocessing import Process, Queue
 
 import tensorflow as tf
 import pandas as pd
@@ -146,26 +146,14 @@ class BIRTSGD:
         self
             Adjusted values ​​of the parameters
         """
-        # if y == None:
-        #     X, y = self._transform(X)
-
-        # args = [
-        #     (
-        #         X, self.n_models, 
-        #         self.n_instances,
-        #         self.epochs, self.batch_size, 
-        #         self.lr, seed, self.fixed_discrimination,None
-        #     ) for seed in range(
-        #         self.n_seed, self.n_seed + self.n_inits
-        #     )
-        # ]
+        
         queue = Queue()
 
         args = (
             queue, X, self.n_models, 
             self.n_instances,
-            self.epochs, self.batch_size, 
-            self.lr, self.n_seed, self.fixed_discrimination
+            self.epochs, self.lr, self.n_seed, 
+            self.fixed_discrimination
         )
 
         p = Process(target=_fit, args=list(args))
@@ -177,58 +165,6 @@ class BIRTSGD:
         self.difficulties = dif
         if not self.fixed_discrimination:
             self.discriminations = dis
-
-        # if self.n_workers == -1:
-        #     n_workers = cpu_count()
-
-        # if self.n_workers == 1:
-        #     map_f = map
-        # else:
-        #     if n_workers > len(args):
-        #         n_workers = len(args)
-
-        #     p = Pool(n_workers)
-        #     map_f = p.map
-
-        # results = map_f(_fit, args)
-
-        # abi, dif, dis_b, dis_a = [], [], [], []
-        # for res in results:
-        #     abi.append(res[0])
-        #     dif.append(res[1])
-        #     if self.fixed_discrimination == False:
-        #         dis_b.append(res[2])
-        #         dis_a.append(res[3])
-
-        # abi = tf.math.reduce_mean(tf.stack(abi, axis=1), axis=1)
-        # dif = tf.math.reduce_mean(tf.stack(dif, axis=1), axis=1)
-        # if self.fixed_discrimination == False:
-        #     dis_b = tf.math.reduce_mean(tf.stack(dis_b, axis=1), axis=1)
-        #     dis_a = tf.math.reduce_mean(tf.stack(dis_a, axis=1), axis=1)
-        
-        # if self.fixed_discrimination == False:
-        #     if self.n_inits > 1:
-        #         abi, dif, dis_b, dis_a = _fit((
-        #             X, self.n_models, 
-        #             self.n_instances,
-        #             self.epochs, self.batch_size, 
-        #             self.lr, self.n_seed + self.n_inits, self.fixed_discrimination, 
-        #             [abi, dif, dis_b, dis_a]
-        #         ))
-        #     self.abilities = tf.math.sigmoid(abi).numpy().flatten()
-        #     self.difficulties = tf.math.sigmoid(dif).numpy().flatten()
-        #     self.discriminations = tf.math.tanh(dis_b) * tf.math.softplus(dis_a)
-        #     self.discriminations = self.discriminations.numpy().flatten()
-        # else:
-        #     abi, dif = _fit((
-        #         X, self.n_models,
-        #         self.n_instances,
-        #         self.epochs, self.batch_size, 
-        #         self.lr, self.n_seed + self.n_inits, self.fixed_discrimination,
-        #         [abi, dif]
-        #     ))
-        #     self.abilities = tf.math.sigmoid(abi).numpy().flatten()
-        #     self.difficulties = tf.math.sigmoid(dif).numpy().flatten()
 
         return self
     
@@ -370,7 +306,7 @@ def _fit(*args):
     self
     """
 
-    (queue, X, n_models, n_instances, epochs, batch_size, lr, random_seed, fixed_discrimination) = args
+    (queue, X, n_models, n_instances, epochs, lr, random_seed, fixed_discrimination) = args
 
     np.random.seed(random_seed)
     tf.random.set_seed(
@@ -382,7 +318,6 @@ def _fit(*args):
         trainable=False, dtype=tf.float32
     )
 
-    # if not params:
 
     thi = tf.Variable(
         np.random.normal(0,1, size=(1, n_models)), 
@@ -403,31 +338,7 @@ def _fit(*args):
             np.random.normal(1, 1, size=(n_instances, 1)), 
             trainable=True, dtype=tf.float32
         )
-    
-    # else:
-    #     thi = tf.Variable(
-    #         params[0], 
-    #         trainable=True, dtype=tf.float32
-    #     )
         
-    #     delj = tf.Variable(
-    #         params[1], 
-    #         trainable=True, dtype=tf.float32
-    #     )
-    #     if fixed_discrimination == False:
-    #         bj = tf.Variable(
-    #             params[2], 
-    #             trainable=True, dtype=tf.float32
-    #         )
-
-    #         aj = tf.Variable(
-    #             params[3], 
-    #             trainable=True, dtype=tf.float32
-    #         )
-
-    # dataset = tf.data.Dataset.from_tensor_slices(
-    #     X
-    # ).shuffle(len(X), reshuffle_each_iteration=True)
 
     if fixed_discrimination == False:
         variables = [
@@ -438,20 +349,9 @@ def _fit(*args):
             ]
         
         for _ in tqdm(range(epochs)):
-            # batches = dataset.batch(batch_size).as_numpy_iterator()
-            # for batch in batches:
-
+            
             with tf.GradientTape() as g:
                 g.watch(variables)
-                # t = tf.gather(thi, batch[:,1].astype(int))
-                # d = tf.gather(delj, batch[:,0].astype(int))
-                # a = tf.gather(aj, batch[:,0].astype(int))
-                # b = tf.gather(bj, batch[:,0].astype(int))
-                # y_pred = _irt(thi = t, delj = d, aj = a, bj = b)
-
-                # current_loss = _loss(
-                #     batch[:, 2].astype(np.float32), y_pred
-                # )
                 pred = _irt(thi = thi, delj = delj, aj = aj, bj = bj)
 
                 current_loss = _loss(
@@ -462,14 +362,7 @@ def _fit(*args):
             delj.assign_sub(tf.math.scalar_mul(lr, _delj))
             aj.assign_sub(tf.math.scalar_mul(lr, _aj))
             bj.assign_sub(tf.math.scalar_mul(lr, _bj))
-
-            # thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
-            # delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
-            # aj.scatter_sub(tf.math.scalar_mul(lr, _aj))
-            # bj.scatter_sub(tf.math.scalar_mul(lr, _bj))
-
-        # abilities, difficulties = tf.math.sigmoid(thi).numpy(), tf.math.sigmoid(delj).numpy()
-        # discriminations = tf.math.tanh(bj).numpy()*tf.math.softplus(aj).numpy()
+           
         
         abilities = tf.math.sigmoid(thi).numpy().flatten()
         difficulties = tf.math.sigmoid(delj).numpy().flatten()
@@ -484,18 +377,11 @@ def _fit(*args):
             ]
         
         for _ in tqdm(range(epochs)):
-            # batches = dataset.batch(batch_size).as_numpy_iterator()
-            # for batch in batches:
 
             with tf.GradientTape() as g:
                 g.watch(variables)  
-                # t = tf.gather(thi, batch[:,1].astype(int))
-                # d = tf.gather(delj, batch[:,0].astype(int))
                 pred = _irt_fixed_discrimination(thi = thi, delj = delj)
 
-                # current_loss = _loss(
-                #     batch[:, 2].astype(np.float32), y_pred
-                # )
                 current_loss = _loss(
                     X, pred
                 )
@@ -503,21 +389,10 @@ def _fit(*args):
             thi.assign_sub(tf.math.scalar_mul(lr, _thi))
             delj.assign_sub(tf.math.scalar_mul(lr, _delj))
             
-            # thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
-            # delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
-
-        # abilities, difficulties = tf.math.sigmoid(thi).numpy(), tf.math.sigmoid(delj).numpy()
-        # discriminations = tf.math.tanh(bj).numpy()*tf.math.softplus(aj).numpy()
         
         abilities = tf.math.sigmoid(thi).numpy().flatten()
         difficulties = tf.math.sigmoid(delj).numpy().flatten()
 
         parameters = (abilities, difficulties, None)
 
-        # parameters = thi, delj
     queue.put(parameters)
-    # return parameters
-    
-        
-    
-   

@@ -1,11 +1,12 @@
 import os
-from multiprocessing import cpu_count, Pool
+from multiprocessing import cpu_count, Pool, Process, Queue
 
 import tensorflow as tf
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import os
+
 
 class BIRTSGD:
     """Beta3-IRT with Gradient descent.
@@ -98,70 +99,7 @@ class BIRTSGD:
             'n_instances': n_instances,
             'batch_size':  batch_size
         }
-
-    def _transform(self, data):
-        """Separates the data set into X, with a list of tuples and Y with a list of p_ {ij}
-            
-        Parameters
-        -------------------------------------------------------
-        data :
-                all adataset (DataFrame type), like:
-                model_00  | model_01  | model_02  | ... | model_n
-                -------------------------------------------------
-                p00       | p10       | p20       | ... | pi0  
-                -------------------------------------------------
-                p01       | p11       | p21       | ... | pi1  
-                -------------------------------------------------
-                p02       | p12       | p22       | ... | pi2
-                -------------------------------------------------
-                ...
-                ...
-                ...
-                -------------------------------------------------
-                p0j       | p1j       | p2j       | ... | pij  
-        
-        Returns
-        -------------------------------------------------------
-        X : 
-            a list with set of tuples (n_instance=i, n_model=j), like:
-            [
-                (0, 0),
-                (0, 1),
-                (0, 2),
-                ...
-                (0, i),
-                (1, 0),
-                (1, 1),
-                (1, 2),
-                ... 
-                (1, i),
-                ...
-                (j, i)
-            ]
-        y : 
-            a list with p_{ij} ( len(y) == n_instance * n_model ), like:
-            [
-                p00,
-                p01,
-                p02,
-                ...,
-                p0i,
-                p10,
-                p11,
-                p12,
-                ...,
-                p1i,
-                ...,
-                pij
-            ]
-        """
-        X, y = [], []
-        for row in range(data.shape[0]):
-            for col in range(data.shape[1]):
-                X.append((row,col))
-                y.append(data.iloc[row,col])
-        return X, y
-
+    
     def get_params(self):
         """Get parameters
 
@@ -208,71 +146,89 @@ class BIRTSGD:
         self
             Adjusted values ​​of the parameters
         """
-        if y == None:
-            X, y = self._transform(X)
+        # if y == None:
+        #     X, y = self._transform(X)
 
-        args = [
-            (
-                X, y, self.n_models, 
-                self.n_instances,
-                self.epochs, self.batch_size, 
-                self.lr, seed, self.fixed_discrimination,None
-            ) for seed in range(
-                self.n_seed, self.n_seed + self.n_inits
-            )
-        ]
+        # args = [
+        #     (
+        #         X, self.n_models, 
+        #         self.n_instances,
+        #         self.epochs, self.batch_size, 
+        #         self.lr, seed, self.fixed_discrimination,None
+        #     ) for seed in range(
+        #         self.n_seed, self.n_seed + self.n_inits
+        #     )
+        # ]
+        queue = Queue()
 
-        if self.n_workers == -1:
-            n_workers = cpu_count()
+        args = (
+            queue, X, self.n_models, 
+            self.n_instances,
+            self.epochs, self.batch_size, 
+            self.lr, self.n_seed, self.fixed_discrimination
+        )
 
-        if self.n_workers == 1:
-            map_f = map
-        else:
-            if n_workers > len(args):
-                n_workers = len(args)
+        p = Process(target=_fit, args=list(args))
+        p.start()
+        abi, dif, dis = queue.get()
+        p.join()
 
-            p = Pool(n_workers)
-            map_f = p.map
+        self.abilities = abi
+        self.difficulties = dif
+        if not self.fixed_discrimination:
+            self.discriminations = dis
 
-        results = map_f(_fit, args)
+        # if self.n_workers == -1:
+        #     n_workers = cpu_count()
 
-        abi, dif, dis_b, dis_a = [], [], [], []
-        for res in results:
-            abi.append(res[0])
-            dif.append(res[1])
-            if self.fixed_discrimination == False:
-                dis_b.append(res[2])
-                dis_a.append(res[3])
+        # if self.n_workers == 1:
+        #     map_f = map
+        # else:
+        #     if n_workers > len(args):
+        #         n_workers = len(args)
 
-        abi = tf.math.reduce_mean(tf.stack(abi, axis=1), axis=1)
-        dif = tf.math.reduce_mean(tf.stack(dif, axis=1), axis=1)
-        if self.fixed_discrimination == False:
-            dis_b = tf.math.reduce_mean(tf.stack(dis_b, axis=1), axis=1)
-            dis_a = tf.math.reduce_mean(tf.stack(dis_a, axis=1), axis=1)
+        #     p = Pool(n_workers)
+        #     map_f = p.map
+
+        # results = map_f(_fit, args)
+
+        # abi, dif, dis_b, dis_a = [], [], [], []
+        # for res in results:
+        #     abi.append(res[0])
+        #     dif.append(res[1])
+        #     if self.fixed_discrimination == False:
+        #         dis_b.append(res[2])
+        #         dis_a.append(res[3])
+
+        # abi = tf.math.reduce_mean(tf.stack(abi, axis=1), axis=1)
+        # dif = tf.math.reduce_mean(tf.stack(dif, axis=1), axis=1)
+        # if self.fixed_discrimination == False:
+        #     dis_b = tf.math.reduce_mean(tf.stack(dis_b, axis=1), axis=1)
+        #     dis_a = tf.math.reduce_mean(tf.stack(dis_a, axis=1), axis=1)
         
-        if self.fixed_discrimination == False:
-            if self.n_inits > 1:
-                abi, dif, dis_b, dis_a = _fit((
-                    X, y, self.n_models, 
-                    self.n_instances,
-                    self.epochs, self.batch_size, 
-                    self.lr, self.n_seed + self.n_inits, self.fixed_discrimination, 
-                    [abi, dif, dis_b, dis_a]
-                ))
-            self.abilities = tf.math.sigmoid(abi).numpy()
-            self.difficulties = tf.math.sigmoid(dif).numpy()
-            self.discriminations = tf.math.tanh(dis_b) * tf.math.softplus(dis_a)
-            self.discriminations = self.discriminations.numpy()
-        else:
-            abi, dif = _fit((
-                X, y, self.n_models,
-                self.n_instances,
-                self.epochs, self.batch_size, 
-                self.lr, self.n_seed + self.n_inits, self.fixed_discrimination,
-                [abi, dif]
-            ))
-            self.abilities = tf.math.sigmoid(abi).numpy()
-            self.difficulties = tf.math.sigmoid(dif).numpy()
+        # if self.fixed_discrimination == False:
+        #     if self.n_inits > 1:
+        #         abi, dif, dis_b, dis_a = _fit((
+        #             X, self.n_models, 
+        #             self.n_instances,
+        #             self.epochs, self.batch_size, 
+        #             self.lr, self.n_seed + self.n_inits, self.fixed_discrimination, 
+        #             [abi, dif, dis_b, dis_a]
+        #         ))
+        #     self.abilities = tf.math.sigmoid(abi).numpy().flatten()
+        #     self.difficulties = tf.math.sigmoid(dif).numpy().flatten()
+        #     self.discriminations = tf.math.tanh(dis_b) * tf.math.softplus(dis_a)
+        #     self.discriminations = self.discriminations.numpy().flatten()
+        # else:
+        #     abi, dif = _fit((
+        #         X, self.n_models,
+        #         self.n_instances,
+        #         self.epochs, self.batch_size, 
+        #         self.lr, self.n_seed + self.n_inits, self.fixed_discrimination,
+        #         [abi, dif]
+        #     ))
+        #     self.abilities = tf.math.sigmoid(abi).numpy().flatten()
+        #     self.difficulties = tf.math.sigmoid(dif).numpy().flatten()
 
         return self
     
@@ -371,10 +327,12 @@ def _irt(thi, delj, aj, bj):
     sig_thi, sig_delj = tf.math.sigmoid(thi), tf.math.sigmoid(delj)
     tanh_bj, soft_aj = tf.math.tanh(bj), tf.math.softplus(aj)
 
-    alphaij = (sig_thi/sig_delj)**(tanh_bj*soft_aj)
-    betaij = ( ((1 - sig_thi)/(1 - sig_delj))**(tanh_bj*soft_aj) )
-    y_est = alphaij/(alphaij + betaij)
-    return y_est
+    term1 = sig_delj / (1 - sig_delj)
+    term2 = (1 - sig_thi) / sig_thi
+    mult = tf.tensordot(term1, term2, axes=1)
+
+    est = 1 / (1 + mult ** (tanh_bj * soft_aj))
+    return est
 
 def _irt_fixed_discrimination(thi, delj):
     """calculating a probability (i) deduction from (j) using Beta3-IRT
@@ -393,12 +351,14 @@ def _irt_fixed_discrimination(thi, delj):
     """
     sig_thi, sig_delj = tf.math.sigmoid(thi), tf.math.sigmoid(delj)
 
-    alphaij = (sig_thi/sig_delj)**(1)
-    betaij = ( ((1 - sig_thi)/(1 - sig_delj))**(1) )
-    y_est = alphaij/(alphaij + betaij)
-    return y_est
+    term1 = sig_delj / (1 - sig_delj)
+    term2 = (1 - sig_thi) / sig_thi
+    mult = tf.tensordot(term1, term2, axes=1)
 
-def _fit(args):
+    est = 1 / (1 + mult)
+    return est
+
+def _fit(*args):
     """Train BIRT Gradient Descent
 
     Parameters
@@ -410,59 +370,64 @@ def _fit(args):
     self
     """
 
-    (X, y, n_models, n_instances, epochs, batch_size, lr, random_seed, fixed_discrimination, params) = args
+    (queue, X, n_models, n_instances, epochs, batch_size, lr, random_seed, fixed_discrimination) = args
 
     np.random.seed(random_seed)
     tf.random.set_seed(
         random_seed
     )
 
-    if not params:
+    X = tf.Variable(
+        X, 
+        trainable=False, dtype=tf.float32
+    )
 
-        thi = tf.Variable(
-            np.random.normal(0,1, size=n_models), 
-            trainable=True, dtype=tf.float32
-        )
-        
-        delj = tf.Variable(
-            np.random.normal(0,1, size=n_instances), 
-            trainable=True, dtype=tf.float32
-        )
-        if fixed_discrimination == False:
-            bj = tf.Variable(
-                np.abs(np.random.normal(1, 1, size=n_instances)), 
-                trainable=True, dtype=tf.float32
-            )
+    # if not params:
 
-            aj = tf.Variable(
-                np.random.normal(1, 1, size=n_instances), 
-                trainable=True, dtype=tf.float32
-            )
+    thi = tf.Variable(
+        np.random.normal(0,1, size=(1, n_models)), 
+        trainable=True, dtype=tf.float32
+    )
     
-    else:
-        thi = tf.Variable(
-            params[0], 
+    delj = tf.Variable(
+        np.random.normal(0,1, size=(n_instances, 1)), 
+        trainable=True, dtype=tf.float32
+    )
+    if fixed_discrimination == False:
+        bj = tf.Variable(
+            np.abs(np.random.normal(1, 1, size=(n_instances, 1))), 
             trainable=True, dtype=tf.float32
         )
+
+        aj = tf.Variable(
+            np.random.normal(1, 1, size=(n_instances, 1)), 
+            trainable=True, dtype=tf.float32
+        )
+    
+    # else:
+    #     thi = tf.Variable(
+    #         params[0], 
+    #         trainable=True, dtype=tf.float32
+    #     )
         
-        delj = tf.Variable(
-            params[1], 
-            trainable=True, dtype=tf.float32
-        )
-        if fixed_discrimination == False:
-            bj = tf.Variable(
-                params[2], 
-                trainable=True, dtype=tf.float32
-            )
+    #     delj = tf.Variable(
+    #         params[1], 
+    #         trainable=True, dtype=tf.float32
+    #     )
+    #     if fixed_discrimination == False:
+    #         bj = tf.Variable(
+    #             params[2], 
+    #             trainable=True, dtype=tf.float32
+    #         )
 
-            aj = tf.Variable(
-                params[3], 
-                trainable=True, dtype=tf.float32
-            )
+    #         aj = tf.Variable(
+    #             params[3], 
+    #             trainable=True, dtype=tf.float32
+    #         )
 
-    dataset = tf.data.Dataset.from_tensor_slices(
-        np.hstack((X, np.array(y).reshape(-1, 1)))
-    ).shuffle(len(X), reshuffle_each_iteration=True)
+    # dataset = tf.data.Dataset.from_tensor_slices(
+    #     X
+    # ).shuffle(len(X), reshuffle_each_iteration=True)
 
     if fixed_discrimination == False:
         variables = [
@@ -473,31 +438,45 @@ def _fit(args):
             ]
         
         for _ in tqdm(range(epochs)):
-            batches = dataset.batch(batch_size).as_numpy_iterator()
-            for batch in batches:
+            # batches = dataset.batch(batch_size).as_numpy_iterator()
+            # for batch in batches:
 
-                with tf.GradientTape() as g:
-                    g.watch(variables)
-                    t = tf.gather(thi, batch[:,1].astype(int))
-                    d = tf.gather(delj, batch[:,0].astype(int))
-                    a = tf.gather(aj, batch[:,0].astype(int))
-                    b = tf.gather(bj, batch[:,0].astype(int))
-                    y_pred = _irt(thi = t, delj = d, aj = a, bj = b)
+            with tf.GradientTape() as g:
+                g.watch(variables)
+                # t = tf.gather(thi, batch[:,1].astype(int))
+                # d = tf.gather(delj, batch[:,0].astype(int))
+                # a = tf.gather(aj, batch[:,0].astype(int))
+                # b = tf.gather(bj, batch[:,0].astype(int))
+                # y_pred = _irt(thi = t, delj = d, aj = a, bj = b)
 
-                    current_loss = _loss(
-                        batch[:, 2].astype(np.float32), y_pred
-                    )
-                _thi, _delj, _aj, _bj = g.gradient(current_loss, variables)
-                
-                thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
-                delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
-                aj.scatter_sub(tf.math.scalar_mul(lr, _aj))
-                bj.scatter_sub(tf.math.scalar_mul(lr, _bj))
+                # current_loss = _loss(
+                #     batch[:, 2].astype(np.float32), y_pred
+                # )
+                pred = _irt(thi = thi, delj = delj, aj = aj, bj = bj)
+
+                current_loss = _loss(
+                    X, pred
+                )
+            _thi, _delj, _aj, _bj = g.gradient(current_loss, variables)
+            thi.assign_sub(tf.math.scalar_mul(lr, _thi))
+            delj.assign_sub(tf.math.scalar_mul(lr, _delj))
+            aj.assign_sub(tf.math.scalar_mul(lr, _aj))
+            bj.assign_sub(tf.math.scalar_mul(lr, _bj))
+
+            # thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
+            # delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
+            # aj.scatter_sub(tf.math.scalar_mul(lr, _aj))
+            # bj.scatter_sub(tf.math.scalar_mul(lr, _bj))
 
         # abilities, difficulties = tf.math.sigmoid(thi).numpy(), tf.math.sigmoid(delj).numpy()
         # discriminations = tf.math.tanh(bj).numpy()*tf.math.softplus(aj).numpy()
         
-        parameters = thi, delj, bj, aj
+        abilities = tf.math.sigmoid(thi).numpy().flatten()
+        difficulties = tf.math.sigmoid(delj).numpy().flatten()
+        discriminations = tf.math.tanh(bj) * tf.math.softplus(aj)
+        discriminations = discriminations.numpy().flatten()
+
+        parameters = (abilities, difficulties, discriminations)
     else:
         variables = [
                 thi,
@@ -505,29 +484,39 @@ def _fit(args):
             ]
         
         for _ in tqdm(range(epochs)):
-            batches = dataset.batch(batch_size).as_numpy_iterator()
-            for batch in batches:
+            # batches = dataset.batch(batch_size).as_numpy_iterator()
+            # for batch in batches:
 
-                with tf.GradientTape() as g:
-                    g.watch(variables)  
-                    t = tf.gather(thi, batch[:,1].astype(int))
-                    d = tf.gather(delj, batch[:,0].astype(int))
-                    y_pred = _irt_fixed_discrimination(thi = t, delj = d)
+            with tf.GradientTape() as g:
+                g.watch(variables)  
+                # t = tf.gather(thi, batch[:,1].astype(int))
+                # d = tf.gather(delj, batch[:,0].astype(int))
+                pred = _irt_fixed_discrimination(thi = thi, delj = delj)
 
-                    current_loss = _loss(
-                        batch[:, 2].astype(np.float32), y_pred
-                    )
-                _thi, _delj = g.gradient(current_loss, variables)
-                
-                thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
-                delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
+                # current_loss = _loss(
+                #     batch[:, 2].astype(np.float32), y_pred
+                # )
+                current_loss = _loss(
+                    X, pred
+                )
+            _thi, _delj = g.gradient(current_loss, variables)
+            thi.assign_sub(tf.math.scalar_mul(lr, _thi))
+            delj.assign_sub(tf.math.scalar_mul(lr, _delj))
+            
+            # thi.scatter_sub(tf.math.scalar_mul(lr, _thi))
+            # delj.scatter_sub(tf.math.scalar_mul(lr, _delj))
 
         # abilities, difficulties = tf.math.sigmoid(thi).numpy(), tf.math.sigmoid(delj).numpy()
         # discriminations = tf.math.tanh(bj).numpy()*tf.math.softplus(aj).numpy()
         
-        parameters = thi, delj
+        abilities = tf.math.sigmoid(thi).numpy().flatten()
+        difficulties = tf.math.sigmoid(delj).numpy().flatten()
 
-    return parameters
+        parameters = (abilities, difficulties, None)
+
+        # parameters = thi, delj
+    queue.put(parameters)
+    # return parameters
     
         
     

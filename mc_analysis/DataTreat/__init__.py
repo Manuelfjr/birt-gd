@@ -66,7 +66,8 @@ class Datasets:
         data.to_csv(names[1] + f'/generate_data_iter_mc{names[-1]}.csv')
         df_abilities.to_csv(names[0] + f'/generate_abilities_iter_mc{names[-1]}.csv')
         df_j.to_csv(names[0] + f'/generate_diff_disc_iter_mc{names[-1]}.csv')
-      
+        return data
+
     def RSE(self, y_true, y_pred):
     	return sum( (y_pred - y_true)**(2) )/sum( (y_true - np.mean(y_true))**(2) )
     	
@@ -75,7 +76,7 @@ class Datasets:
         #self.write(param, path)
         if not os.path.exists(path_generate):
             os.makedirs(path_generate)
-
+        
         if kwargs['mc'] == 0:
             data = {
                 'p.value_thi.ks': [ks_2samp(param['thi'],param['_thi']).pvalue],

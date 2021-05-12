@@ -33,10 +33,10 @@ def parse_arguments():
                         type=int,
                         default=20,
                         help= '''Epochs to gradient descent.''')
-    parser.add_argument('-b', '--batch_size', dest='batch_size',
-                        type=int,
-                        default=5,
-                        help= '''Number of batchs to gradient descent.''')
+    #parser.add_argument('-b', '--batch_size', dest='batch_size',
+    #                    type=int,
+    #                    default=5,
+    #                    help= '''Number of batchs to gradient descent.''')
     parser.add_argument('-m', '--n_models', dest='n_models',
                         type=int,
                         default=20,
@@ -82,7 +82,9 @@ if __name__ == '__main__':
             '_thi': Data._thi,
             '_delj': Data._delj,
             '_aj': Data._aj,
-            'n_iter':n_iter
+            'n_iter':n_iter,
+            'n_models': X[-1][1] + 1,
+            'n_instances': X[-1][0] + 1,
             }
         )
         
@@ -92,7 +94,7 @@ if __name__ == '__main__':
             learning_rate = vars(args)['learning_rate'], 
             epochs = vars(args)['epochs'],
             n_models = n_models, n_instances = n_instances,
-            batch_size = vars(args)['batch_size'], 
+            #batch_size = vars(args)['batch_size'], 
             n_inits = vars(args)['n_inits'], 
             n_workers = vars(args)['n_workers'], 
             random_seed = random_seed[n_iter],
@@ -118,8 +120,8 @@ if __name__ == '__main__':
             'n_instances': vars(args)['n_instances'],
             'epochs': vars(args)['epochs'],
             'n_inits': vars(args)['n_inits'],
-            'learning_rate': vars(args)['learning_rate'],
-            'batchs': vars(args)['batch_size']
+            'learning_rate': vars(args)['learning_rate']
+            #'batchs': vars(args)['batch_size']
             }
         
         Data.mc_write(param = params, path = MC_PATH, mc = n_iter)

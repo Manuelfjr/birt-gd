@@ -28,9 +28,6 @@ class BIRTSGD:
     n_instances : int, default=100
         Numbers of instances to fit the models.
 
-    batch_size : int, default=5
-        Batch size for each iteration of the model fit. (batch_size <= n_instances).
-
     random_seed : int, default=1
         Determines a random state to generation initial kicks.
     
@@ -79,7 +76,7 @@ class BIRTSGD:
     def __init__(
         self, learning_rate=0.1, 
         epochs=20, n_models=20, 
-        n_instances=100, batch_size=5, 
+        n_instances=100,
         n_inits=10, n_workers=-1,
         random_seed=1, fixed_discrimination=False
     ):
@@ -87,7 +84,6 @@ class BIRTSGD:
         self.epochs = epochs
         self.n_models = n_models
         self.n_instances = n_instances
-        self.batch_size = batch_size
         self.n_seed = random_seed
         self.n_inits = n_inits
         self.n_workers = n_workers
@@ -96,8 +92,7 @@ class BIRTSGD:
             'learning_rate': learning_rate,
             'epochs': epochs,
             'n_models': n_models,
-            'n_instances': n_instances,
-            'batch_size':  batch_size
+            'n_instances': n_instances
         }
     
     def get_params(self):
@@ -283,7 +278,8 @@ def _fit(*args):
 
     Parameters
     -------------------------------------------------------
-    batches : batchs containing X and Y
+    args : tuple containing 
+            (queue, X, n_models, n_instances, epochs, lr, random_seed, fixed_discrimination)
 
     Returns
     -------------------------------------------------------

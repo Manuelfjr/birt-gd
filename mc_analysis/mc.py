@@ -97,8 +97,7 @@ if __name__ == '__main__':
             #batch_size = vars(args)['batch_size'], 
             n_inits = vars(args)['n_inits'], 
             n_workers = vars(args)['n_workers'], 
-            random_seed = random_seed[n_iter],
-            fixed_discrimination=False
+            random_seed = random_seed[n_iter]
         )
 
         _thi, _delj, _aj = irt.fit(responses).get_params()

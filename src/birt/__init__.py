@@ -11,7 +11,7 @@ import os
 class BIRTGD:
     """Beta3-IRT with Gradient descent.
 
-    Read more in the https://github.com/Manuelfjr/BIRTSGD .
+    Read more in the https://github.com/Manuelfjr/BIRTGD .
 
     Parameters:
     -------------------------------------------------------
@@ -56,18 +56,18 @@ class BIRTGD:
 
     Example
     -------------------------------------------------------
-    >>> from BIRTSGD.birt import BIRTSGD
+    >>> from BIRTGD.birt import BIRTGD
     >>> X = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
     >>> Y = [0.98,0.81,0.12,0.567,0.76,0.9]
-    >>> bsgd = BIRTGD(n_models=3, n_instances=2, random_seed=1)
-    >>> bsgd.fit(X,Y)
+    >>> bgd = BIRTGD(n_models=3, n_instances=2, random_seed=1)
+    >>> bgd.fit(X,Y)
     100%|██████████| 20/20 [00:00<00:00, 52.58it/s]
     <birt.BIRTGD at 0x7f6ce2555f50>
     >>> bsgd.abilities
     array([0.78665066, 0.5025896 , 0.545207  ], dtype=float32)
-    >>> bsgd.difficulties
+    >>> bgd.difficulties
     array([0.25070453, 0.46883535], dtype=float32)
-    >>> bsgd.discriminations
+    >>> bgd.discriminations
     array([0.09374281, 1.4122988 ], dtype=float32)
     """
     def __init__(

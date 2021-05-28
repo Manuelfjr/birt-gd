@@ -11,10 +11,10 @@ setuptools.setup(
     description="BIRTGD is an implementation of Beta3-irt using gradient descent.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Manuelfjr/birt-sgd",
+    url="https://github.com/Manuelfjr/birt-gd",
     project_urls={
         "Bug Tracker": "https://github.com/pypa/sampleproject/issues",
-        "Source Code": "https://github.com/Manuelfjr/birt-sgd/blob/main/src/birt/__init__.py"
+        "Source Code": "https://github.com/Manuelfjr/birt-gd/blob/main/src/birt/__init__.py"
     },
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -4,11 +4,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="birt-sgd", # Replace with your own username
-    version="0.1.26",
+    name="birt-gd", # Replace with your own username
+    version="0.1.1",
     author="Manuel Ferreira Junior",
     author_email="ferreira.jr.ufpb@gmail.com",
-    description="BIRTSGD is an implementation of Beta3-irt using gradient descent.",
+    description="BIRTGD is an implementation of Beta3-irt using gradient descent.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Manuelfjr/birt-sgd",

@@ -5,7 +5,7 @@ from tqdm import tqdm
 import os
 import argparse
 from DataTreat import Datasets
-from birt import BIRTSGD
+from birt import BIRTGD
 
 
 # Arguments
@@ -90,7 +90,7 @@ if __name__ == '__main__':
         
         n_models, n_instances = vars(args)['n_models'], vars(args)['n_instances']
         
-        irt = BIRTSGD(
+        irt = BIRTGD(
             learning_rate = vars(args)['learning_rate'], 
             epochs = vars(args)['epochs'],
             n_models = n_models, n_instances = n_instances,

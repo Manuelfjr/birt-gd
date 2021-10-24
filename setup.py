@@ -4,17 +4,17 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="birt-sgd", # Replace with your own username
-    version="0.1.26",
+    name="birt-gd", # Replace with your own username
+    version="0.1.8",
     author="Manuel Ferreira Junior",
     author_email="ferreira.jr.ufpb@gmail.com",
-    description="BIRTSGD is an implementation of Beta3-irt using gradient descent.",
+    description="BIRTGD is an implementation of Beta3-irt using gradient descent.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Manuelfjr/birt-sgd",
+    url="https://github.com/Manuelfjr/birt-gd",
     project_urls={
         "Bug Tracker": "https://github.com/pypa/sampleproject/issues",
-        "Source Code": "https://github.com/Manuelfjr/birt-sgd/blob/main/src/birt/__init__.py"
+        "Source Code": "https://github.com/Manuelfjr/birt-gd/blob/feature-matrix-ops/src/birt/__init__.py"
     },
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -25,7 +25,10 @@ setuptools.setup(
         'numpy',
         'tensorflow',
         'pandas',
-        'tqdm'
+        'tqdm',
+        'seaborn',
+        'matplotlib',
+        'scikit-learn'
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src", exclude="mc_analysis"),

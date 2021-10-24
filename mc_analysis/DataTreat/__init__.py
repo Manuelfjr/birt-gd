@@ -63,10 +63,11 @@ class Datasets:
         if (not os.path.exists(names[1]) ):
             os.makedirs(names[1])
 
-        data.to_csv(names[1] + f'/generate_data_iter_mc{names[-1]}.csv')
-        df_abilities.to_csv(names[0] + f'/generate_abilities_iter_mc{names[-1]}.csv')
-        df_j.to_csv(names[0] + f'/generate_diff_disc_iter_mc{names[-1]}.csv')
-      
+        data.to_csv(names[1] + '/generate_data_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_instances'],params['n_models']))
+        df_abilities.to_csv(names[0] + '/generate_abilities_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_instances'],params['n_models']))
+        df_j.to_csv(names[0] + '/generate_diff_disc_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_instances'],params['n_models']))
+        return data
+
     def RSE(self, y_true, y_pred):
     	return sum( (y_pred - y_true)**(2) )/sum( (y_true - np.mean(y_true))**(2) )
     	
@@ -75,7 +76,7 @@ class Datasets:
         #self.write(param, path)
         if not os.path.exists(path_generate):
             os.makedirs(path_generate)
-
+        
         if kwargs['mc'] == 0:
             data = {
                 'p.value_thi.ks': [ks_2samp(param['thi'],param['_thi']).pvalue],
@@ -108,15 +109,15 @@ class Datasets:
             #     }
             # )
 
-            df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_models'], param['n_instances'], param['batchs'], param['epochs'],
+            df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
+                param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 )
                 )
             #df_infs.to_csv( path_generate + '/generate_data_mc_{}_infs.csv'.format(param['mc_iterations']) )
         else:
-            df = pd.read_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_models'], param['n_instances'], param['batchs'], param['epochs'],
+            df = pd.read_csv(path_generate + '/generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
+                param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 ),
                 index_col=0)
@@ -139,8 +140,8 @@ class Datasets:
                 pearsonr(param['aj'],param['_aj'])[0]
             ]
 
-            df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_b{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_models'], param['n_instances'], param['batchs'], param['epochs'],
+            df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
+                param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 )
                 )

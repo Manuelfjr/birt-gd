@@ -110,7 +110,7 @@ Import the **BIRTGD's class**
 
 ```py 
 >>> bgd.abilities
-array([0.78665066, 0.5025896 , 0.545207  ], dtype=float32)
+array([0.78665066, 0.5025896 , 0.545207], dtype=float32)
 ```
 
 ```py
@@ -169,13 +169,22 @@ birt.summary()
 ```
 
 # Using Plot Feature
-
-
 ```py
-birt.plot(xaxis='discrimination',yaxis='difficulties', ann=True, kwargs={'color': 'red'})
+birt.plot(xaxis='discrimination',yaxis='difficulty', ann=True, kwargs={'color': 'red'})
 ```
 ![ex1](assets/dis_diff_ex.png)
 
+```py
+birt.plot(xaxis='difficulty',yaxis='average_item', ann=True, kwargs={'color': 'red'})
+```
+
+![ex2](assets/diff_av_ex2.png)
+
+```py
+birt.plot(xaxis='ability',yaxis='average_response', ann=False)
+```
+
+![ex3](assets/ab_av_ex3.png)
 # Help and Support
 ## Communication
 

@@ -285,7 +285,7 @@ class BIRTGD:
                 sns.scatterplot(x=self.abilities, y=pij.apply(np.mean,axis=0), **kwargs)
                 for i in range(pij.shape[1]):
                     plt.text(x = self.abilities[i]+0.003, y =pij.apply(np.mean,axis=0)[i]+0.003, s='{}'.format(self.pij.columns[i]))
-        elif (xaxis == 'difficulties') and (yaxis == 'average_item'):
+        elif (xaxis == 'difficulty') and (yaxis == 'average_item'):
             if ann == False:
                 sns.scatterplot(x=self.difficulties, y=pij.apply(np.mean,axis=1), **kwargs)
             else:

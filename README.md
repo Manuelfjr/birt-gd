@@ -100,30 +100,29 @@ Import the **BIRTGD's class**
 ```
 
 ```py
->>> X = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
->>> Y = [0.98,0.81,0.12,0.567,0.76,0.9]
+>>> data = pd.DataFrame({'a': [0.99,0.89,0.87], 'b': [0.32,0.25,0.45]})
 ```
 
 ```py
->>> bgd = BIRTGD(n_models=3, n_instances=2, random_seed=1)
->>> bgd.fit(X,Y)
-100%|██████████| 20/20 [00:00<00:00, 52.81it/s]
-<birt.BIRTGD at 0x7f6ce2555f50>
+>>> bgd = BIRTGD(n_models=2, n_instances=3, random_seed=1)
+>>> bgd.fit(data)
+100%|██████████| 5000/5000 [00:22<00:00, 219.50it/s]
+<birt.BIRTGD at 0x7f6131326c10>
 ```
 
 ```py 
 >>> bgd.abilities
-array([0.78665066, 0.5025896 , 0.545207], dtype=float32)
+array([0.90438306, 0.27729774], dtype=float32)
 ```
 
 ```py
 >>> bgd.difficulties
-array([0.25070453, 0.46883535], dtype=float32)
+array([0.3760659 , 0.5364428 , 0.34256178], dtype=float32)
 ```
 
 ```py
 >>> bgd.discriminations
-array([0.09374281, 1.4122988 ], dtype=float32)
+array([1.6690203 , 0.9951777 , 0.65577406], dtype=float32)
 ```
 
 # Summary data

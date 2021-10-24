@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="birt-gd", # Replace with your own username
-    version="0.1.10",
+    version="0.1.11",
     author="Manuel Ferreira Junior",
     author_email="ferreira.jr.ufpb@gmail.com",
     description="BIRTGD is an implementation of Beta3-irt using gradient descent.",
@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/Manuelfjr/birt-gd",
     project_urls={
         "Bug Tracker": "https://github.com/pypa/sampleproject/issues",
-        "Source Code": "https://github.com/Manuelfjr/birt-gd/blob/feature-matrix-ops/src/birt/__init__.py"
+        "Source Code": "https://github.com/Manuelfjr/birt-gd/blob/main/src/birt/__init__.py"
     },
     classifiers=[
         "Programming Language :: Python :: 3",

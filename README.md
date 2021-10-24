@@ -90,7 +90,7 @@ git clone https://github.com/Manuelfjr/birt-gd
 ```
 
 # Usage
-Import the **BIRTSGD's class**
+Import the **BIRTGD's class**
 
 ```py
 >>> from birt import BIRTGD
@@ -122,6 +122,59 @@ array([0.25070453, 0.46883535], dtype=float32)
 >>> bgd.discriminations
 array([0.09374281, 1.4122988 ], dtype=float32)
 ```
+
+# Summary data
+
+How to use the summary feature:
+
+* **Generate data**
+```py
+import numpy as np
+
+m, n = 5, 20
+np.random.seed(1)
+abilities = [np.random.beta(1,i) for i in ([0.1, 10] + [1]*(m-2))]
+difficulties = [np.random.beta(1,i) for i in [10, 5] + [1]*(n-2)]
+discrimination = list(np.random.normal(1,1, size=n))
+pij = pd.DataFrame(columns=range(m), index=range(n))
+```
+
+* **Fitting the model**
+```py
+birt = BIRTGD(n_models=pij.shape[1],
+             n_instances=pij.shape[0],
+             learning_rate=1,
+             epochs=5000,
+             n_inits=1000)
+birt.fit(pij)
+```
+
+* **Summary**
+```py
+birt.summary()
+```
+```py
+
+        HYPERPARAMS
+        -----
+                        | Min      1Qt      Median   3Qt      Max      Std.Dev
+        Ability         | 0.00010  0.22148  0.63389  0.73353  0.92040  0.33960
+        Difficulty      | 0.01745  0.28047  0.63058  0.84190  0.98624  0.31635
+        Discrimination  | 0.31464  1.28330  1.61493  2.22936  4.44645  1.02678
+        pij             | 0.00000  0.02219  0.35941  0.86255  0.99993  0.40210
+        -----
+        Pseudo-R2       | 0.90381
+        
+
+```
+
+# Using Plot Feature
+
+
+```py
+birt.plot(xaxis='discrimination',yaxis='difficulties', ann=True, kwargs={'color': 'red'})
+```
+![ex1](assets/dis_diff_ex.png)
 
 # Help and Support
 ## Communication

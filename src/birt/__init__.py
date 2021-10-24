@@ -73,9 +73,9 @@ class BIRTGD:
     """
     def __init__(
         self, learning_rate=1, 
-        epochs=20, n_models=20, 
+        epochs=5000, n_models=20, 
         n_instances=100,
-        n_inits=10, n_workers=-1,
+        n_inits=1000, n_workers=-1,
         random_seed=1
     ):
         self.lr = learning_rate
@@ -227,7 +227,7 @@ class BIRTGD:
         Discrimination  | {12:.5f}  {13:.5f}  {14:.5f}  {15:.5f}  {16:.5f}  {17:.5f}
         pij             | {18:.5f}  {19:.5f}  {20:.5f}  {21:.5f}  {22:.5f}  {23:.5f}
         -----
-        R2 (OLS)        | {24:.5f}
+        Pseudo-R2       | {24:.5f}
         '''.format(
                     np.min(abi), np.quantile(abi,0.25),np.median(abi), np.quantile(abi,0.75),np.max(abi), np.std(abi),
                     np.min(dif), np.quantile(dif,0.25),np.median(dif), np.quantile(dif,0.75),np.max(dif), np.std(dif),
@@ -242,7 +242,7 @@ class BIRTGD:
                     '''.format(abi, dif, dis)
             print(out + hyper)
 
-    def plot(self, xaxis=None, yaxis=None, kwargs=None, ann=False):
+    def plot(self, xaxis=None, yaxis=None, kwargs={}, ann=False):
         """Plot's of results
             
         Parameters
@@ -264,21 +264,21 @@ class BIRTGD:
 
         sns.set_style('darkgrid')
         plt.figure(figsize=(13,6))
-        if (xaxis == 'discrimination') and (yaxis == 'difficulties'):
+        if (xaxis == 'discrimination') and (yaxis == 'difficulty'):
             if ann == False:
                 sns.scatterplot(x=self.discriminations, y=self.difficulties, **kwargs)
             else:
                 sns.scatterplot(x=self.discriminations, y=self.difficulties, **kwargs)
                 for i in range(pij.shape[0]):
                     plt.text(x = self.discriminations[i]+0.007, y = self.difficulties[i]+0.007, s='n{}'.format(i+1))
-        elif (yaxis == 'discrimination') and (xaxis == 'difficulties'):
+        elif (yaxis == 'discrimination') and (xaxis == 'difficulty'):
             if ann == False:
                 sns.scatterplot(x=self.difficulties, y=self.discriminations, **kwargs)
             else:
                 sns.scatterplot(x=self.difficulties, y=self.discriminations, **kwargs)
                 for i in range(pij.shape[0]):
                     plt.text(x = self.difficulties[i]+0.007, y = self.discriminations[i]+0.007, s='n{}'.format(i+1))
-        elif (xaxis == 'abilities') and (yaxis == 'average_response'):
+        elif (xaxis == 'ability') and (yaxis == 'average_response'):
             if ann == False:
                 sns.scatterplot(x=self.abilities, y=pij.apply(np.mean,axis=0), **kwargs)
             else:
@@ -299,7 +299,6 @@ class BIRTGD:
         plt.title(f'{xaxis} vs {yaxis}')
         plt.xlabel(xaxis)
         plt.ylabel(yaxis)
-        plt.show()
 
 def _loss(y_true, y_pred):
     """Calculate Binary Cross Entropy (loss function)
@@ -456,7 +455,7 @@ def _fit(*args):
 #data = pd.DataFrame({'a': np.random.beta(alpha_1, beta_1, n), 'b': np.random.beta(alpha_2, beta_2, n)})
 #data = pd.DataFrame({'a': [0.12,0.3,0.2], 'b': [0.98,0.89,0.7899]})
 
-#ep = 10000
+#ep = 5000
 #birt = BIRTGD(learning_rate=0.1, epochs=ep, n_instances=data.shape[0], n_models=data.shape[1], n_inits=1000)
 #birt.fit(data)
 #birt.summary(show = False)

@@ -173,20 +173,20 @@ birt.summary()
 birt.plot(xaxis='discrimination',yaxis='difficulty', ann=True, kwargs={'color': 'red'})
 ```
 
-<img alt = "assets/dis_diff_ex.png" src="assets/dis_diff_ex.png">
+<img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/dis_diff_ex.png">
 
 ```py
 birt.plot(xaxis='difficulty',yaxis='average_item', ann=True, kwargs={'color': 'red'})
 ```
 
-<img alt = "assets/diff_av_ex2.png" src="assets/diff_av_ex2.png">
+<img alt = "assets/diff_av_ex2.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/diff_av_ex2.png">
 
 
 ```py
 birt.plot(xaxis='ability',yaxis='average_response', ann=False)
 ```
 
-<img alt = "assets/ab_av_ex3.png" src="assets/ab_av_ex3.png">
+<img alt = "assets/ab_av_ex3.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/ab_av_ex3.png">
 
 # Help and Support
 ## Communication

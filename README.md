@@ -171,20 +171,21 @@ birt.summary()
 
 ```
 
-# Using Plot Feature
+# Using Scatterplot Feature
+
 ```py
 birt.plot(xaxis='discrimination',yaxis='difficulty', ann=True, kwargs={'color': 'red'})
 plt.show()
 ```
 
-<img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/dis_diff_ex.png">
+<img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/dis_diff_ex.png">
 
 ```py
 birt.plot(xaxis='difficulty',yaxis='average_item', ann=True, kwargs={'color': 'red'})
 plt.show()
 ```
 
-<img alt = "assets/diff_av_ex2.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/diff_av_ex2.png">
+<img alt = "assets/diff_av_ex2.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/diff_av_ex2.png">
 
 
 ```py
@@ -192,7 +193,28 @@ birt.plot(xaxis='ability',yaxis='average_response', ann=False)
 plt.show()
 ```
 
-<img alt = "assets/ab_av_ex3.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/ab_av_ex3.png">
+<img alt = "assets/ab_av_ex3.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex3.png">
+
+# Using Boxplot Feature
+
+```py
+birt.boxplot(y='abilities',kwargs={'linewidth': 4})
+```
+
+<img alt = "assets/ab_av_ex3.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex4.png">
+
+
+```py
+birt.boxplot(y='difficulties')
+```
+<img alt = "assets/ab_av_ex3.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex5.png">
+
+```py
+birt.boxplot(x='discrimination')
+```
+
+<img alt = "assets/ab_av_ex3.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex6.png">
+
 
 # Help and Support
 ## Communication

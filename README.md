@@ -130,6 +130,7 @@ How to use the summary feature:
 * **Generate data**
 ```py
 import numpy as np
+import matplotlib.pyplot as plt
 
 m, n = 5, 20
 np.random.seed(1)
@@ -171,12 +172,14 @@ birt.summary()
 # Using Plot Feature
 ```py
 birt.plot(xaxis='discrimination',yaxis='difficulty', ann=True, kwargs={'color': 'red'})
+plt.show()
 ```
 
 <img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/dis_diff_ex.png">
 
 ```py
 birt.plot(xaxis='difficulty',yaxis='average_item', ann=True, kwargs={'color': 'red'})
+plt.show()
 ```
 
 <img alt = "assets/diff_av_ex2.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/diff_av_ex2.png">
@@ -184,6 +187,7 @@ birt.plot(xaxis='difficulty',yaxis='average_item', ann=True, kwargs={'color': 'r
 
 ```py
 birt.plot(xaxis='ability',yaxis='average_response', ann=False)
+plt.show()
 ```
 
 <img alt = "assets/ab_av_ex3.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/feature-matrix-ops/assets/ab_av_ex3.png">

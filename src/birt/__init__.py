@@ -336,6 +336,13 @@ class BIRTGD:
                 ValueError(f'both X and Y are the same')
             elif y == 'abilities':
                 ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
+        elif x == 'discriminations':
+            if y == None or y == 'difficulties':
+                sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
+            elif y == 'discriminations':
+                ValueError(f'both X and Y are the same')
+            elif y == 'abilities':
+                ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
         elif x == None:
             if y == 'abilities':
                 sns.boxplot(x=x,y=y, data=abi, **kwargs)

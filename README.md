@@ -201,19 +201,19 @@ plt.show()
 birt.boxplot(y='abilities',kwargs={'linewidth': 4})
 ```
 
-<img alt = "assets/ab_av_ex4.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex4.png">
+<img alt = "assets/ab_av_ex4.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex4.png">
 
 
 ```py
-birt.boxplot(y='difficulties')
+birt.boxplot(x='difficulties')
 ```
-<img alt = "assets/ab_av_ex5.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex5.png">
+<img alt = "assets/ab_av_ex5.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex5.png">
 
 ```py
-birt.boxplot(x='discrimination')
+birt.boxplot(y='discrimination')
 ```
 
-<img alt = "assets/ab_av_ex6.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex6.png">
+<img alt = "assets/ab_av_ex6.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex6.png">
 
 
 # Help and Support

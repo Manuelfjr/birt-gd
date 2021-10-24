@@ -57,19 +57,18 @@ class BIRTGD:
 
     Example
     -------------------------------------------------------
-    >>> from BIRTGD.birt import BIRTGD
-    >>> X = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)]
-    >>> Y = [0.98,0.81,0.12,0.567,0.76,0.9]
-    >>> bgd = BIRTGD(n_models=3, n_instances=2, random_seed=1)
-    >>> bgd.fit(X,Y)
-    100%|██████████| 20/20 [00:00<00:00, 52.58it/s]
-    <birt.BIRTGD at 0x7f6ce2555f50>
+    >>> from birt import BIRTGD
+    >>> data = pd.DataFrame({'a': [0.99,0.89,0.87], 'b': [0.32,0.25,0.45]})
+    >>> bgd = BIRTGD(n_models=2, n_instances=3, random_seed=1)
+    >>> bgd.fit(data)
+    100%|██████████| 5000/5000 [00:22<00:00, 219.50it/s]
+    <birt.BIRTGD at 0x7f6131326c10>
     >>> bsgd.abilities
-    array([0.78665066, 0.5025896 , 0.545207  ], dtype=float32)
+    array([0.90438306, 0.27729774], dtype=float32)
     >>> bgd.difficulties
-    array([0.25070453, 0.46883535], dtype=float32)
+    array([0.3760659, 0.5364428, 0.34256178], dtype=float32)
     >>> bgd.discriminations
-    array([0.09374281, 1.4122988 ], dtype=float32)
+    array([1.6690203, 0.9951777, 0.65577406], dtype=float32)
     """
     def __init__(
         self, learning_rate=1, 
@@ -294,11 +293,64 @@ class BIRTGD:
                     plt.text(x = self.difficulties[i]+0.004, y =pij.apply(np.mean,axis=1)[i]+0.004, s='n{}'.format(i+1))
         elif xaxis == yaxis:
             raise ValueError('xaxis and yaxis are the same')
+        elif xaxis not in ['discrimination','difficulties','abilities'] or yaxis not in ['discrimination','difficulties', 'average_response', 'average_item']:
+            raise ValueError(f'{xaxis} or {yaxis} doesnt exists')
         else:
             raise ValueError(f'plotting {xaxis} vs {yaxis} is impossible.')
         plt.title(f'{xaxis} vs {yaxis}')
         plt.xlabel(xaxis)
         plt.ylabel(yaxis)
+    
+    def boxplot(self, x=None, y=None, kwargs={}):
+        """Boxplot's of results
+            
+        Parameters
+        -------------------------------------------------------
+        x : ['discrimination','difficulties','abilities', None].
+                x axis of plot.
+        y : ['discrimination','difficulties','abilities', None]
+                y axis of plot.
+        kwargs: dict.
+            other Matplotlib library arguments.
+
+        Returns
+        -------------------------------------------------------
+            Boxplot of x axis vs y axis.
+        """
+
+        abi = pd.DataFrame({'abilities': self.abilities})
+        dif_dis = pd.DataFrame({'difficulties': self.difficulties, 'discriminations': self.discriminations})
+        sns.set_style('darkgrid')
+        plt.figure(figsize=(13,6))
+        if x == 'abilities':
+            if y ==None:
+                sns.boxplot(x=x,y=y, data=abi, **kwargs)
+            elif y == 'discriminations' or y == 'difficulties':
+                ValueError(f'the length of x is different from y.')
+            elif y == 'abilities':
+                ValueError(f'both X and Y are the same')
+        elif x == 'difficulties':
+            if y == None or y == 'discriminations':
+                sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
+            elif y == 'difficulties':
+                ValueError(f'both X and Y are the same')
+            elif y == 'abilities':
+                ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
+        elif x == None:
+            if y == 'abilities':
+                sns.boxplot(x=x,y=y, data=abi, **kwargs)
+            elif y == 'difficulties' or y == 'discriminations':
+                sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
+            elif y == 'None':
+                raise ValueError(f'both X and Y are None')
+        elif y == None and (x not in ['abilities', 'difficulties', 'discriminations']):
+            raise ValueError(f'y is None but {x} doesnot exist')
+        elif x == None and (y not in ['abilities', 'difficulties', 'discriminations']):
+            raise ValueError(f'x is None but {y} doesnot exist')
+        elif x != None and y != None:
+            if (x == 'abilities' and y == 'difficulties') or (x == 'difficulties' and y == 'abilities'):
+                ValueError(f'the length of x is different from y.')
+            
 
 def _loss(y_true, y_pred):
     """Calculate Binary Cross Entropy (loss function)

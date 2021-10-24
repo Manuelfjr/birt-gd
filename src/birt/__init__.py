@@ -218,7 +218,7 @@ class BIRTGD:
         self.score = model.score(X,Y)
         
         out = '''
-        HYPERPARAMS
+        ESTIMATES
         -----
                         | Min      1Qt      Median   3Qt      Max      Std.Dev
         Ability         | {0:.5f}  {1:.5f}  {2:.5f}  {3:.5f}  {4:.5f}  {5:.5f}

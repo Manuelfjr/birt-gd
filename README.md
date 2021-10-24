@@ -158,7 +158,7 @@ birt.summary()
 ```
 ```py
 
-        HYPERPARAMS
+        ESTIMATES
         -----
                         | Min      1Qt      Median   3Qt      Max      Std.Dev
         Ability         | 0.00010  0.22148  0.63389  0.73353  0.92040  0.33960

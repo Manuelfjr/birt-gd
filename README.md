@@ -225,7 +225,7 @@ birt.boxplot(y='discriminations')
 # License
 [MIT License](https://github.com/Manuelfjr/birt-sgd/blob/main/LICENSE)
 
-Copyright (c) 2021 Manuel
+Copyright (c) 2021 Manuel Ferreira Junior
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

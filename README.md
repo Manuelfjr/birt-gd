@@ -83,7 +83,7 @@ birt-sgd requires:
 ## User installation
 
 ```bash
-pip install -i https://test.pypi.org/simple/ birt-gd
+pip install birt-gd
 ```
 
 ## Source code 

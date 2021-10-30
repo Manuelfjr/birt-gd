@@ -51,7 +51,8 @@
 [![Downloads](https://pepy.tech/badge/pandas)](https://pepy.tech/project/pandas)    
 -->
 
-# [birt-gd](https://test.pypi.org/project/birt-gd/)
+# [birt-gd](https://pypi.org/project/birt-gd/)
+
 **BIRTGD** is an implementation of Beta3-irt using gradient descent.
 
 The model expects to receive two sets of data, *X* being a list or array containing tuples of indices, where the first index references the instance *j* and the second index of the tuple references the model *i*, thus, *Y* will be a list or array where each input will be p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>), the probability of the *i* model correctly classifying the *j* model. Being, 

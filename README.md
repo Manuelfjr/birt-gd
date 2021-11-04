@@ -133,6 +133,8 @@ How to use the summary feature:
 * **Generate data**
 ```py
 import numpy as np
+import pandas as pd
+from birt import BIRTGD
 import matplotlib.pyplot as plt
 
 m, n = 5, 20
@@ -141,6 +143,16 @@ abilities = [np.random.beta(1,i) for i in ([0.1, 10] + [1]*(m-2))]
 difficulties = [np.random.beta(1,i) for i in [10, 5] + [1]*(n-2)]
 discrimination = list(np.random.normal(1,1, size=n))
 pij = pd.DataFrame(columns=range(m), index=range(n))
+
+i,j = 0,0
+for theta in abilities:
+  for delta, a in zip(difficulties, discrimination):
+    alphaij = (theta/delta)**(a)
+    betaij = ((1-theta)/(1 - delta))**(a)
+    pij.loc[j,i] = np.random.beta(alphaij, betaij, size=1)[0]
+    j+=1
+  j = 0
+  i+=1
 ```
 
 * **Fitting the model**

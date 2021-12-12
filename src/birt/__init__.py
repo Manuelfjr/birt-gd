@@ -115,7 +115,7 @@ class BIRTGD:
         Returns
         -------------------------------------------------------
         self
-            Adjusted values ​​of the parameters
+            Adjusted values of the parameters
         """
         self.pij = X
         queue = Queue()
@@ -135,7 +135,8 @@ class BIRTGD:
         self.abilities = abi
         self.difficulties = dif
         self.discriminations = dis
-
+        X, Y, self.pijhat = _split(self.pij, self.predict(), (len(self.discriminations), len(self.abilities)))
+        self.score(X, Y)
         return self
     
     def irt(self, abilities, difficulties, discriminations):
@@ -187,6 +188,28 @@ class BIRTGD:
                 )
 
         return y_pred
+    
+    def score(self, X=None, Y=None):
+        """Score is Pseudo-R2
+            
+        Parameters
+        -------------------------------------------------------
+        self.
+
+        X : array.
+            Contains pij adjusted.
+
+        Y : array.
+            Contains pij real.
+
+        Returns
+        -------------------------------------------------------
+            Calculate the Pseudo-R2 based a OLS model.
+        """
+        model = LinearRegression()
+        model.fit(X,Y)
+        self.score = model.score(X, Y)
+        return self.score
 
     def summary(self, show=False):
         """Summary of results
@@ -203,19 +226,6 @@ class BIRTGD:
             print summarize of the hyperparams and p_ij.
         """
         abi, dif, dis = self.get_params()
-        pijhat = pd.DataFrame(np.reshape(self.predict(), (len(self.discriminations), len(self.abilities))))
-
-        # Pseudo R2
-        shape = np.shape(self.pij)
-        try:
-            Y, X = np.reshape(self.pij.values,(shape[0]*shape[1], 1)), np.reshape(pijhat.values,(shape[0]*shape[1], 1))
-        except:
-            Y, X = np.reshape(self.pij,(shape[0]*shape[1], 1)), np.reshape(pijhat.values,(shape[0]*shape[1], 1))
-        
-        # OLS R2
-        model = LinearRegression()
-        model.fit(X,Y)
-        self.score = model.score(X,Y)
         
         out = '''
         ESTIMATES
@@ -231,7 +241,7 @@ class BIRTGD:
                     np.min(abi), np.quantile(abi,0.25),np.median(abi), np.quantile(abi,0.75),np.max(abi), np.std(abi),
                     np.min(dif), np.quantile(dif,0.25),np.median(dif), np.quantile(dif,0.75),np.max(dif), np.std(dif),
                     np.min(dis), np.quantile(dis,0.25),np.median(dis), np.quantile(dis,0.75),np.max(dis), np.std(dis),
-                    np.min(pijhat.values), np.quantile(pijhat.values,0.25),np.median(pijhat.values), np.quantile(pijhat.values,0.75),np.max(pijhat.values), np.std(pijhat.values),
+                    np.min(self.pijhat.values), np.quantile(self.pijhat.values,0.25),np.median(self.pijhat.values), np.quantile(self.pijhat.values,0.75),np.max(self.pijhat.values), np.std(self.pijhat.values),
                     self.score
                 )
         if show == False:
@@ -326,23 +336,23 @@ class BIRTGD:
             if y ==None:
                 sns.boxplot(x=x,y=y, data=abi, **kwargs)
             elif y == 'discriminations' or y == 'difficulties':
-                ValueError(f'the length of x is different from y.')
+                raise ValueError(f'the length of x is different from y.')
             elif y == 'abilities':
-                ValueError(f'both X and Y are the same')
+                raise ValueError(f'both X and Y are the same')
         elif x == 'difficulties':
             if y == None or y == 'discriminations':
                 sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
             elif y == 'difficulties':
-                ValueError(f'both X and Y are the same')
+                raise ValueError(f'both X and Y are the same')
             elif y == 'abilities':
-                ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
+                raise ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
         elif x == 'discriminations':
             if y == None or y == 'difficulties':
                 sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
             elif y == 'discriminations':
-                ValueError(f'both X and Y are the same')
+                raise ValueError(f'both X and Y are the same')
             elif y == 'abilities':
-                ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
+                raise ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
         elif x == None:
             if y == 'abilities':
                 sns.boxplot(x=x,y=y, data=abi, **kwargs)
@@ -356,7 +366,7 @@ class BIRTGD:
             raise ValueError(f'x is None but {y} doesnot exist')
         elif x != None and y != None:
             if (x == 'abilities' and y == 'difficulties') or (x == 'difficulties' and y == 'abilities'):
-                ValueError(f'the length of x is different from y.')
+                raise ValueError(f'the length of x is different from y.')
             
 
 def _loss(y_true, y_pred):
@@ -498,6 +508,18 @@ def _fit(*args):
     parameters = (abilities, difficulties, discriminations)
 
     queue.put(parameters)
+
+def _split(*args):
+    (pij, predict, shape) = args
+    pijhat = pd.DataFrame( np.reshape(predict, (shape[0], shape[1])) )
+
+    shape = np.shape(pij)
+    try:
+        Y, X = np.reshape(pij.values,(shape[0]*shape[1], 1)), np.reshape(pijhat.values,(shape[0]*shape[1], 1))
+    except:
+        Y, X = np.reshape(pij,(shape[0]*shape[1], 1)), np.reshape(pijhat.values,(shape[0]*shape[1], 1))
+    return Y, X, pijhat
+
 
 #m, n = 2, 150
 #t1 = np.random.beta(1,0.1,size = 1)

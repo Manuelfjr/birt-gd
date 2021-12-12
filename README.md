@@ -165,6 +165,16 @@ birt = BIRTGD(n_models=pij.shape[1],
 birt.fit(pij)
 ```
 
+
+* **Score (Pseudo-$R^2$)**
+```py
+birt.score
+```
+```py
+0.9038145665424927
+```
+
+
 * **Summary**
 ```py
 birt.summary()

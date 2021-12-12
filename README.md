@@ -166,7 +166,7 @@ birt.fit(pij)
 ```
 
 
-* **Score (Pseudo-$R^2$)**
+* **Score (Pseudo - R<sup>2</sup>)**
 ```py
 birt.score
 ```

@@ -10,6 +10,7 @@ setuptools.setup(
     author_email="ferreira.jr.ufpb@gmail.com",
     description="BIRTGD is an implementation of Beta3-irt using gradient descent.",
     long_description=long_description,
+    license='GNU General Public License v3.0',
     long_description_content_type="text/markdown",
     url="https://github.com/Manuelfjr/birt-gd",
     project_urls={

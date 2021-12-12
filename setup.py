@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="birt-gd", # Replace with your own username
-    version="0.1.20",
+    version="0.1.21",
     author="Manuel Ferreira Junior",
     author_email="ferreira.jr.ufpb@gmail.com",
     description="BIRTGD is an implementation of Beta3-irt using gradient descent.",
@@ -18,7 +18,7 @@ setuptools.setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU General Public License v3.0",
         "Operating System :: OS Independent",
     ],
     install_requires=[

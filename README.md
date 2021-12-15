@@ -71,7 +71,7 @@ E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>] = (&
 
 # Installation
 ## Dependencies 
-birt-sgd requires:
+birt-gd requires:
 - Python (>=3.8.5)
 - numpy (>=1.19.5)
 - tqdm (>=4.59.0)

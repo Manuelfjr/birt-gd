@@ -922,3 +922,20 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
+
+# Author
+</table>
+<table  justify-self="center">
+  <tr>
+    <td width=5% align="center"><a href="https://manuelfjr.github.io/"><img style="border-radius: 50%;" src="assets\author.png" width="100px;" alt=""/><br /><sub><b>Manuel Ferreira Junior</b></sub></a><br /><a href="https://manuelfjr.github.io/" title=""></a></td>
+  </tr> 
+</table>
+
+# Contributors
+
+</table>
+<table  justify-self="center">
+  <tr>
+    <td width=5% align="center"><a href="https://github.com/tmfilho"><img style="border-radius: 50%;" src="assets\coauthor1.jpeg" width="100px;" alt=""/><br /><sub><b>Telmo de Menezes e Silva Filho</b></sub></a><br /><a href="https://github.com/tmfilho" title=""></a></td>
+  </tr> 
+</table>

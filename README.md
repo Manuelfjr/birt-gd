@@ -1,5 +1,5 @@
-[![license: MIT](https://img.shields.io/badge/license-MIT-red.svg?&logo=license&color=blue)](https://github.com/Manuelfjr/birt-gd/blob/main/LICENSE)
-[![Docs](https://img.shields.io/badge/docs-birtgd-blue?&logo)](https://github.com/Manuelfjr/birt-sgd)
+[![license: GPLv3](https://img.shields.io/badge/license-GPLv3-red.svg?&logo=license&color=blue)](https://github.com/Manuelfjr/birt-gd/blob/main/LICENSE)
+[![Docs](https://img.shields.io/badge/docs-birtgd-blue?&logo)](https://github.com/Manuelfjr/birt-gd)
 [![Author](https://img.shields.io/badge/author-manuelfjr-blue?&logo=github)](https://github.com/Manuelfjr)
 [![Author2](https://img.shields.io/badge/author-tmfilho-blue?&logo=github)](https://github.com/tmfilho)
 
@@ -72,7 +72,7 @@ E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>] = (&
 # Installation
 ## Dependencies 
 birt-gd requires:
-- Python (>=3.8.5)
+- Python (>=3.6.0)
 - numpy (>=1.19.5)
 - tqdm (>=4.59.0)
 - tensorflow (>=2.4.1)

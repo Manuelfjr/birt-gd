@@ -197,14 +197,20 @@ birt.summary()
 # Using Scatterplot Feature
 
 ```py
-birt.plot(xaxis='discrimination',yaxis='difficulty', ann=True, kwargs={'color': 'red'})
+birt.plot(xaxis='discrimination',
+          yaxis='difficulty',
+          ann=True,
+          kwargs={'color': 'red'})
 plt.show()
 ```
 
 <img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/dis_diff_ex.png">
 
 ```py
-birt.plot(xaxis='difficulty',yaxis='average_item', ann=True, kwargs={'color': 'red'})
+birt.plot(xaxis='difficulty',
+          yaxis='average_item',
+          ann=True,
+          kwargs={'color': 'blue'})
 plt.show()
 ```
 
@@ -212,7 +218,9 @@ plt.show()
 
 
 ```py
-birt.plot(xaxis='ability',yaxis='average_response', ann=False)
+birt.plot(xaxis='ability',
+          yaxis='average_response',
+          ann=False)
 plt.show()
 ```
 
@@ -221,7 +229,8 @@ plt.show()
 # Using Boxplot Feature
 
 ```py
-birt.boxplot(y='abilities',kwargs={'linewidth': 4})
+birt.boxplot(y='abilities',
+             kwargs={'linewidth': 4})
 ```
 
 <img alt = "assets/ab_av_ex4.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex4.png">
@@ -242,7 +251,7 @@ birt.boxplot(y='discriminations')
 # Help and Support
 ## Communication
 
-- E-mail: [ferreira.jr.ufpb@gmail.com]()
+- E-mail: [ferreira.jr.ufpb@gmail.com](mailto:ferreira.jr.ufpb@gmail.com)
 - Site: [https://manuelfjr.github.io/](https://manuelfjr.github.io/)
 
 # License
@@ -937,5 +946,8 @@ Public License instead of this License.  But first, please read
 <table  justify-self="center">
   <tr>
     <td width=5% align="center"><a href="https://github.com/tmfilho"><img style="border-radius: 50%;" src="assets\coauthor1.jpeg" width="100px;" alt=""/><br /><sub><b>Telmo de Menezes e Silva Filho</b></sub></a><br /><a href="https://github.com/tmfilho" title=""></a></td>
+    <td width=5% align="center"><a href="https://github.com/jessicareinaldo"><img style="border-radius: 50%;" src="assets\coauthor2.jpeg" width="100px;" alt=""/><br /><sub><b>Jessica Reinaldo</b></sub></a><br /><a href="https://github.com/jessicareinaldo" title=""></a></td>
+    <td width=5% align="center"><a href="http://lattes.cnpq.br/2984888073123287"><img style="border-radius: 50%;" src="assets\coauthor3.jpg" width="100px;" alt=""/><br /><sub><b>Ricardo Prudêncio</b></sub></a><br /><a href="http://lattes.cnpq.br/2984888073123287" title=""></a></td>
+    <td width=5% align="center"><a href="http://lattes.cnpq.br/5580004940091667"><img style="border-radius: 50%;" src="assets\coauthor4.jpg" width="100px;" alt=""/><br /><sub><b>Eufrásio de Andrade Lima Neto</b></sub></a><br /><a href="http://lattes.cnpq.br/5580004940091667" title=""></a></td>
   </tr> 
 </table>

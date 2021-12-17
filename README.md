@@ -945,9 +945,9 @@ Public License instead of this License.  But first, please read
 </table>
 <table  justify-self="center">
   <tr>
-    <td width=5% align="center"><a href="https://github.com/tmfilho"><img style="border-radius: 50%;" src="assets\coauthor1.jpeg" width="100px;" alt=""/><br /><sub><b>Telmo de Menezes e Silva Filho</b></sub></a><br /><a href="https://github.com/tmfilho" title=""></a></td>
-    <td width=5% align="center"><a href="https://github.com/jessicareinaldo"><img style="border-radius: 50%;" src="assets\coauthor2.jpeg" width="100px;" alt=""/><br /><sub><b>Jessica Reinaldo</b></sub></a><br /><a href="https://github.com/jessicareinaldo" title=""></a></td>
-    <td width=5% align="center"><a href="http://lattes.cnpq.br/2984888073123287"><img style="border-radius: 50%;" src="assets\coauthor3.jpg" width="100px;" alt=""/><br /><sub><b>Ricardo Prudêncio</b></sub></a><br /><a href="http://lattes.cnpq.br/2984888073123287" title=""></a></td>
-    <td width=5% align="center"><a href="http://lattes.cnpq.br/5580004940091667"><img style="border-radius: 50%;" src="assets\coauthor4.jpg" width="100px;" alt=""/><br /><sub><b>Eufrásio de Andrade Lima Neto</b></sub></a><br /><a href="http://lattes.cnpq.br/5580004940091667" title=""></a></td>
+    <td width=5% align="center"><a href="https://github.com/tmfilho"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor1.jpeg" width="100px;" alt=""/><br /><sub><b>Telmo de Menezes e Silva Filho</b></sub></a><br /><a href="https://github.com/tmfilho" title=""></a></td>
+    <td width=5% align="center"><a href="https://github.com/jessicareinaldo"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor2.jpeg" width="100px;" alt=""/><br /><sub><b>Jessica Reinaldo</b></sub></a><br /><a href="https://github.com/jessicareinaldo" title=""></a></td>
+    <td width=5% align="center"><a href="http://lattes.cnpq.br/2984888073123287"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor3.jpg" width="100px;" alt=""/><br /><sub><b>Ricardo Prudêncio</b></sub></a><br /><a href="http://lattes.cnpq.br/2984888073123287" title=""></a></td>
+    <td width=5% align="center"><a href="http://lattes.cnpq.br/5580004940091667"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor4.jpg" width="100px;" alt=""/><br /><sub><b>Eufrásio de Andrade Lima Neto</b></sub></a><br /><a href="http://lattes.cnpq.br/5580004940091667" title=""></a></td>
   </tr> 
 </table>

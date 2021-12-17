@@ -936,7 +936,7 @@ Public License instead of this License.  But first, please read
 </table>
 <table  justify-self="center">
   <tr>
-    <td width=5% align="center"><a href="https://manuelfjr.github.io/"><img style="border-radius: 50%;" src="assets\author.png" width="100px;" alt=""/><br /><sub><b>Manuel Ferreira Junior</b></sub></a><br /><a href="https://manuelfjr.github.io/" title=""></a></td>
+    <td width=5% align="center"><a href="https://manuelfjr.github.io/"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/author.png" width="100px;" alt=""/><br /><sub><b>Manuel Ferreira Junior</b></sub></a><br /><a href="https://manuelfjr.github.io/" title=""></a></td>
   </tr> 
 </table>
 

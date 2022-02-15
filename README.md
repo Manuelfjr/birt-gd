@@ -1,8 +1,12 @@
-![PyPI - Downloads](https://img.shields.io/pypi/dm/birt-gd?style=flat-square&color=darkgreen)
+[![https://badgen.net/pypi/v/birt-gd](https://badgen.net/pypi/v/birt-gd)](https://pypi.org/project/birt-gd/#history)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/birt-gd?style=flat-square&color=darkgreen)](https://pypi.org/project/birt-gd/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dw/birt-gd?style=flat-square&color=darkgreen)]((https://pypi.org/project/birt-gd/))
 [![license: GPLv3](https://img.shields.io/badge/license-GPLv3-red.svg?&logo=license&color=blue)](https://github.com/Manuelfjr/birt-gd/blob/main/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-birtgd-blue?&logo)](https://github.com/Manuelfjr/birt-gd)
 [![Author](https://img.shields.io/badge/author-manuelfjr-blue?&logo=github)](https://github.com/Manuelfjr)
 [![Author2](https://img.shields.io/badge/author-tmfilho-blue?&logo=github)](https://github.com/tmfilho)
+[![https://badgen.net/github/open-issues/manuelfjr/birt-gd](https://badgen.net/github/open-issues/manuelfjr/birt-gd)](https://github.com/Manuelfjr/birt-gd/issues?q=is%3Aopen+is%3Aissue)
+[![https://badgen.net/github/closed-issues/manuelfjr/birt-gd](https://badgen.net/github/closed-issues/manuelfjr/birt-gd)](https://github.com/Manuelfjr/birt-gd/issues?q=is%3Aissue+is%3Aclosed)
 
 <!-- PyPi Status
 ![PyPI - Status](https://img.shields.io/pypi/status/pandas)

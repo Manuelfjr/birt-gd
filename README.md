@@ -9,6 +9,8 @@
 [![https://badgen.net/github/open-issues/manuelfjr/birt-gd](https://badgen.net/github/open-issues/manuelfjr/birt-gd)](https://github.com/Manuelfjr/birt-gd/issues?q=is%3Aopen+is%3Aissue)
 [![https://badgen.net/github/closed-issues/manuelfjr/birt-gd](https://badgen.net/github/closed-issues/manuelfjr/birt-gd)](https://github.com/Manuelfjr/birt-gd/issues?q=is%3Aissue+is%3Aclosed)
 
+
+<a href="https://www.buymeacoffee.com/manuelfjr" target="_blank"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-5F7FFF?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" target="_blank"></a>
 <!-- PyPi Status
 ![PyPI - Status](https://img.shields.io/pypi/status/pandas)
 -->

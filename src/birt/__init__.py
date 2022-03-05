@@ -368,7 +368,6 @@ class BIRTGD:
             if (x == 'abilities' and y == 'difficulties') or (x == 'difficulties' and y == 'abilities'):
                 raise ValueError(f'the length of x is different from y.')
             
-
 def _loss(y_true, y_pred):
     """Calculate Binary Cross Entropy (loss function)
 

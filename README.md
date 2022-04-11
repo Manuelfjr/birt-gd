@@ -179,7 +179,7 @@ birt.fit(pij)
 birt.score
 ```
 ```py
-0.9038145665424927
+0.90381
 ```
 
 
@@ -208,7 +208,8 @@ birt.summary()
 birt.plot(xaxis='discrimination',
           yaxis='difficulty',
           ann=True,
-          kwargs={'color': 'red'})
+          kwargs={'color': 'red'},
+          font_size=16)
 plt.show()
 ```
 
@@ -218,7 +219,8 @@ plt.show()
 birt.plot(xaxis='difficulty',
           yaxis='average_item',
           ann=True,
-          kwargs={'color': 'blue'})
+          kwargs={'color': 'blue'},
+          font_size=16)
 plt.show()
 ```
 
@@ -228,7 +230,8 @@ plt.show()
 ```py
 birt.plot(xaxis='ability',
           yaxis='average_response',
-          ann=False)
+          ann=False,
+          font_size=16)
 plt.show()
 ```
 
@@ -238,19 +241,22 @@ plt.show()
 
 ```py
 birt.boxplot(y='abilities',
-             kwargs={'linewidth': 4})
+             kwargs={'linewidth': 4},
+             font_size=16)
 ```
 
 <img alt = "assets/ab_av_ex4.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex4.png">
 
 
 ```py
-birt.boxplot(x='difficulties')
+birt.boxplot(x='difficulties',
+             font_size=16)
 ```
 <img alt = "assets/ab_av_ex5.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex5.png">
 
 ```py
-birt.boxplot(y='discriminations')
+birt.boxplot(y='discriminations',
+             font_size=16)
 ```
 
 <img alt = "assets/ab_av_ex6.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex6.png">

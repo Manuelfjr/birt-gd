@@ -251,7 +251,7 @@ class BIRTGD:
                     '''.format(abi, dif, dis)
             print(out + hyper)
 
-    def plot(self, xaxis=None, yaxis=None, kwargs={}, ann=False):
+    def plot(self, xaxis=None, yaxis=None, kwargs={}, ann=False, font_size=12):
         """Plot's of results
             
         Parameters
@@ -264,6 +264,8 @@ class BIRTGD:
             other Matplotlib library arguments.
         ann   : boolean.
             data points with annotations
+        font_size : int.
+            font size of x and y labels
 
         Returns
         -------------------------------------------------------
@@ -307,11 +309,11 @@ class BIRTGD:
             raise ValueError(f'{xaxis} or {yaxis} doesnt exists')
         else:
             raise ValueError(f'plotting {xaxis} vs {yaxis} is impossible.')
-        plt.title(f'{xaxis} vs {yaxis}')
-        plt.xlabel(xaxis)
-        plt.ylabel(yaxis)
+        plt.title(f'{xaxis} vs {yaxis}', fontsize=font_size)
+        plt.xlabel(xaxis, fontsize=font_size)
+        plt.ylabel(yaxis, fontsize=font_size)
     
-    def boxplot(self, x=None, y=None, kwargs={}):
+    def boxplot(self, x=None, y=None, kwargs={}, font_size=12):
         """Boxplot's of results
             
         Parameters
@@ -322,6 +324,8 @@ class BIRTGD:
                 y axis of plot.
         kwargs: dict.
             other Matplotlib library arguments.
+        font_size : int.
+            font size of x and y labels
 
         Returns
         -------------------------------------------------------
@@ -333,31 +337,31 @@ class BIRTGD:
         sns.set_style('darkgrid')
         plt.figure(figsize=(13,6))
         if x == 'abilities':
-            if y ==None:
-                sns.boxplot(x=x,y=y, data=abi, **kwargs)
+            if y == None:
+                bx = sns.boxplot(x=x,y=y, data=abi, **kwargs)
             elif y == 'discriminations' or y == 'difficulties':
                 raise ValueError(f'the length of x is different from y.')
             elif y == 'abilities':
                 raise ValueError(f'both X and Y are the same')
         elif x == 'difficulties':
             if y == None or y == 'discriminations':
-                sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
+                bx = sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
             elif y == 'difficulties':
                 raise ValueError(f'both X and Y are the same')
             elif y == 'abilities':
                 raise ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
         elif x == 'discriminations':
             if y == None or y == 'difficulties':
-                sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
+                bx = sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
             elif y == 'discriminations':
                 raise ValueError(f'both X and Y are the same')
             elif y == 'abilities':
                 raise ValueError(f'the length of x is different from y. ({dif_dis.shape[0], abi.shape[0]})')
         elif x == None:
             if y == 'abilities':
-                sns.boxplot(x=x,y=y, data=abi, **kwargs)
+                bx = sns.boxplot(x=x,y=y, data=abi, **kwargs)
             elif y == 'difficulties' or y == 'discriminations':
-                sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
+                bx = sns.boxplot(x=x,y=y, data=dif_dis, **kwargs)
             elif y == 'None':
                 raise ValueError(f'both X and Y are None')
         elif y == None and (x not in ['abilities', 'difficulties', 'discriminations']):
@@ -367,7 +371,9 @@ class BIRTGD:
         elif x != None and y != None:
             if (x == 'abilities' and y == 'difficulties') or (x == 'difficulties' and y == 'abilities'):
                 raise ValueError(f'the length of x is different from y.')
-            
+        bx.set_ylabel(y,fontsize=font_size)
+        bx.set_xlabel(x,fontsize=font_size)
+             
 def _loss(y_true, y_pred):
     """Calculate Binary Cross Entropy (loss function)
 
@@ -520,28 +526,26 @@ def _split(*args):
     return Y, X, pijhat
 
 
-#m, n = 2, 150
-#t1 = np.random.beta(1,0.1,size = 1)
-#t2 = np.random.beta(1,5,size = 1)
-#d = np.random.beta(1,1,size = n)
-#a = np.random.normal(1,1,size = n)
+#m, n = 5, 20
+#np.random.seed(1)
+#abilities = [np.random.beta(1,i) for i in ([0.1, 10] + [1]*(m-2))]
+#difficulties = [np.random.beta(1,i) for i in [10, 5] + [1]*(n-2)]
+#discrimination = list(np.random.normal(1,1, size=n))
+#pij = pd.DataFrame(columns=range(m), index=range(n))
 
-#alpha_1 = (t1/d)**(a)
-#beta_1 = ((1 - t1)/(1 - d))**(a)
+#i,j = 0,0
+#for theta in abilities:
+#  for delta, a in zip(difficulties, discrimination):
+#    alphaij = (theta/delta)**(a)
+#    betaij = ((1-theta)/(1 - delta))**(a)
+#    pij.loc[j,i] = np.random.beta(alphaij, betaij, size=1)[0]
+#    j+=1
+#  j = 0
+#  i+=1
 
-#alpha_2 = (t2/d)**(a)
-#beta_2 = ((1 - t2)/(1 - d))**(a)
-
-#data = pd.DataFrame({'a': np.random.beta(alpha_1, beta_1, n), 'b': np.random.beta(alpha_2, beta_2, n)})
-#data = pd.DataFrame({'a': [0.12,0.3,0.2], 'b': [0.98,0.89,0.7899]})
-
-#ep = 5000
-#birt = BIRTGD(learning_rate=0.1, epochs=ep, n_instances=data.shape[0], n_models=data.shape[1], n_inits=1000)
-#birt.fit(data)
-#birt.summary(show = False)
-#birt.plot(xaxis='discrimination', yaxis='difficulties', kwargs={'palette': 'Greys'}, ann=True)
-#birt.plot(xaxis='difficulties', yaxis='discrimination', kwargs={'palette': 'Greys'}, ann=True)
-#birt.plot(xaxis='abilities', yaxis='average_response', kwargs={'palette': 'Greys'}, ann=True)
-#birt.plot(xaxis='difficulties', yaxis='average_item', kwargs={'palette': 'Greys'}, ann=True)
-
-#print((t1,t2), birt.abilities)
+#birt = BIRTGD(n_models=pij.shape[1],
+#             n_instances=pij.shape[0],
+#             learning_rate=1,
+#             epochs=5000,
+#             n_inits=1000)
+#birt.fit(pij)

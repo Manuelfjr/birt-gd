@@ -251,7 +251,7 @@ class BIRTGD:
                     '''.format(abi, dif, dis)
             print(out + hyper)
 
-    def plot(self, xaxis=None, yaxis=None, kwargs={}, ann=False, font_size=12):
+    def plot(self, xaxis=None, yaxis=None, kwargs={}, ann=False, font_size=12, font_ann_size=12):
         """Plot's of results
             
         Parameters
@@ -261,11 +261,13 @@ class BIRTGD:
         yaxis : {'discrimination','difficulties', 'average_response', 'average_item'}
                 y axis of plot.
         kwargs: dict.
-            other Matplotlib library arguments.
+            other Matplotlib library arguments
         ann   : boolean.
             data points with annotations
         font_size : int.
             font size of x and y labels
+        font_ann_size : int.
+            font size of ann points
 
         Returns
         -------------------------------------------------------
@@ -281,28 +283,28 @@ class BIRTGD:
             else:
                 sns.scatterplot(x=self.discriminations, y=self.difficulties, **kwargs)
                 for i in range(pij.shape[0]):
-                    plt.text(x = self.discriminations[i]+0.007, y = self.difficulties[i]+0.007, s='n{}'.format(i+1))
+                    plt.text(x = self.discriminations[i]+0.007, y = self.difficulties[i]+0.007, s='n{}'.format(i+1), fontsize=font_ann_size)
         elif (yaxis == 'discrimination') and (xaxis == 'difficulty'):
             if ann == False:
                 sns.scatterplot(x=self.difficulties, y=self.discriminations, **kwargs)
             else:
                 sns.scatterplot(x=self.difficulties, y=self.discriminations, **kwargs)
                 for i in range(pij.shape[0]):
-                    plt.text(x = self.difficulties[i]+0.007, y = self.discriminations[i]+0.007, s='n{}'.format(i+1))
+                    plt.text(x = self.difficulties[i]+0.007, y = self.discriminations[i]+0.007, s='n{}'.format(i+1), fontsize=font_ann_size)
         elif (xaxis == 'ability') and (yaxis == 'average_response'):
             if ann == False:
                 sns.scatterplot(x=self.abilities, y=pij.apply(np.mean,axis=0), **kwargs)
             else:
                 sns.scatterplot(x=self.abilities, y=pij.apply(np.mean,axis=0), **kwargs)
                 for i in range(pij.shape[1]):
-                    plt.text(x = self.abilities[i]+0.003, y =pij.apply(np.mean,axis=0)[i]+0.003, s='{}'.format(self.pij.columns[i]))
+                    plt.text(x = self.abilities[i]+0.003, y =pij.apply(np.mean,axis=0)[i]+0.003, s='{}'.format(self.pij.columns[i]), fontsize=font_ann_size)
         elif (xaxis == 'difficulty') and (yaxis == 'average_item'):
             if ann == False:
                 sns.scatterplot(x=self.difficulties, y=pij.apply(np.mean,axis=1), **kwargs)
             else:
                 sns.scatterplot(x=self.difficulties, y=pij.apply(np.mean,axis=1), **kwargs)
                 for i in range(pij.shape[0]):
-                    plt.text(x = self.difficulties[i]+0.004, y =pij.apply(np.mean,axis=1)[i]+0.004, s='n{}'.format(i+1))
+                    plt.text(x = self.difficulties[i]+0.004, y =pij.apply(np.mean,axis=1)[i]+0.004, s='n{}'.format(i+1), fontsize=font_ann_size)
         elif xaxis == yaxis:
             raise ValueError('xaxis and yaxis are the same')
         elif xaxis not in ['discrimination','difficulties','abilities'] or yaxis not in ['discrimination','difficulties', 'average_response', 'average_item']:

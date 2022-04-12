@@ -209,18 +209,16 @@ birt.plot(xaxis='discrimination',
           yaxis='difficulty',
           ann=True,
           kwargs={'color': 'red'},
-          font_size=16)
+          font_size=22,font_ann_size=15)
 plt.show()
 ```
 
 <img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/dis_diff_ex.png">
 
 ```py
-birt.plot(xaxis='difficulty',
-          yaxis='average_item',
-          ann=True,
-          kwargs={'color': 'blue'},
-          font_size=16)
+birt.plot(xaxis='difficulty', yaxis='average_item',
+          ann=True, kwargs={'color': 'blue'},
+          font_size=22,font_ann_size=17)
 plt.show()
 ```
 
@@ -228,10 +226,8 @@ plt.show()
 
 
 ```py
-birt.plot(xaxis='ability',
-          yaxis='average_response',
-          ann=False,
-          font_size=16)
+birt.plot(xaxis='ability', yaxis='average_response',
+          ann=True, font_size=16, font_ann_size=16)
 plt.show()
 ```
 

@@ -1,11 +1,11 @@
-import tensorflow as tf
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import os
 import argparse
 from DataTreat import Datasets
-from birt import BIRTGD
+from birt import Beta4, Beta3
+import time
 
 
 # Arguments
@@ -90,7 +90,8 @@ if __name__ == '__main__':
         
         n_models, n_instances = vars(args)['n_models'], vars(args)['n_instances']
         
-        irt = BIRTGD(
+        start = time.time()
+        irt = Beta4(
             learning_rate = vars(args)['learning_rate'], 
             epochs = vars(args)['epochs'],
             n_models = n_models, n_instances = n_instances,
@@ -99,8 +100,11 @@ if __name__ == '__main__':
             n_workers = vars(args)['n_workers'], 
             random_seed = random_seed[n_iter]
         )
+        irt.fit(responses)
+        done = time.time()
+        time_stamp = done - start
 
-        _thi, _delj, _aj = irt.fit(responses).get_params()
+        _thi, _delj, _aj = irt.get_params()
 
         # from IPython import embed
         # embed()
@@ -119,7 +123,8 @@ if __name__ == '__main__':
             'n_instances': vars(args)['n_instances'],
             'epochs': vars(args)['epochs'],
             'n_inits': vars(args)['n_inits'],
-            'learning_rate': vars(args)['learning_rate']
+            'learning_rate': vars(args)['learning_rate'],
+            'time_stamp': [time_stamp]
             #'batchs': vars(args)['batch_size']
             }
         

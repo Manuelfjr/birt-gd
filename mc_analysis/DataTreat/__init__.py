@@ -1,4 +1,3 @@
-import tensorflow as tf
 import pandas as pd
 import numpy as np
 from scipy.stats import pearsonr, ks_2samp, wilcoxon, ttest_ind
@@ -76,16 +75,26 @@ class Datasets:
         #self.write(param, path)
         if not os.path.exists(path_generate):
             os.makedirs(path_generate)
-        
+        a_thi = np.logical_and( param["thi"]< 0 ,  param["_thi"] > 0)
+        b_thi = np.logical_and(param["thi"] > 0,  param["_thi"] < 0)
+        a_delj = np.logical_and( param["delj"]< 0 ,  param["_delj"] > 0)
+        b_delj = np.logical_and(param["delj"] > 0,  param["_delj"] < 0)
+        a_aj = np.logical_and( param["aj"]< 0 ,  param["_aj"] > 0)
+        b_aj = np.logical_and(param["aj"] > 0,  param["_aj"] < 0)
+
+        thi_changed_sign = sum(np.logical_or(a_thi,b_thi))/self.n_models
+        delj_changed_sign = sum(np.logical_or(a_delj,b_delj))/self.n_instances
+        aj_changed_sign = sum(np.logical_or(a_aj,b_aj))/self.n_instances
+
         if kwargs['mc'] == 0:
             data = {
                 'p.value_thi.ks': [ks_2samp(param['thi'],param['_thi']).pvalue],
                 'p.value_delj.ks': [ks_2samp(param['delj'],param['_delj']).pvalue],
                 'p.value_aj.ks': [ks_2samp(param['aj'],param['_aj']).pvalue],
 
-                'p.value_thi.wilcoxon': [wilcoxon(param['thi'],param['_thi']).pvalue],
-                'p.value_delj.wilcoxon': [wilcoxon(param['delj'],param['_delj']).pvalue],
-                'p.value_aj.wilcoxon': [wilcoxon(param['aj'],param['_aj']).pvalue],
+                #'p.value_thi.wilcoxon': [wilcoxon(param['thi'],param['_thi']).pvalue],
+                #'p.value_delj.wilcoxon': [wilcoxon(param['delj'],param['_delj']).pvalue],
+                #'p.value_aj.wilcoxon': [wilcoxon(param['aj'],param['_aj']).pvalue],
                 
                 'RSE_thi': [self.RSE(param['thi'], param['_thi'])],
                 'RSE_delj': [self.RSE(param['delj'], param['_delj'])],
@@ -93,7 +102,13 @@ class Datasets:
 
                 'corr_thi_to_pred_thi': pearsonr(param['thi'],param['_thi'])[0],
                 'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj'])[0],
-                'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])[0]
+                'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])[0],
+
+                'thi_sign_changed': [thi_changed_sign],
+                'delj_sign_changed': [delj_changed_sign],
+                'aj_sign_changed': [aj_changed_sign],
+
+                'time_stamp': param['time_stamp'],
             }
             df = pd.DataFrame(data)
 
@@ -127,9 +142,9 @@ class Datasets:
                 ks_2samp(param['delj'],param['_delj']).pvalue,
                 ks_2samp(param['aj'],param['_aj']).pvalue,
 
-                wilcoxon(param['thi'],param['_thi']).pvalue,
-                wilcoxon(param['delj'],param['_delj']).pvalue,
-                wilcoxon(param['aj'],param['_aj']).pvalue,
+                #wilcoxon(param['thi'],param['_thi']).pvalue,
+                #wilcoxon(param['delj'],param['_delj']).pvalue,
+                #wilcoxon(param['aj'],param['_aj']).pvalue,
                 
                 self.RSE(param['thi'], param['_thi']),
                 self.RSE(param['delj'], param['_delj']),
@@ -137,7 +152,13 @@ class Datasets:
 
                 pearsonr(param['thi'],param['_thi'])[0],
                 pearsonr(param['delj'],param['_delj'])[0],
-                pearsonr(param['aj'],param['_aj'])[0]
+                pearsonr(param['aj'],param['_aj'])[0],
+
+                [thi_changed_sign],
+                [delj_changed_sign],
+                [aj_changed_sign],
+                
+                param['time_stamp']
             ]
 
             df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(

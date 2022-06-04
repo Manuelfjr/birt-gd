@@ -1,7 +1,7 @@
 import os
 from itertools import product 
 import warnings
-  
+from tqdm import tqdm  
 # adding a single entry into warnings filter
 warnings.simplefilter('error', UserWarning)
 
@@ -15,9 +15,8 @@ lr = [1]
 epochs = [10000]
 n_iters = [0,1000,5000,10000]
 
-#os.system('pip install birt-gd')
-for i, j in zip(m_models, n_instances):
+for i in tqdm(range(len(m_models)), desc="Iteration" ):
     for k in n_iters:
         print()
-        print('python mc.py -mc {} -l {} -e {} -m {} -i {} -t {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(i), str(j), str(k)))
-        os.system('python mc.py -mc {} -l {} -e {} -m {} -i {} -t {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(i), str(j), str(k)))
+        print('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k)))
+        os.system('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k)))

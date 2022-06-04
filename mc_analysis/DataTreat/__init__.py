@@ -75,15 +75,10 @@ class Datasets:
         #self.write(param, path)
         if not os.path.exists(path_generate):
             os.makedirs(path_generate)
-        a_thi = np.logical_and( param["thi"]< 0 ,  param["_thi"] > 0)
-        b_thi = np.logical_and(param["thi"] > 0,  param["_thi"] < 0)
-        a_delj = np.logical_and( param["delj"]< 0 ,  param["_delj"] > 0)
-        b_delj = np.logical_and(param["delj"] > 0,  param["_delj"] < 0)
-        a_aj = np.logical_and( param["aj"]< 0 ,  param["_aj"] > 0)
+
+        a_aj = np.logical_and( param["aj"] < 0 ,  param["_aj"] > 0)
         b_aj = np.logical_and(param["aj"] > 0,  param["_aj"] < 0)
 
-        thi_changed_sign = sum(np.logical_or(a_thi,b_thi))/self.n_models
-        delj_changed_sign = sum(np.logical_or(a_delj,b_delj))/self.n_instances
         aj_changed_sign = sum(np.logical_or(a_aj,b_aj))/self.n_instances
 
         if kwargs['mc'] == 0:
@@ -104,11 +99,9 @@ class Datasets:
                 'corr_delj_to_pred_delj': pearsonr(param['delj'],param['_delj'])[0],
                 'corr_aj_to_pred_aj': pearsonr(param['aj'],param['_aj'])[0],
 
-                'thi_sign_changed': [thi_changed_sign],
-                'delj_sign_changed': [delj_changed_sign],
                 'aj_sign_changed': [aj_changed_sign],
 
-                'time_stamp': param['time_stamp'],
+                'time_stamp': param['time_stamp']
             }
             df = pd.DataFrame(data)
 
@@ -154,11 +147,9 @@ class Datasets:
                 pearsonr(param['delj'],param['_delj'])[0],
                 pearsonr(param['aj'],param['_aj'])[0],
 
-                [thi_changed_sign],
-                [delj_changed_sign],
-                [aj_changed_sign],
+                aj_changed_sign,
                 
-                param['time_stamp']
+                param['time_stamp'][0]
             ]
 
             df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(

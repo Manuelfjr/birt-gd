@@ -15,8 +15,9 @@ lr = [1]
 epochs = [10000]
 n_iters = [0,1000,5000,10000]
 
-for i in tqdm(range(len(m_models)), desc="Iteration" ):
-    for k in n_iters:
-        print()
-        print('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k)))
-        os.system('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k)))
+for model in tqdm(['beta3','beta3fixed']):
+    for i in tqdm(range(len(m_models)), desc="Iteration" ):
+        for k in n_iters:
+            print()
+            print('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {} -b {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k),model))
+            os.system('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {} -b'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k),model))

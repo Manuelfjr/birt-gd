@@ -1,7 +1,6 @@
 #install.packages('nptest')
 library('nptest')
 
-
 # Datasets ###############
 lista = list(
 generate_data_mc100_m50_i300_e10000_t1000_lr1.0,
@@ -52,3 +51,28 @@ for (j in 1:6){
   }
   print('')
 }
+# P - mu ##############
+set.seed(2022)
+names_new = c('aj_sign_changed','time_stamp')
+
+for (j in 1:6){
+  print(names_bd[j])
+  for (i in 1:2){
+    print(names_new[i])
+    data = as.data.frame(lista[[j]])
+    #print(lista[[j]])
+    values = lista[[j]][,names_new[i]]
+
+    npbs.media <- np.boot(x = values, statistic = mean)
+    if(names_new[i] == 'aj_sign_changed'){
+      ics.bca = round(npbs.media$bca*100,4)
+    }else{
+      ics.bca = round(npbs.media$bca,4) 
+      }
+    print(paste('Parametro:',names[i]))
+    print(ics.bca[2,])
+    print(mean(values))
+  }
+  print('')
+}
+

@@ -15,7 +15,11 @@ def parse_arguments():
     parser.add_argument('-s', '--scale', dest='scale',
                         type=float,
                         default=1,
-                        help= '''Scale to generate dataset.''')  
+                        help= '''Scale to generate dataset.''')
+    parser.add_argument('-b', '--beta', dest='beta',
+                        type=str,
+                        default="beta4",
+                        help= '''Which beta.''')
     parser.add_argument('-mc', '--mc_interations', dest='mc_interations',
                         type=int,
                         default=1,
@@ -91,15 +95,36 @@ if __name__ == '__main__':
         n_models, n_instances = vars(args)['n_models'], vars(args)['n_instances']
         
         start = time.time()
-        irt = Beta4(
-            learning_rate = vars(args)['learning_rate'], 
-            epochs = vars(args)['epochs'],
-            n_models = n_models, n_instances = n_instances,
-            #batch_size = vars(args)['batch_size'], 
-            n_inits = vars(args)['n_inits'], 
-            n_workers = vars(args)['n_workers'], 
-            random_seed = random_seed[n_iter]
-        )
+        if vars(args)['beta'] == 'beta4':
+            irt = Beta4(
+                learning_rate = vars(args)['learning_rate'], 
+                epochs = vars(args)['epochs'],
+                n_models = n_models, n_instances = n_instances,
+                #batch_size = vars(args)['batch_size'], 
+                n_inits = vars(args)['n_inits'], 
+                n_workers = vars(args)['n_workers'], 
+                random_seed = random_seed[n_iter]
+            )
+        elif vars(args)['beta' == 'beta3']:
+            irt = Beta3(
+                learning_rate = vars(args)['learning_rate'], 
+                epochs = vars(args)['epochs'],
+                n_models = n_models, n_instances = n_instances,
+                #batch_size = vars(args)['batch_size'], 
+                n_inits = vars(args)['n_inits'], 
+                n_workers = vars(args)['n_workers'], 
+                random_seed = random_seed[n_iter]
+            )
+        elif (vars(args)['beta']=='beta3')and(vars(args)['n_inits']==0):
+            irt = Beta3(
+                learning_rate = vars(args)['learning_rate'], 
+                epochs = vars(args)['epochs'],
+                n_models = n_models, n_instances = n_instances,
+                #batch_size = vars(args)['batch_size'], 
+                n_inits = vars(args)['n_inits'], 
+                n_workers = vars(args)['n_workers'], 
+                random_seed = random_seed[n_iter]
+            )
         irt.fit(responses)
         done = time.time()
         time_stamp = done - start
@@ -124,7 +149,8 @@ if __name__ == '__main__':
             'epochs': vars(args)['epochs'],
             'n_inits': vars(args)['n_inits'],
             'learning_rate': vars(args)['learning_rate'],
-            'time_stamp': [time_stamp]
+            'time_stamp': [time_stamp],
+            'model': vars(args)['model']
             #'batchs': vars(args)['batch_size']
             }
         

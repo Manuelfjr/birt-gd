@@ -71,7 +71,7 @@ class Datasets:
     	return sum( (y_pred - y_true)**(2) )/sum( (y_true - np.mean(y_true))**(2) )
     	
     def mc_write(self, param, path, **kwargs):
-        path_generate = path
+        path_generate = os.path.join(path,param['model'])
         #self.write(param, path)
         if not os.path.exists(path_generate):
             os.makedirs(path_generate)
@@ -117,17 +117,17 @@ class Datasets:
             #     }
             # )
 
-            df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
+            df.to_csv(os.path.join(path_generate,'generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
                 param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
                 param['n_inits'], param['learning_rate']
-                )
+                ))
                 )
             #df_infs.to_csv( path_generate + '/generate_data_mc_{}_infs.csv'.format(param['mc_iterations']) )
         else:
-            df = pd.read_csv(path_generate + '/generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
+            df = pd.read_csv(os.path.join(path_generate,'generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
                 param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
                 param['n_inits'], param['learning_rate']
-                ),
+                )),
                 index_col=0)
 
             df.loc[ kwargs['mc'] ] = [
@@ -152,8 +152,8 @@ class Datasets:
                 param['time_stamp'][0]
             ]
 
-            df.to_csv(path_generate + '/generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
+            df.to_csv(os.path.join(path_generate,'generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
                 param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
                 param['n_inits'], param['learning_rate']
-                )
+                ))
                 )

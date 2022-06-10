@@ -57,6 +57,10 @@ def parse_arguments():
                         type=int,
                         default=-1,
                         help= '''Number of cpu workers.''')  
+    parser.add_argument('-p', '--path', dest='path',
+                        type=str,
+                        default="mc_results",
+                        help= '''Name of path of results.''')  
 
     return parser.parse_args()
 
@@ -64,7 +68,7 @@ if __name__ == '__main__':
     args = parse_arguments()
     mc = vars(args)['mc_interations']
 
-    MC_PATH = 'mc_results'
+    MC_PATH = vars(args)["path"]
 
     if vars(args)['random_seed'] == -1:
         #random_seed = list(np.random.randint(low=0, high=( (2)**(32) - 1 ), size=mc))

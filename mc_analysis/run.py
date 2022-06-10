@@ -26,7 +26,10 @@ if __name__ == '__main__':
 
     m_models = vars(args)['n_models']
     n_instances = vars(args)['n_instances']
-
+    
+    if (len(m_models) == 1)and(len(n_instances) == 1):
+        MC_PATH = "mc_i{}_m{}_results".format(n_instances[0],m_models[0])
+    
     mc = [100]
 
     lr = [1]
@@ -37,5 +40,5 @@ if __name__ == '__main__':
         for i in tqdm(range(len(m_models)), desc="Iteration" ):
             for k in n_iters:
                 print() 
-                print('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {} -b {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k),str(model)))
-                os.system('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {} -b {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k),str(model)))
+                print('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {} -b {} -p {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k),str(model), MC_PATH))
+                os.system('python3 mc.py -mc {} -l {} -e {} -m {} -i {} -t {} -b {} -p {}'.format(str(mc[0]),str(lr[0]), str(epochs[0]), str(m_models[i]), str(n_instances[i]), str(k),str(model), MC_PATH))

@@ -105,7 +105,7 @@ if __name__ == '__main__':
                 n_workers = vars(args)['n_workers'], 
                 random_seed = random_seed[n_iter]
             )
-        elif vars(args)['beta' == 'beta3']:
+        elif vars(args)['beta'] == 'beta3':
             irt = Beta3(
                 learning_rate = vars(args)['learning_rate'], 
                 epochs = vars(args)['epochs'],
@@ -115,13 +115,13 @@ if __name__ == '__main__':
                 n_workers = vars(args)['n_workers'], 
                 random_seed = random_seed[n_iter]
             )
-        elif (vars(args)['beta']=='beta3')and(vars(args)['n_inits']==0):
+        elif (vars(args)['beta']=='beta3fixed'):
             irt = Beta3(
                 learning_rate = vars(args)['learning_rate'], 
                 epochs = vars(args)['epochs'],
                 n_models = n_models, n_instances = n_instances,
                 #batch_size = vars(args)['batch_size'], 
-                n_inits = vars(args)['n_inits'], 
+                n_inits = 0, 
                 n_workers = vars(args)['n_workers'], 
                 random_seed = random_seed[n_iter]
             )
@@ -150,7 +150,7 @@ if __name__ == '__main__':
             'n_inits': vars(args)['n_inits'],
             'learning_rate': vars(args)['learning_rate'],
             'time_stamp': [time_stamp],
-            'model': vars(args)['model']
+            'model': vars(args)['beta']
             #'batchs': vars(args)['batch_size']
             }
         

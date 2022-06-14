@@ -4,6 +4,7 @@ import tensorflow as tf
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -831,5 +832,5 @@ def _loss(y_true, y_pred):
 #             n_instances=pij.shape[0],
 #             learning_rate=1,
 #             epochs=10000,
-#             n_inits=1000)
+#             n_inits=10000)
 #birt.fit(pij)

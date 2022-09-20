@@ -4,6 +4,7 @@ import tensorflow as tf
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+from sklearn.exceptions import ConvergenceWarning
 
 import seaborn as sns
 import pandas as pd
@@ -311,13 +312,13 @@ class _irt(object):
         Parameters
         -------------------------------------------------------
         args : tuple containing 
-                (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits)
+                (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol)
 
         Returns
         -------------------------------------------------------
         self
         """
-        (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits) = args
+        (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol) = args
 
         np.random.seed(random_seed)
         tf.random.set_seed(
@@ -350,6 +351,7 @@ class _irt(object):
         )
         
         t = 0
+        self.current_loss = 0
         for _ in tqdm(range(epochs)):
             if t < n_inits:
                 variables = [
@@ -367,11 +369,16 @@ class _irt(object):
             with tf.GradientTape() as g:
                 g.watch(variables)
                 pred = self.irt_four(thi = thi, delj = delj, aj = aj, bj = bj)
-
-                current_loss = _loss(
+                old_loss = self.current_loss
+                self.current_loss = _loss(
                     X, pred
                 )
-            gradients = g.gradient(current_loss, variables)
+
+            if np.abs(old_loss - self.current_loss) < tol:
+                print(f'Model converged at the {t}th epoch')
+                break
+
+            gradients = g.gradient(self.current_loss, variables)
             if t < n_inits:
                 _thi, _delj = gradients
             else:
@@ -426,13 +433,13 @@ class _irt(object):
         Parameters
         -------------------------------------------------------
         args : tuple containing 
-                (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits)
+                (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol)
 
         Returns
         -------------------------------------------------------
         self
         """
-        (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits) = args
+        (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol) = args
 
         np.random.seed(random_seed)
         tf.random.set_seed(
@@ -466,6 +473,7 @@ class _irt(object):
             )
         
         t = 0
+        self.current_loss = 0 
         for _ in tqdm(range(epochs)):
             if t < n_inits:
                 variables = [
@@ -482,12 +490,16 @@ class _irt(object):
             with tf.GradientTape() as g:
                 g.watch(variables)
                 pred = self.irt_three(thi = thi, delj = delj, aj = aj)
-
-                current_loss = _loss(
+                old_loss = self.current_loss
+                self.current_loss = _loss(
                     X, pred
                 )
 
-            gradients = g.gradient(current_loss, variables)
+            if np.abs(old_loss - self.current_loss) < tol:
+                print(f'Model converged at the {t}th epoch')
+                break
+
+            gradients = g.gradient(self.current_loss, variables)
             if t < n_inits:
                 _thi, _delj = gradients
             else:
@@ -583,8 +595,10 @@ class Beta4(_viz,_irt):
         
     n_workers : int, default=-1
         Determines the number of CPUs to use.
-
     
+    tol : float, default=10**(-5)
+        Tolerance to converge epochs.
+
     Attributes
     -------------------------------------------------------
     self.abilities : ResourceVariable of shape (n_models,)
@@ -621,7 +635,8 @@ class Beta4(_viz,_irt):
         epochs=10000, n_models=20, 
         n_instances=100,
         n_inits=1000, n_workers=-1,
-        random_seed=1
+        random_seed=1,
+        tol=10**(-5)
     ):
         self.lr = learning_rate
         self.epochs = epochs
@@ -630,6 +645,7 @@ class Beta4(_viz,_irt):
         self.n_seed = random_seed
         self.n_inits = n_inits
         self.n_workers = n_workers
+        self.tol = tol
         self._params = {
             'learning_rate': learning_rate,
             'epochs': epochs,
@@ -657,7 +673,7 @@ class Beta4(_viz,_irt):
             queue, X, self.n_models, 
             self.n_instances,
             self.epochs, self.lr, self.n_seed, 
-            self.n_inits
+            self.n_inits, self.tol
         )
 
         p = Process(target=super().fit_four, args=list(args))
@@ -703,6 +719,8 @@ class Beta3(_viz,_irt):
     n_workers : int, default=-1
         Determines the number of CPUs to use.
 
+    tol : float, default=10**(-5)
+        Tolerance to converge epochs.
     
     Attributes
     -------------------------------------------------------
@@ -740,7 +758,7 @@ class Beta3(_viz,_irt):
         epochs=10000, n_models=20, 
         n_instances=100,
         n_inits=1000, n_workers=-1,
-        random_seed=1
+        random_seed=1, tol=10**(-5)
     ):
         self.lr = learning_rate
         self.epochs = epochs
@@ -749,6 +767,7 @@ class Beta3(_viz,_irt):
         self.n_seed = random_seed
         self.n_inits = n_inits
         self.n_workers = n_workers
+        self.tol = tol
         self._params = {
             'learning_rate': learning_rate,
             'epochs': epochs,
@@ -776,7 +795,7 @@ class Beta3(_viz,_irt):
             queue, X, self.n_models, 
             self.n_instances,
             self.epochs, self.lr, self.n_seed, 
-            self.n_inits
+            self.n_inits, self.tol
         )
 
         p = Process(target=super().fit_three, args=list(args))

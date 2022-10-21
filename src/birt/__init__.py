@@ -1,6 +1,7 @@
 from multiprocessing import Process, Queue, Value
 
 import tensorflow as tf
+#import tensorflow_probability as tfp
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
@@ -9,6 +10,7 @@ from sklearn.exceptions import ConvergenceWarning
 import seaborn as sns
 import pandas as pd
 import numpy as np
+
 
 class _viz:
     def __init__(self, abi, dif, dis):
@@ -30,11 +32,9 @@ class _viz:
 
     def get_params(self):
         """Get parameters
-
         Parameters
         -------------------------------------------------------
         self : self objetc
-
         Returns
         -------------------------------------------------------
         tuple of (abilities, difficulties, discrimination).
@@ -43,18 +43,14 @@ class _viz:
     
     def irt(self, abilities, difficulties, discriminations):
         """calculating a probability (i) deduction from (j)
-
         Parameters
         -------------------------------------------------------
         abilities : 
                 Optimized ability estimation by gradient descent
-
         difficulties : 
                 Optimized difficulties estimation by gradient descent
-
         discriminations : 
                 Optimized discriminations estimation by gradient descent
-
         Returns
         -------------------------------------------------------
         Calculate E[pij | abilities, difficulties, discriminations]
@@ -70,7 +66,6 @@ class _viz:
         -------------------------------------------------------
         X : 
             None
-
         Returns
         -------------------------------------------------------
         return 
@@ -95,13 +90,10 @@ class _viz:
         Parameters
         -------------------------------------------------------
         self.
-
         X : array.
             Contains pij adjusted.
-
         Y : array.
             Contains pij real.
-
         Returns
         -------------------------------------------------------
             Calculate the Pseudo-R2 based a OLS model.
@@ -117,10 +109,8 @@ class _viz:
         Parameters
         -------------------------------------------------------
         self.
-
         show : boolean.
             Show hyperparams (abilities, difficulties and discrimination).
-
         Returns
         -------------------------------------------------------
             print summarize of the hyperparams and p_ij.
@@ -168,7 +158,6 @@ class _viz:
             font size of x and y labels
         font_ann_size : int.
             font size of ann points
-
         Returns
         -------------------------------------------------------
             Scatterplot of xaxis vs yaxis.
@@ -227,7 +216,6 @@ class _viz:
             other Matplotlib library arguments.
         font_size : int.
             font size of x and y labels
-
         Returns
         -------------------------------------------------------
             Boxplot of x axis vs y axis.
@@ -275,29 +263,29 @@ class _viz:
         bx.set_xlabel(x,fontsize=font_size)
 
 class _irt(object):
-    def irt_four(self, thi, delj, aj, bj):
+    def irt_four(self, thi, delj, aj, bj, set_priors=True):
         """Calculating a probability (i) deduction from (j) using Beta4-IRT
-
         Parameters
         -------------------------------------------------------
         thi : 
                 Parameter to be estimated from the abilitie for Beta4-IRT
-
         delj : 
                 Parameter to be estimated from the difficulty for Beta4-IRT
-
         aj : 
                 Other parameter of discrimination to be estimated to Beta4-IRT.
-
         bj : 
                 Other parameter of discrimination to be estimated to Beta4-IRT.
-
         Returns
         -------------------------------------------------------
         Calculate E[pij | abilities, difficulties, discrimination = aj * bj]
         """
         sig_thi, sig_delj = tf.math.sigmoid(thi), tf.math.sigmoid(delj)
-        tanh_bj, soft_aj = tf.math.tanh(bj), tf.math.softplus(aj)
+        soft_aj = tf.math.softplus(aj)
+
+        if set_priors==True:
+            tanh_bj = bj
+        else:
+            tanh_bj = tf.math.tanh(bj)
 
         term1 = sig_delj / (1 - sig_delj)
         term2 = (1 - sig_thi) / sig_thi
@@ -308,12 +296,10 @@ class _irt(object):
 
     def fit_four(self, *args):
         """Train BIRT with Gradient Descent
-
         Parameters
         -------------------------------------------------------
         args : tuple containing 
                 (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol)
-
         Returns
         -------------------------------------------------------
         self
@@ -368,12 +354,12 @@ class _irt(object):
             
             with tf.GradientTape() as g:
                 g.watch(variables)
-                pred = self.irt_four(thi = thi, delj = delj, aj = aj, bj = bj)
+                pred = self.irt_four(thi = thi, delj = delj, aj = aj, bj = bj, set_priors=False)
                 old_loss = self.current_loss
                 self.current_loss = _loss(
                     X, pred
                 )
-
+                
             if np.abs(old_loss - self.current_loss) < tol:
                 print(f'Model converged at the {t}th epoch')
                 break
@@ -399,20 +385,115 @@ class _irt(object):
 
         queue.put(parameters)
 
+    def fit_priors(self, *args):
+        """Train BIRT with Gradient Descent
+        Parameters
+        -------------------------------------------------------
+        args : tuple containing 
+                (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol)
+        Returns
+        -------------------------------------------------------
+        self
+        """
+        (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol) = args
+
+        np.random.seed(random_seed)
+        tf.random.set_seed(
+            random_seed
+        )
+
+        abil = np.mean(X, axis=0)
+        thi = tf.Variable(
+            np.log(-abil / (abil - 1)).reshape((1, n_models)),
+            # np.random.normal(0,1, size=(1, n_models)), 
+            trainable=True, dtype=tf.float32
+        )
+
+        diff = 1 - np.mean(X, axis=1)        
+        delj = tf.Variable(
+            np.log(-diff / (diff - 1)).reshape((n_instances, 1)),
+            # np.random.normal(0,1, size=(n_instances, 1)), 
+            trainable=True, dtype=tf.float32
+        )
+        
+        cor = np.zeros((n_instances, 1))
+        for i in range(len(X)):
+            p_i = self.pij[i]#P[i]
+            cor[i, 0] = np.corrcoef(abil, p_i)[0,1]       
+        
+        bj = tf.Variable(
+            np.log((-cor - 1) / (cor - 1)) / 2, 
+            trainable=False, dtype=tf.float32
+        )
+        
+        aj = tf.Variable(   
+            # np.random.normal(0, 1, size=(n_instances, 1)), 
+            np.log(np.exp(np.ones((n_instances, 1))) - 1),
+            trainable=True, dtype=tf.float32
+        )
+
+        X = tf.constant(
+            X, dtype=tf.float32
+        )
+        
+        t = 0
+        self.current_loss = 0
+        for _ in tqdm(range(epochs)):
+            if t < n_inits:
+                variables = [
+                    thi,
+                    delj
+                ]
+            else: 
+                variables = [
+                    thi,
+                    delj,
+                    aj
+                ]
+            
+            with tf.GradientTape() as g:
+                g.watch(variables)
+                pred = self.irt_four(thi = thi, delj = delj, aj = aj, bj = bj)
+                old_loss = self.current_loss
+                self.current_loss = _loss(
+                    X, pred
+                )
+
+            if np.abs(old_loss - self.current_loss) < tol:
+                print(f'Model converged at the {t}th epoch')
+                break
+
+            gradients = g.gradient(self.current_loss, variables)
+            if t < n_inits:
+                _thi, _delj = gradients
+            else:
+                _thi, _delj, _aj = gradients
+                aj.assign_sub(tf.math.scalar_mul(lr, _aj))
+                # bj.assign_sub(tf.math.scalar_mul(lr, _bj))
+            thi.assign_sub(tf.math.scalar_mul(lr, _thi))
+            delj.assign_sub(tf.math.scalar_mul(lr, _delj))
+
+            t += 1
+        
+        abilities = tf.math.sigmoid(thi).numpy().flatten()
+        difficulties = tf.math.sigmoid(delj).numpy().flatten()
+        discriminations = tf.math.tanh(bj) * tf.math.softplus(aj)
+        discriminations = discriminations.numpy().flatten()
+
+        parameters = (abilities, difficulties, discriminations)
+
+        queue.put(parameters)
+
     def irt_three(self, thi, delj, aj):
         """Calculating a probability (i) deduction from (j) using Beta3-IRT
-
         Parameters
         -------------------------------------------------------
         thi : 
                 Parameter to be estimated from the abilitie for Beta3-IRT
-
         delj : 
                 Parameter to be estimated from the difficulty for Beta3-IRT
-
         aj : 
                 Other parameter of discrimination to be estimated to Beta3-IRT.
-
         Returns
         -------------------------------------------------------
         Calculate E[pij | abilities, difficulties, discrimination = aj * bj]
@@ -429,12 +510,10 @@ class _irt(object):
 
     def fit_three(self, *args):
         """Train with Gradient Descent
-
         Parameters
         -------------------------------------------------------
         args : tuple containing 
                 (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol)
-
         Returns
         -------------------------------------------------------
         self
@@ -446,9 +525,8 @@ class _irt(object):
             random_seed
         )
 
-        X = tf.Variable(
-            X, 
-            trainable=False, dtype=tf.float32
+        X = tf.constant(
+            X
         )
 
         thi = tf.Variable(
@@ -521,18 +599,14 @@ class _irt(object):
 
     def irt(self, abilities, difficulties, discriminations):
         """calculating a probability (i) deduction from (j)
-
         Parameters
         -------------------------------------------------------
         abilities : 
                 Optimized ability estimation by gradient descent
-
         difficulties : 
                 Optimized difficulties estimation by gradient descent
-
         discriminations : 
                 Optimized discriminations estimation by gradient descent
-
         Returns
         -------------------------------------------------------
         Calculate E[pij | abilities, difficulties, discriminations]
@@ -548,7 +622,6 @@ class _irt(object):
         -------------------------------------------------------
         X : 
             None
-
         Returns
         -------------------------------------------------------
         return 
@@ -569,24 +642,17 @@ class _irt(object):
 
 class Beta4(_viz,_irt):
     """Beta4-IRT with Gradient descent.
-
     Read more in the https://github.com/Manuelfjr/BIRTGD .
-
     Parameters:
     -------------------------------------------------------
-
     learning_rate : float, default=0.1
         It's a learning rate to Gradient descent.
-
     epochs : int, default=20
         Numbers of epochs to fit the model.
-
     n_models : int, default=20
         Numbers of models to be evaluated.
-
     n_instances : int, default=100
         Numbers of instances to fit the models.
-
     random_seed : int, default=1
         Determines a random state to generation initial kicks.
         
@@ -598,7 +664,6 @@ class Beta4(_viz,_irt):
     
     tol : float, default=10**(-5)
         Tolerance to converge epochs.
-
     Attributes
     -------------------------------------------------------
     self.abilities : ResourceVariable of shape (n_models,)
@@ -606,15 +671,10 @@ class Beta4(_viz,_irt):
     
     self.difficulties : ResourceVariable of shape (n_instances,)
         It is the optimized estimate for the difficulties parameter.
-
     self.discriminations : ResourceVariable of shape (n_instances,)
         It is the optimized estimate for the discrimination parameter.
-
-
     Notes
     -------------------------------------------------------
-
-
     Example
     -------------------------------------------------------
     >>> from birt import BIRTGD
@@ -636,7 +696,8 @@ class Beta4(_viz,_irt):
         n_instances=100,
         n_inits=1000, n_workers=-1,
         random_seed=1,
-        tol=10**(-5)
+        tol=10**(-5),
+        set_priors=True
     ):
         self.lr = learning_rate
         self.epochs = epochs
@@ -646,6 +707,7 @@ class Beta4(_viz,_irt):
         self.n_inits = n_inits
         self.n_workers = n_workers
         self.tol = tol
+        self.set_priors = set_priors
         self._params = {
             'learning_rate': learning_rate,
             'epochs': epochs,
@@ -660,7 +722,6 @@ class Beta4(_viz,_irt):
         -------------------------------------------------------
         X : list, array or tensor of shape (n_instances,n_models)
             
-
         Returns
         -------------------------------------------------------
         self
@@ -676,7 +737,10 @@ class Beta4(_viz,_irt):
             self.n_inits, self.tol
         )
 
-        p = Process(target=super().fit_four, args=list(args))
+        if self.set_priors:
+            p = Process(target=super().fit_priors, args=list(args))
+        else:
+            p = Process(target=super().fit_four, args=list(args))
         p.start()
         abi, dif, dis = queue.get()
         p.join()
@@ -689,27 +753,21 @@ class Beta4(_viz,_irt):
         X, Y, self.pijhat = self._split(self.pij, super().predict(), (len(self.discriminations), len(self.abilities)))
         self.score(X, Y)
         return self
-    
+
+
 class Beta3(_viz,_irt):
     """Beta3-IRT with Gradient descent.
-
     Read more in the https://github.com/Manuelfjr/BIRTGD .
-
     Parameters:
     -------------------------------------------------------
-
     learning_rate : float, default=0.1
         It's a learning rate to Gradient descent.
-
     epochs : int, default=20
         Numbers of epochs to fit the model.
-
     n_models : int, default=20
         Numbers of models to be evaluated.
-
     n_instances : int, default=100
         Numbers of instances to fit the models.
-
     random_seed : int, default=1
         Determines a random state to generation initial kicks.
         
@@ -718,7 +776,6 @@ class Beta3(_viz,_irt):
         
     n_workers : int, default=-1
         Determines the number of CPUs to use.
-
     tol : float, default=10**(-5)
         Tolerance to converge epochs.
     
@@ -729,15 +786,10 @@ class Beta3(_viz,_irt):
     
     self.difficulties : ResourceVariable of shape (n_instances,)
         It is the optimized estimate for the difficulties parameter.
-
     self.discriminations : ResourceVariable of shape (n_instances,)
         It is the optimized estimate for the discrimination parameter.
-
-
     Notes
     -------------------------------------------------------
-
-
     Example
     -------------------------------------------------------
     >>> from birt import BTHREE
@@ -782,7 +834,6 @@ class Beta3(_viz,_irt):
         -------------------------------------------------------
         X : list, array or tensor of shape (n_instances,n_models)
             
-
         Returns
         -------------------------------------------------------
         self
@@ -814,15 +865,12 @@ class Beta3(_viz,_irt):
  
 def _loss(y_true, y_pred):
     """Calculate Binary Cross Entropy (loss function)
-
     Parameters
     -------------------------------------------------------
     y_true : tf.Tensor 
             Real valued Tensor containing the ground truth
-
     y_pred : tf.Tensor
             Real valued Tensor containing predictions
-
     Returns 
     -------------------------------------------------------
     EagerTensor with loss functions value
@@ -830,26 +878,34 @@ def _loss(y_true, y_pred):
     loss = tf.keras.losses.BinaryCrossentropy()
     return loss(y_true, y_pred)
 
-#m, n = 5, 20
-#np.random.seed(1)
-#abilities = [np.random.beta(1,i) for i in ([0.1, 10] + [1]*(m-2))]
-#difficulties = [np.random.beta(1,i) for i in [10, 5] + [1]*(n-2)]
-#discrimination = list(np.random.normal(1,1, size=n))
-#pij = pd.DataFrame(columns=range(m), index=range(n))
 
-#i,j = 0,0
-#for theta in abilities:
-#  for delta, a in zip(difficulties, discrimination):
-#    alphaij = (theta/delta)**(a)
-#    betaij = ((1-theta)/(1 - delta))**(a)
-#    pij.loc[j,i] = np.random.beta(alphaij, betaij, size=1)[0]
-#    j+=1
-#  j = 0
-#  i+=1
+# m, n = 5, 20
+# np.random.seed(1)
+# abilities = [np.random.beta(1,i) for i in ([0.1, 10] + [1]*(m-2))]
+# difficulties = [np.random.beta(1,i) for i in [10, 5] + [1]*(n-2)]
+# discrimination = list(np.random.normal(1,1, size=n))
+# pij = pd.DataFrame(columns=range(m), index=range(n))
 
-#birt = Beta4(n_models=pij.shape[1],
-#             n_instances=pij.shape[0],
-#             learning_rate=1,
-#             epochs=10000,
-#             n_inits=10000)
-#birt.fit(pij)
+# i,j = 0,0
+# for theta in abilities:
+#   for delta, a in zip(difficulties, discrimination):
+#     alphaij = (theta/delta)**(a)
+#     betaij = ((1-theta)/(1 - delta))**(a)
+#     pij.loc[j,i] = np.random.beta(alphaij, betaij, size=1)[0]
+#     j+=1
+#   j = 0
+#   i+=1
+
+# b4 = Beta4(
+#         learning_rate=1, 
+#         epochs=5000,
+#         n_models=pij.shape[1], 
+#         n_instances=pij.shape[0],
+#         n_inits=1000, 
+#         n_workers=-1,
+#         random_seed=1,
+#         tol=10**(-8),
+#         set_priors=False
+#     )
+
+# b4.fit(pij.values)

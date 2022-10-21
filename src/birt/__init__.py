@@ -299,12 +299,12 @@ class _irt(object):
         Parameters
         -------------------------------------------------------
         args : tuple containing 
-                (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol)
+                (queue, X, n_respondents, n_items, epochs, lr, random_seed, n_inits, tol)
         Returns
         -------------------------------------------------------
         self
         """
-        (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol) = args
+        (queue, X, n_respondents, n_items, epochs, lr, random_seed, n_inits, tol) = args
 
         np.random.seed(random_seed)
         tf.random.set_seed(
@@ -317,22 +317,22 @@ class _irt(object):
         )
 
         thi = tf.Variable(
-            np.random.normal(0,1, size=(1, n_models)), 
+            np.random.normal(0,1, size=(1, n_respondents)), 
             trainable=True, dtype=tf.float32
         )
         
         delj = tf.Variable(
-            np.random.normal(0,1, size=(n_instances, 1)), 
+            np.random.normal(0,1, size=(n_items, 1)), 
             trainable=True, dtype=tf.float32
         )
         
         bj = tf.Variable(
-            np.ones((n_instances, 1)) * 0.5096851, 
+            np.ones((n_items, 1)) * 0.5096851, 
             trainable=True, dtype=tf.float32
         )
 
         aj = tf.Variable(   
-            np.ones((n_instances, 1)) * 2.002374, 
+            np.ones((n_items, 1)) * 2.002374, 
             trainable=True, dtype=tf.float32
         )
         
@@ -390,12 +390,12 @@ class _irt(object):
         Parameters
         -------------------------------------------------------
         args : tuple containing 
-                (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol)
+                (queue, X, n_respondents, n_items, epochs, lr, random_seed, n_inits, tol)
         Returns
         -------------------------------------------------------
         self
         """
-        (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol) = args
+        (queue, X, n_respondents, n_items, epochs, lr, random_seed, n_inits, tol) = args
 
         np.random.seed(random_seed)
         tf.random.set_seed(
@@ -404,19 +404,19 @@ class _irt(object):
 
         abil = np.mean(X, axis=0)
         thi = tf.Variable(
-            np.log(-abil / (abil - 1)).reshape((1, n_models)),
-            # np.random.normal(0,1, size=(1, n_models)), 
+            np.log(-abil / (abil - 1)).reshape((1, n_respondents)),
+            # np.random.normal(0,1, size=(1, n_respondents)), 
             trainable=True, dtype=tf.float32
         )
 
         diff = 1 - np.mean(X, axis=1)        
         delj = tf.Variable(
-            np.log(-diff / (diff - 1)).reshape((n_instances, 1)),
-            # np.random.normal(0,1, size=(n_instances, 1)), 
+            np.log(-diff / (diff - 1)).reshape((n_items, 1)),
+            # np.random.normal(0,1, size=(n_items, 1)), 
             trainable=True, dtype=tf.float32
         )
         
-        cor = np.zeros((n_instances, 1))
+        cor = np.zeros((n_items, 1))
         for i in range(len(X)):
             p_i = self.pij[i]#P[i]
             cor[i, 0] = np.corrcoef(abil, p_i)[0,1]       
@@ -427,8 +427,8 @@ class _irt(object):
         )
         
         aj = tf.Variable(   
-            # np.random.normal(0, 1, size=(n_instances, 1)), 
-            np.log(np.exp(np.ones((n_instances, 1))) - 1),
+            # np.random.normal(0, 1, size=(n_items, 1)), 
+            np.log(np.exp(np.ones((n_items, 1))) - 1),
             trainable=True, dtype=tf.float32
         )
 
@@ -513,12 +513,12 @@ class _irt(object):
         Parameters
         -------------------------------------------------------
         args : tuple containing 
-                (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol)
+                (queue, X, n_respondents, n_items, epochs, lr, random_seed, n_inits, tol)
         Returns
         -------------------------------------------------------
         self
         """
-        (queue, X, n_models, n_instances, epochs, lr, random_seed, n_inits, tol) = args
+        (queue, X, n_respondents, n_items, epochs, lr, random_seed, n_inits, tol) = args
 
         np.random.seed(random_seed)
         tf.random.set_seed(
@@ -530,23 +530,23 @@ class _irt(object):
         )
 
         thi = tf.Variable(
-            np.random.normal(0,1, size=(1, n_models)), 
+            np.random.normal(0,1, size=(1, n_respondents)), 
             trainable=True, dtype=tf.float32
         )
         
         delj = tf.Variable(
-            np.random.normal(0,1, size=(n_instances, 1)), 
+            np.random.normal(0,1, size=(n_items, 1)), 
             trainable=True, dtype=tf.float32
         )
         
         if n_inits == 0:
             aj = tf.Variable(   
-                np.random.normal(1,1, size=(n_instances, 1)), 
+                np.random.normal(1,1, size=(n_items, 1)), 
                 trainable=True, dtype=tf.float32
             )
         else:
             aj = tf.Variable(   
-                np.ones((n_instances, 1)), 
+                np.ones((n_items, 1)), 
                 trainable=True, dtype=tf.float32
             )
         
@@ -649,9 +649,9 @@ class Beta4(_viz,_irt):
         It's a learning rate to Gradient descent.
     epochs : int, default=20
         Numbers of epochs to fit the model.
-    n_models : int, default=20
+    n_respondents : int, default=20
         Numbers of models to be evaluated.
-    n_instances : int, default=100
+    n_items : int, default=100
         Numbers of instances to fit the models.
     random_seed : int, default=1
         Determines a random state to generation initial kicks.
@@ -666,12 +666,12 @@ class Beta4(_viz,_irt):
         Tolerance to converge epochs.
     Attributes
     -------------------------------------------------------
-    self.abilities : ResourceVariable of shape (n_models,)
+    self.abilities : ResourceVariable of shape (n_respondents,)
         It is the optimized estimate for the abilitie parameter.
     
-    self.difficulties : ResourceVariable of shape (n_instances,)
+    self.difficulties : ResourceVariable of shape (n_items,)
         It is the optimized estimate for the difficulties parameter.
-    self.discriminations : ResourceVariable of shape (n_instances,)
+    self.discriminations : ResourceVariable of shape (n_items,)
         It is the optimized estimate for the discrimination parameter.
     Notes
     -------------------------------------------------------
@@ -679,7 +679,7 @@ class Beta4(_viz,_irt):
     -------------------------------------------------------
     >>> from birt import BIRTGD
     >>> data = pd.DataFrame({'a': [0.99,0.89,0.87], 'b': [0.32,0.25,0.45]})
-    >>> bgd = BIRTGD(n_models=2, n_instances=3, random_seed=1)
+    >>> bgd = BIRTGD(n_respondents=2, n_items=3, random_seed=1)
     >>> bgd.fit(data)
     100%|██████████| 5000/5000 [00:22<00:00, 219.50it/s]
     <birt.BIRTGD at 0x7f6131326c10>
@@ -692,8 +692,8 @@ class Beta4(_viz,_irt):
     """
     def __init__(
         self, learning_rate=1, 
-        epochs=10000, n_models=20, 
-        n_instances=100,
+        epochs=10000, n_respondents=20, 
+        n_items=100,
         n_inits=1000, n_workers=-1,
         random_seed=1,
         tol=10**(-5),
@@ -701,8 +701,8 @@ class Beta4(_viz,_irt):
     ):
         self.lr = learning_rate
         self.epochs = epochs
-        self.n_models = n_models
-        self.n_instances = n_instances
+        self.n_respondents = n_respondents
+        self.n_items = n_items
         self.n_seed = random_seed
         self.n_inits = n_inits
         self.n_workers = n_workers
@@ -711,8 +711,8 @@ class Beta4(_viz,_irt):
         self._params = {
             'learning_rate': learning_rate,
             'epochs': epochs,
-            'n_models': n_models,
-            'n_instances': n_instances
+            'n_respondents': n_respondents,
+            'n_items': n_items
         }
     
     def fit(self, X, y=None):
@@ -720,7 +720,7 @@ class Beta4(_viz,_irt):
         
         Parameters
         -------------------------------------------------------
-        X : list, array or tensor of shape (n_instances,n_models)
+        X : list, array or tensor of shape (n_items,n_respondents)
             
         Returns
         -------------------------------------------------------
@@ -731,8 +731,8 @@ class Beta4(_viz,_irt):
         queue = Queue()
 
         args = (
-            queue, X, self.n_models, 
-            self.n_instances,
+            queue, X, self.n_respondents, 
+            self.n_items,
             self.epochs, self.lr, self.n_seed, 
             self.n_inits, self.tol
         )
@@ -764,9 +764,9 @@ class Beta3(_viz,_irt):
         It's a learning rate to Gradient descent.
     epochs : int, default=20
         Numbers of epochs to fit the model.
-    n_models : int, default=20
+    n_respondents : int, default=20
         Numbers of models to be evaluated.
-    n_instances : int, default=100
+    n_items : int, default=100
         Numbers of instances to fit the models.
     random_seed : int, default=1
         Determines a random state to generation initial kicks.
@@ -781,12 +781,12 @@ class Beta3(_viz,_irt):
     
     Attributes
     -------------------------------------------------------
-    self.abilities : ResourceVariable of shape (n_models,)
+    self.abilities : ResourceVariable of shape (n_respondents,)
         It is the optimized estimate for the abilitie parameter.
     
-    self.difficulties : ResourceVariable of shape (n_instances,)
+    self.difficulties : ResourceVariable of shape (n_items,)
         It is the optimized estimate for the difficulties parameter.
-    self.discriminations : ResourceVariable of shape (n_instances,)
+    self.discriminations : ResourceVariable of shape (n_items,)
         It is the optimized estimate for the discrimination parameter.
     Notes
     -------------------------------------------------------
@@ -794,7 +794,7 @@ class Beta3(_viz,_irt):
     -------------------------------------------------------
     >>> from birt import BTHREE
     >>> data = pd.DataFrame({'a': [0.99,0.89,0.87], 'b': [0.32,0.25,0.45]})
-    >>> bgd = BTHREE(n_models=2, n_instances=3, random_seed=1)
+    >>> bgd = BTHREE(n_respondents=2, n_items=3, random_seed=1)
     >>> bgd.fit(data)
     100%|██████████| 5000/5000 [00:22<00:00, 219.50it/s]
     <birt.BTHREE at 0x7f6131326c10>
@@ -807,15 +807,15 @@ class Beta3(_viz,_irt):
     """
     def __init__(
         self, learning_rate=1, 
-        epochs=10000, n_models=20, 
-        n_instances=100,
+        epochs=10000, n_respondents=20, 
+        n_items=100,
         n_inits=1000, n_workers=-1,
         random_seed=1, tol=10**(-5)
     ):
         self.lr = learning_rate
         self.epochs = epochs
-        self.n_models = n_models
-        self.n_instances = n_instances
+        self.n_respondents = n_respondents
+        self.n_items = n_items
         self.n_seed = random_seed
         self.n_inits = n_inits
         self.n_workers = n_workers
@@ -823,8 +823,8 @@ class Beta3(_viz,_irt):
         self._params = {
             'learning_rate': learning_rate,
             'epochs': epochs,
-            'n_models': n_models,
-            'n_instances': n_instances
+            'n_respondents': n_respondents,
+            'n_items': n_items
         }
     
     def fit(self, X, y=None):
@@ -832,7 +832,7 @@ class Beta3(_viz,_irt):
         
         Parameters
         -------------------------------------------------------
-        X : list, array or tensor of shape (n_instances,n_models)
+        X : list, array or tensor of shape (n_items,n_respondents)
             
         Returns
         -------------------------------------------------------
@@ -843,8 +843,8 @@ class Beta3(_viz,_irt):
         queue = Queue()
 
         args = (
-            queue, X, self.n_models, 
-            self.n_instances,
+            queue, X, self.n_respondents, 
+            self.n_items,
             self.epochs, self.lr, self.n_seed, 
             self.n_inits, self.tol
         )
@@ -899,8 +899,8 @@ def _loss(y_true, y_pred):
 # b4 = Beta4(
 #         learning_rate=1, 
 #         epochs=5000,
-#         n_models=pij.shape[1], 
-#         n_instances=pij.shape[0],
+#         n_respondents=pij.shape[1], 
+#         n_items=pij.shape[0],
 #         n_inits=1000, 
 #         n_workers=-1,
 #         random_seed=1,

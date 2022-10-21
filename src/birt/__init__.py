@@ -904,7 +904,7 @@ def _loss(y_true, y_pred):
 #         n_inits=1000, 
 #         n_workers=-1,
 #         random_seed=1,
-#         tol=10**(-8),
+#         tol=10**(-8),aaa
 #         set_priors=False
 #     )
 

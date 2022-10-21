@@ -272,7 +272,7 @@ plt.show()
 # Using Boxplot Feature
 
 ```py
-birt.boxplot(y='ability',
+b4.boxplot(y='ability',
              kwargs={'linewidth': 4},
              font_size=16)
 ```
@@ -281,13 +281,13 @@ birt.boxplot(y='ability',
 
 
 ```py
-birt.boxplot(x='difficulty',
+b4.boxplot(x='difficulty',
              font_size=16)
 ```
 <img alt = "assets/ab_av_ex5.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex5.png">
 
 ```py
-birt.boxplot(y='discrimination',
+b4.boxplot(y='discrimination',
              font_size=16)
 ```
 

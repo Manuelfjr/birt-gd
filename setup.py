@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.1.43",
     author="Manuel Ferreira Junior",
     author_email="ferreira.jr.ufpb@gmail.com",
-    description="BIRTGD is an implementation of Beta3-irt using gradient descent.",
+    description="BIRT is an implementation of Beta3-irt using gradient descent.",
     long_description=long_description,
     license='GNU General Public License v3 (GPLv3)',
     long_description_content_type="text/markdown",

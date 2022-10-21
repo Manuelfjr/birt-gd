@@ -61,10 +61,13 @@
 
 # [birt-gd](https://pypi.org/project/birt-gd/)
 
-**BIRTGD** is an implementation of &beta;<sup>3</sup>-irt using gradient descent.
+**BIRT** is an implementation of &beta;<sup>4</sup>-irt using gradient descent.
 
-The model expects to receive two sets of data, *X* being a list or array containing tuples of indices, where the first index references the instance *j* and the second index of the tuple references the model *i*, thus, *Y* will be a list or array where each input will be p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>), the probability of the *i* model correctly classifying the *j* model. Being, 
+The model expects to receive one dataset, being *X* a matrix (array or list) containing the probability p<sub>ij</sub>, where the  index references the item *j* and the columns represents the respondent *j*, such that p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>), the probability of the *i* model correctly classifying the *j* model. Being
 
+
+The original &beta;<sup>3</sup>-irt model can be describe below: 
+<!--
 p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>)
 
 &alpha;<sub>ij</sub> = F<sub>&alpha;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = (&theta;<sub>i</sub>/&delta;<sub>j</sub>)<sup>a<sub>j</sub></sup>
@@ -72,10 +75,19 @@ p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>)
 &beta;<sub>ij</sub> = F<sub>&beta;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = ( (1 - &theta;<sub>i</sub>)/(1 - &delta;<sub>j</sub>) )<sup>a<sub>j</sub></sup>
 
 &theta;<sub>i</sub> ~ &Beta;(1,1), &delta;<sub>j</sub> ~ &Beta;(1,1), a<sub>j</sub> ~ N(1, &sigma;<sup>2</sup><sub>0</sub>)
+-->
+&theta;<sub>i</sub> = &sigma;(t<sub>i</sub>) = 1/(1+e<sup>-t<sub>i</sub></sup>)
+
+&delta;<sub>j</sub> = &sigma;(d<sub>j</sub>) = 1/(1+e<sup>-d<sub>j</sub></sup>)
+
+&omega;<sub>j</sub> = softplus(o<sub>j</sub>) = ln(1 + e<sup>j</sup>)
+
+&beta;<sub>j</sub> = tanh(b<sub>j</sub>) = ( e<sup>b<sub>j</sub></sup>  - e<sup>-b<sub>j</sub></sup> )/( e<sup>b<sub>j</sub></sup>  + e<sup>-b<sub>j</sub></sup> )
 
 where,
 
-E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>] = (&alpha;<sub>ij</sub>)/( &alpha;<sub>ij</sub> + &beta;<sub>ij</sub>) = 1/(1 + ( (&delta;<sub>j</sub>)/(1 - &delta;<sub>j</sub>) )<sup>a<sub>j</sub></sup> &#xd7; ( (&theta;<sub>i</sub>)/(1 - &theta;<sub>i</sub>) )<sup> - a<sub>j</sub></sup> )
+E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, &omega;<sub>j</sub>, &beta;<sub>j</sub>] = 1/(1 + ( (&delta;<sub>j</sub>)/(1 - &delta;<sub>j</sub>) )<sup>&omega;<sub>j</sub>, &beta;<sub>j</sub></sup> &#xd7; ( (&theta;<sub>i</sub>)/(1 - &theta;<sub>i</sub>) )<sup> - &omega;<sub>j</sub>, &beta;<sub>j</sub></sup> )
+
 
 # Installation
 ## Dependencies 
@@ -102,10 +114,10 @@ git clone https://github.com/Manuelfjr/birt-gd
 ```
 
 # Usage
-Import the **BIRTGD's class**
+Import the **BIRT's class**
 
 ```py
->>> from birt import BIRTGD
+>>> from birt import Beta4
 ```
 
 ```py
@@ -113,25 +125,31 @@ Import the **BIRTGD's class**
 ```
 
 ```py
->>> bgd = BIRTGD(n_models=2, n_instances=3, random_seed=1)
+>>> b4 = Beta4(n_models=2, n_instances=3, random_seed=1)
 >>> bgd.fit(data)
 100%|██████████| 5000/5000 [00:22<00:00, 219.50it/s]
 <birt.BIRTGD at 0x7f6131326c10>
+
+
+2%|████     | 119/5000 [00:01<01:05, 74.58it/s]Model converged at the 122th epoch
+
+2%|████▏    | 122/5000 [00:01<01:07, 72.35it/s]
+<birt.Beta4 object at 0x7f420baa3b50>
 ```
 
 ```py 
->>> bgd.abilities
-array([0.90438306, 0.27729774], dtype=float32)
+>>> b4.abilities
+array([0.8940176, 0.2747254], dtype=float32)
 ```
 
 ```py
->>> bgd.difficulties
-array([0.3760659 , 0.5364428 , 0.34256178], dtype=float32)
+>>> b4.difficulties
+array([0.38353133, 0.5238179 , 0.37623164], dtype=float32)
 ```
 
 ```py
->>> bgd.discriminations
-array([1.6690203 , 0.9951777 , 0.65577406], dtype=float32)
+>>> b4.discriminations
+array([1., 1., 1.], dtype=float32)
 ```
 
 # Summary data
@@ -139,12 +157,12 @@ array([1.6690203 , 0.9951777 , 0.65577406], dtype=float32)
 How to use the summary feature:
 
 * **Generate data**
+
 ```py
 import numpy as np
-import pandas as pd
-from birt import BIRTGD
-import matplotlib.pyplot as plt
+```
 
+```py
 m, n = 5, 20
 np.random.seed(1)
 abilities = [np.random.beta(1,i) for i in ([0.1, 10] + [1]*(m-2))]
@@ -165,60 +183,75 @@ for theta in abilities:
 
 * **Fitting the model**
 ```py
-birt = BIRTGD(n_models=pij.shape[1],
-             n_instances=pij.shape[0],
-             learning_rate=1,
-             epochs=5000,
-             n_inits=1000)
-birt.fit(pij)
+b4 = Beta4(
+        learning_rate=1, 
+        epochs=5000,
+        n_respondents=pij.shape[1], 
+        n_items=pij.shape[0],
+        n_inits=1000, 
+        n_workers=-1,
+        random_seed=1,
+        tol=10**(-8),
+        set_priors=False
+    )
+b4.fit(pij)
 ```
-
 
 * **Score (Pseudo - R<sup>2</sup>)**
+
 ```py
-birt.score
+b4.score
 ```
+
 ```py
-0.90381
+0.9038146230196351
 ```
 
 
 * **Summary**
+
 ```py
 birt.summary()
 ```
+
 ```py
 
         ESTIMATES
         -----
                         | Min      1Qt      Median   3Qt      Max      Std.Dev
-        Ability         | 0.00010  0.22148  0.63389  0.73353  0.92040  0.33960
+        Ability         | 0.00010  0.22147  0.63389  0.73353  0.92040  0.33960
         Difficulty      | 0.01745  0.28047  0.63058  0.84190  0.98624  0.31635
         Discrimination  | 0.31464  1.28330  1.61493  2.22936  4.44645  1.02678
         pij             | 0.00000  0.02219  0.35941  0.86255  0.99993  0.40210
         -----
         Pseudo-R2       | 0.90381
         
-
 ```
 
 # Using Scatterplot Feature
 
 ```py
-birt.plot(xaxis='discrimination',
-          yaxis='difficulty',
-          ann=True,
-          kwargs={'color': 'red'},
-          font_size=22,font_ann_size=15)
+import matplotlib.pyplot as plt
+```
+
+```py
+b4.plot(xaxis='discrimination',
+        yaxis='difficulty',
+        ann=True,
+        kwargs={'color': 'red'},
+        font_size=22,font_ann_size=15)
 plt.show()
 ```
 
 <img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/dis_diff_ex.png">
 
 ```py
-birt.plot(xaxis='difficulty', yaxis='average_item',
-          ann=True, kwargs={'color': 'blue'},
-          font_size=22,font_ann_size=17)
+b4.plot(xaxis='difficulty', 
+        yaxis='average_item',
+        ann=True,
+        kwargs={'color': 'blue'},
+        font_size=22,
+        font_ann_size=17)
 plt.show()
 ```
 
@@ -226,8 +259,11 @@ plt.show()
 
 
 ```py
-birt.plot(xaxis='ability', yaxis='average_response',
-          ann=True, font_size=16, font_ann_size=16)
+b4.plot(xaxis='ability',
+        yaxis='average_response',
+        ann=True, 
+        font_size=16, 
+        font_ann_size=16)
 plt.show()
 ```
 
@@ -236,7 +272,7 @@ plt.show()
 # Using Boxplot Feature
 
 ```py
-birt.boxplot(y='abilities',
+birt.boxplot(y='ability',
              kwargs={'linewidth': 4},
              font_size=16)
 ```
@@ -245,13 +281,13 @@ birt.boxplot(y='abilities',
 
 
 ```py
-birt.boxplot(x='difficulties',
+birt.boxplot(x='difficulty',
              font_size=16)
 ```
 <img alt = "assets/ab_av_ex5.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex5.png">
 
 ```py
-birt.boxplot(y='discriminations',
+birt.boxplot(y='discrimination',
              font_size=16)
 ```
 

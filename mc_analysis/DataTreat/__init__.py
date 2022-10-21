@@ -4,11 +4,11 @@ from scipy.stats import pearsonr, ks_2samp, wilcoxon, ttest_ind
 import os 
 
 class Datasets:
-    def __init__(self, transform=None, name=None, n_models=20, n_instances=100, random_seed=-1, scale=1):
+    def __init__(self, transform=None, name=None, n_respondents=20, n_items=100, random_seed=-1, scale=1):
         self.transform = transform
         self.name = name
-        self.n_models = n_models
-        self.n_instances = n_instances
+        self.n_respondents = n_respondents
+        self.n_items = n_items
         self.n_seed = random_seed
         self.scale = scale
     
@@ -24,9 +24,9 @@ class Datasets:
 
     def data_generate(self, scale):
         np.random.seed(self.n_seed)
-        self._thi = np.random.beta(1,1,size = self.n_models)
-        self._delj = np.random.beta(1,1,size = self.n_instances)
-        self._aj = np.random.normal(1,self.scale, size = self.n_instances)
+        self._thi = np.random.beta(1,1,size = self.n_respondents)
+        self._delj = np.random.beta(1,1,size = self.n_items)
+        self._aj = np.random.normal(1,self.scale, size = self.n_items)
 
         alphaij, betaij = [], []
 
@@ -42,7 +42,8 @@ class Datasets:
             j += 1
 
         for alpha,beta in zip(alphaij, betaij):
-            y.append( np.random.beta(alpha,beta, size=1)[0] )
+            y.append( np.mean(np.random.beta(alpha, beta, size=100) ))
+            # y.append( alpha/(alpha + beta))
 
         #print(X)
         return X, y
@@ -62,13 +63,13 @@ class Datasets:
         if (not os.path.exists(names[1]) ):
             os.makedirs(names[1])
 
-        data.to_csv(names[1] + '/generate_data_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_instances'],params['n_models']))
-        df_abilities.to_csv(names[0] + '/generate_abilities_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_instances'],params['n_models']))
-        df_j.to_csv(names[0] + '/generate_diff_disc_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_instances'],params['n_models']))
+        data.to_csv(names[1] + '/generate_data_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_items'],params['n_respondents']))
+        df_abilities.to_csv(names[0] + '/generate_abilities_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_items'],params['n_respondents']))
+        df_j.to_csv(names[0] + '/generate_diff_disc_iter_mc{}_i{}_m{}.csv'.format(names[-1],params['n_items'],params['n_respondents']))
         return data
 
     def RSE(self, y_true, y_pred):
-    	return sum( (y_pred - y_true)**(2) )/sum( (y_true - np.mean(y_true))**(2) )
+        return sum( (y_pred - y_true)**(2) )/sum( (y_true - np.mean(y_true))**(2) )
     	
     def mc_write(self, param, path, **kwargs):
         path_generate = os.path.join(path,param['model'])
@@ -79,7 +80,7 @@ class Datasets:
         a_aj = np.logical_and( param["aj"] < 0 ,  param["_aj"] > 0)
         b_aj = np.logical_and(param["aj"] > 0,  param["_aj"] < 0)
 
-        aj_changed_sign = sum(np.logical_or(a_aj,b_aj))/self.n_instances
+        aj_changed_sign = sum(np.logical_or(a_aj,b_aj))/self.n_items
 
         if kwargs['mc'] == 0:
             data = {
@@ -112,20 +113,20 @@ class Datasets:
             #         'mc_iterations': [param['mc_iterations']],
             #         'n_epochs': [param['epochs']],
             #         'n_batchs': [param['batchs']],
-            #         'n_models': [len(param['thi'])],
-            #         'n_instances': [len(param['delj'])]
+            #         'n_respondents': [len(param['thi'])],
+            #         'n_items': [len(param['delj'])]
             #     }
             # )
 
             df.to_csv(os.path.join(path_generate,'generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
+                param['mc_iterations'], param['n_respondents'], param['n_items'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 ))
                 )
             #df_infs.to_csv( path_generate + '/generate_data_mc_{}_infs.csv'.format(param['mc_iterations']) )
         else:
             df = pd.read_csv(os.path.join(path_generate,'generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
+                param['mc_iterations'], param['n_respondents'], param['n_items'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 )),
                 index_col=0)
@@ -153,7 +154,7 @@ class Datasets:
             ]
 
             df.to_csv(os.path.join(path_generate,'generate_data_mc{}_m{}_i{}_e{}_t{}_lr{}.csv'.format(
-                param['mc_iterations'], param['n_models'], param['n_instances'], param['epochs'],
+                param['mc_iterations'], param['n_respondents'], param['n_items'], param['epochs'],
                 param['n_inits'], param['learning_rate']
                 ))
                 )

@@ -418,7 +418,7 @@ class _irt(object):
         
         cor = np.zeros((n_items, 1))
         for i in range(len(X)):
-            p_i = self.pij[i]#P[i]
+            p_i = self.pij.values[i]#P[i]
             cor[i, 0] = np.corrcoef(abil, p_i)[0,1]       
         
         bj = tf.Variable(
@@ -897,15 +897,15 @@ def _loss(y_true, y_pred):
 #   i+=1
 
 # b4 = Beta4(
-#         learning_rate=1, 
-#         epochs=5000,
-#         n_respondents=pij.shape[1], 
-#         n_items=pij.shape[0],
-#         n_inits=1000, 
-#         n_workers=-1,
-#         random_seed=1,
-#         tol=10**(-8),aaa
-#         set_priors=False
-#     )
+#        learning_rate=1, 
+#        epochs=5000,
+#        n_respondents=pij.shape[1], 
+#        n_items=pij.shape[0],
+#        n_inits=1000, 
+#        n_workers=-1,
+#        random_seed=1,
+#        tol=10**(-8),
+#        set_priors=False
+#    )
 
 # b4.fit(pij.values)

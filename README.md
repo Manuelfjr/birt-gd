@@ -127,9 +127,6 @@ Import the **BIRT's class**
 ```py
 >>> b4 = Beta4(n_models=2, n_instances=3, random_seed=1)
 >>> bgd.fit(data)
-100%|██████████| 5000/5000 [00:22<00:00, 219.50it/s]
-<birt.BIRTGD at 0x7f6131326c10>
-
 
 2%|████     | 119/5000 [00:01<01:05, 74.58it/s]Model converged at the 122th epoch
 

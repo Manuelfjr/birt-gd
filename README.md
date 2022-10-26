@@ -65,9 +65,9 @@
 
 The model expects to receive one dataset, being *X* a matrix (array or list) containing the probability p<sub>ij</sub>, where the  index references the item *j* and the columns represents the respondent *j*, such that p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>), the probability of the *i* model correctly classifying the *j* model. Being
 
-
-The original &beta;<sup>3</sup>-irt model can be describe below: 
 <!--
+The original &beta;<sup>3</sup>-irt model can be describe below: 
+
 p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>)
 
 &alpha;<sub>ij</sub> = F<sub>&alpha;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = (&theta;<sub>i</sub>/&delta;<sub>j</sub>)<sup>a<sub>j</sub></sup>
@@ -126,7 +126,7 @@ Import the **BIRT's class**
 
 ```py
 >>> b4 = Beta4(n_models=2, n_instances=3, random_seed=1)
->>> bgd.fit(data)
+>>> bgd.fit(data.values)
 
 2%|████     | 119/5000 [00:01<01:05, 74.58it/s]Model converged at the 122th epoch
 
@@ -191,7 +191,7 @@ b4 = Beta4(
         tol=10**(-8),
         set_priors=False
     )
-b4.fit(pij)
+b4.fit(pij.values)
 ```
 
 * **Score (Pseudo - R<sup>2</sup>)**

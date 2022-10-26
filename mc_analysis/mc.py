@@ -41,11 +41,11 @@ def parse_arguments():
     #                    type=int,
     #                    default=5,
     #                    help= '''Number of batchs to gradient descent.''')
-    parser.add_argument('-m', '--n_models', dest='n_models',
+    parser.add_argument('-m', '--n_respondents', dest='n_respondents',
                         type=int,
                         default=20,
                         help= '''Number of models to IRTSGD.''')
-    parser.add_argument('-i', '--n_instances', dest='n_instances',
+    parser.add_argument('-i', '--n_items', dest='n_items',
                         type=int,
                         default=100,
                         help= '''Number of instances.''')
@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     for n_iter in tqdm(range(mc)):
         Data = Datasets(
-                n_models = vars(args)['n_models'], n_instances = vars(args)['n_instances'],
+                n_respondents = vars(args)['n_respondents'], n_items = vars(args)['n_items'],
                 random_seed = random_seed[n_iter], scale = vars(args)['scale']
                 )
         
@@ -91,45 +91,60 @@ if __name__ == '__main__':
             '_delj': Data._delj,
             '_aj': Data._aj,
             'n_iter':n_iter,
-            'n_models': X[-1][1] + 1,
-            'n_instances': X[-1][0] + 1,
+            'n_respondents': X[-1][1] + 1,
+            'n_items': X[-1][0] + 1,
             }
         )
+# b4 = Beta4(
+#        learning_rate=1, 
+#        epochs=5000,
+#        n_respondents=pij.shape[1], 
+#        n_items=pij.shape[0],
+#        n_inits=1000, 
+#        n_workers=-1,
+#        random_seed=1,
+#        tol=10**(-8),
+#        set_priors=False
+#    )
         
-        n_models, n_instances = vars(args)['n_models'], vars(args)['n_instances']
+        n_respondents, n_items = vars(args)['n_respondents'], vars(args)['n_items']
         
         start = time.time()
         if vars(args)['beta'] == 'beta4':
             irt = Beta4(
                 learning_rate = vars(args)['learning_rate'], 
                 epochs = vars(args)['epochs'],
-                n_models = n_models, n_instances = n_instances,
-                #batch_size = vars(args)['batch_size'], 
+                n_respondents = n_respondents, 
+                n_items = n_items,
                 n_inits = vars(args)['n_inits'], 
                 n_workers = vars(args)['n_workers'], 
-                random_seed = random_seed[n_iter]
+                random_seed = random_seed[n_iter],
+                set_priors=True
             )
         elif vars(args)['beta'] == 'beta3':
             irt = Beta3(
                 learning_rate = vars(args)['learning_rate'], 
                 epochs = vars(args)['epochs'],
-                n_models = n_models, n_instances = n_instances,
-                #batch_size = vars(args)['batch_size'], 
+                n_respondents = n_respondents, 
+                n_items = n_items,
                 n_inits = vars(args)['n_inits'], 
                 n_workers = vars(args)['n_workers'], 
-                random_seed = random_seed[n_iter]
+                random_seed = random_seed[n_iter],
+                set_priors=False
             )
+            
         elif (vars(args)['beta']=='beta3fixed'):
             irt = Beta3(
                 learning_rate = vars(args)['learning_rate'], 
                 epochs = vars(args)['epochs'],
-                n_models = n_models, n_instances = n_instances,
-                #batch_size = vars(args)['batch_size'], 
+                n_respondents = n_respondents, 
+                n_items = n_items,
                 n_inits = 0, 
                 n_workers = vars(args)['n_workers'], 
-                random_seed = random_seed[n_iter]
+                random_seed = random_seed[n_iter],
+                set_priors=False
             )
-        irt.fit(responses)
+        irt.fit(responses.values)
         done = time.time()
         time_stamp = done - start
 
@@ -148,8 +163,8 @@ if __name__ == '__main__':
             '_delj': _delj,
             '_aj': _aj,
             'mc_iterations': mc,
-            'n_models': vars(args)['n_models'],
-            'n_instances': vars(args)['n_instances'],
+            'n_respondents': vars(args)['n_respondents'],
+            'n_items': vars(args)['n_items'],
             'epochs': vars(args)['epochs'],
             'n_inits': vars(args)['n_inits'],
             'learning_rate': vars(args)['learning_rate'],

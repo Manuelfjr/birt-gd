@@ -11,7 +11,6 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
-
 class _viz:
     def __init__(self, abi, dif, dis):
         self.abilities = abi
@@ -418,7 +417,7 @@ class _irt(object):
         
         cor = np.zeros((n_items, 1))
         for i in range(len(X)):
-            p_i = self.pij.values[i]#P[i]
+            p_i = self.pij[i]#P[i]
             cor[i, 0] = np.corrcoef(abil, p_i)[0,1]       
         
         bj = tf.Variable(

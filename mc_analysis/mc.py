@@ -119,7 +119,8 @@ if __name__ == '__main__':
                 n_inits = vars(args)['n_inits'], 
                 n_workers = vars(args)['n_workers'], 
                 random_seed = random_seed[n_iter],
-                set_priors=True
+                set_priors=True,
+                tol = 10 **(-8)
             )
         elif vars(args)['beta'] == 'beta3':
             irt = Beta3(
@@ -130,7 +131,8 @@ if __name__ == '__main__':
                 n_inits = vars(args)['n_inits'], 
                 n_workers = vars(args)['n_workers'], 
                 random_seed = random_seed[n_iter],
-                set_priors=False
+                #set_priors=False,
+                tol = 10 **(-8)
             )
             
         elif (vars(args)['beta']=='beta3fixed'):
@@ -142,8 +144,10 @@ if __name__ == '__main__':
                 n_inits = 0, 
                 n_workers = vars(args)['n_workers'], 
                 random_seed = random_seed[n_iter],
-                set_priors=False
+                #set_priors=False,
+                tol = 10 **(-8)
             )
+
         irt.fit(responses.values)
         done = time.time()
         time_stamp = done - start

@@ -38,7 +38,8 @@ if __name__ == '__main__':
     n_iters = [1000]#[0,1000,5000,10000]
 
     #for model in tqdm(['beta4','beta3','beta3fixed']):
-    for model in tqdm(['beta3','beta3fixed']):
+    #for model in tqdm(['beta3','beta3fixed']):
+    for model in tqdm(['beta4']):
         for i in tqdm(range(len(m_models)), desc="Iteration" ):
             for k in n_iters:
                 print() 

@@ -13,7 +13,7 @@ def parse_arguments():
     parser.add_argument('-m', '--n_respondents', dest='n_respondents',
                         type=int,nargs="+",required=True,
                         default=20,
-                        help= '''Number of respondents to IRTSGD.''')
+                        help= '''Number of respondents to BIRTGD.''')
     parser.add_argument('-i', '--n_items', dest='n_items',
                         type=int,nargs="+",required=True,
                         default=100,

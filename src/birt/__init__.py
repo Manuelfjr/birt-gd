@@ -400,7 +400,7 @@ class _irt(object):
         tf.random.set_seed(
             random_seed
         )
-
+        
         abil = np.mean(X, axis=0)
         thi = tf.Variable(
             np.log(-abil / (abil - 1)).reshape((1, n_respondents)),
@@ -419,14 +419,16 @@ class _irt(object):
         for i in range(len(X)):
             p_i = self.pij[i]#P[i]
             cor[i, 0] = np.corrcoef(abil, p_i)[0,1]       
-        
+
+        cor[np.isnan(cor)] = 0
+
         bj = tf.Variable(
             np.log((-cor - 1) / (cor - 1)) / 2, 
             trainable=False, dtype=tf.float32
         )
         
         aj = tf.Variable(   
-            # np.random.normal(0, 1, size=(n_items, 1)), 
+            # np.random.normal(0, 1, size=(n_items, 1)), clip
             np.log(np.exp(np.ones((n_items, 1))) - 1),
             trainable=True, dtype=tf.float32
         )
@@ -726,6 +728,8 @@ class Beta4(_viz,_irt):
         self
             Adjusted values of the parameters
         """
+
+        X = np.clip(X, (10)**(-4), 1 - (10)**(-4))
         self.pij = X
         queue = Queue()
 
@@ -745,7 +749,7 @@ class Beta4(_viz,_irt):
         p.join()
         
         super().__init__(abi, dif, dis)
-        
+
         self.abilities = abi
         self.difficulties = dif
         self.discriminations = dis
@@ -876,35 +880,3 @@ def _loss(y_true, y_pred):
     """
     loss = tf.keras.losses.BinaryCrossentropy()
     return loss(y_true, y_pred)
-
-
-# m, n = 5, 20
-# np.random.seed(1)
-# abilities = [np.random.beta(1,i) for i in ([0.1, 10] + [1]*(m-2))]
-# difficulties = [np.random.beta(1,i) for i in [10, 5] + [1]*(n-2)]
-# discrimination = list(np.random.normal(1,1, size=n))
-# pij = pd.DataFrame(columns=range(m), index=range(n))
-
-# i,j = 0,0
-# for theta in abilities:
-#   for delta, a in zip(difficulties, discrimination):
-#     alphaij = (theta/delta)**(a)
-#     betaij = ((1-theta)/(1 - delta))**(a)
-#     pij.loc[j,i] = np.random.beta(alphaij, betaij, size=1)[0]
-#     j+=1
-#   j = 0
-#   i+=1
-
-# b4 = Beta4(
-#        learning_rate=1, 
-#        epochs=5000,
-#        n_respondents=pij.shape[1], 
-#        n_items=pij.shape[0],
-#        n_inits=1000, 
-#        n_workers=-1,
-#        random_seed=1,
-#        tol=10**(-8),
-#        set_priors=False
-#    )
-
-# b4.fit(pij.values)

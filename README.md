@@ -208,7 +208,7 @@ b4.score
 * **Summary**
 
 ```py
-birt.summary()
+b4.summary()
 ```
 
 ```py

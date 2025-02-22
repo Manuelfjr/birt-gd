@@ -4,3 +4,24 @@ requires = [
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.poetry.dependencies]
+python = ">=3.10"
+ipykernel = "^6.29.5"
+tensorflow = "^2.18.0"
+pandas = "^2.2.3"
+tqdm = "^4.67.1"
+matplotlib = "^3.10.0"
+seaborn = "^0.13.2"
+scikit-learn = "^1.6.1"
+
+[tool.poetry]
+name = "birt-gd"
+version = "0.1.48"
+description = "BIRT is an implementation of Beta3-irt using gradient descent."
+authors = ["Manuel Ferreira Junior <ferreira.jr.ufpb@gmail.com>"]
+license = "GPL-3.0"
+readme = "README.md"
+homepage = "https://github.com/Manuelfjr/birt-gd"
+repository = "https://github.com/Manuelfjr/birt-gd"
+documentation = "https://github.com/Manuelfjr/birt-gd"

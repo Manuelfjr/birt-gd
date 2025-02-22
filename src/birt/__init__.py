@@ -754,6 +754,7 @@ class Beta4(_viz,_irt):
         self.difficulties = dif
         self.discriminations = dis
         X, Y, self.pijhat = self._split(self.pij, super().predict(), (len(self.discriminations), len(self.abilities)))
+
         self.score(X, Y)
         return self
 

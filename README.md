@@ -117,36 +117,66 @@ git clone https://github.com/Manuelfjr/birt-gd
 Import the **BIRT's class**
 
 ```py
->>> from birt import Beta4
+from birt import Beta4
 ```
 
 ```py
->>> data = pd.DataFrame({'a': [0.99,0.89,0.87], 'b': [0.32,0.25,0.45]})
+data = pd.DataFrame(
+    {
+        'a': [0.99, 0.89, 0.87, 0.50],
+        'b': [0.32, 0.25, 0.45, 0.20],
+        'c': [0.50, 0.50, 0.50, 0.50]
+    }
+)
 ```
 
 ```py
->>> b4 = Beta4(n_models=2, n_instances=3, random_seed=1)
->>> bgd.fit(data.values)
+bgd = Beta4(
+    learning_rate=1, 
+    epochs=10000,
+    n_respondents=data.shape[1], 
+    n_items=data.shape[0],
+    n_inits=1000,
+    # n_workers=-1,
+    random_seed=1,
+    tol=10**(-5),
+    set_priors=True
+)
+bgd.fit(data.values)
+```
 
-2%|████     | 119/5000 [00:01<01:05, 74.58it/s]Model converged at the 122th epoch
-
-2%|████▏    | 122/5000 [00:01<01:07, 72.35it/s]
-<birt.Beta4 object at 0x7f420baa3b50>
+```
+>>> 0%|          | 14/10000 [00:00<01:11, 139.04it/s]
+>>> Model converged at the 24th epoch
+>>> 0%|          | 24/10000 [00:00<01:03, 156.01it/s]
+>>> W0000 00:00:1739567647.550733    4426 gpu_device.cc:2344] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
 ```
 
 ```py 
->>> b4.abilities
-array([0.8940176, 0.2747254], dtype=float32)
+bgd.abilities
+```
+
+```
+>>> array([0.62599856, 0.4157101 , 0.4741606 ], dtype=float32)
 ```
 
 ```py
->>> b4.difficulties
-array([0.38353133, 0.5238179 , 0.37623164], dtype=float32)
+bgd.difficulties
 ```
 
+```
+>>> array([0.4555296 , 0.4779129 , 0.44193327, 0.6075782 ], dtype=float32)
+
+```
+
+
 ```py
->>> b4.discriminations
-array([1., 1., 1.], dtype=float32)
+bgd.discriminations
+```
+
+```
+>>> array([0.99179965, 0.9999737 , 0.96063244, 0.79214346], dtype=float32)
 ```
 
 # Summary data
@@ -176,39 +206,47 @@ for theta in abilities:
     j+=1
   j = 0
   i+=1
+pij = pij.astype(float)
 ```
 
 * **Fitting the model**
 ```py
-b4 = Beta4(
-        learning_rate=1, 
-        epochs=5000,
-        n_respondents=pij.shape[1], 
+bgd = Beta4(
+        learning_rate=0.1, 
+        epochs=10000,
+        n_respondents=pij.shape[1],
         n_items=pij.shape[0],
         n_inits=1000, 
         n_workers=-1,
         random_seed=1,
         tol=10**(-8),
-        set_priors=False
+        set_priors=True
     )
-b4.fit(pij.values)
+bgd.fit(pij.values)
 ```
+
+```
+>>> 0%|          | 14/10000 [00:00<01:14, 134.16it/s]W0000 00:00:1739567855.178464    4426 gpu_device.cc:2344] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+>>> 100%|██████████| 10000/10000 [00:50<00:00, 199.07it/s]
+```
+
 
 * **Score (Pseudo - R<sup>2</sup>)**
 
 ```py
-b4.score
+bgd.score
 ```
 
 ```py
-0.9038146230196351
+>>> 0.8878812010701687
 ```
 
 
 * **Summary**
 
 ```py
-b4.summary()
+bgd.summary()
 ```
 
 ```py
@@ -216,12 +254,12 @@ b4.summary()
         ESTIMATES
         -----
                         | Min      1Qt      Median   3Qt      Max      Std.Dev
-        Ability         | 0.00010  0.22147  0.63389  0.73353  0.92040  0.33960
-        Difficulty      | 0.01745  0.28047  0.63058  0.84190  0.98624  0.31635
-        Discrimination  | 0.31464  1.28330  1.61493  2.22936  4.44645  1.02678
-        pij             | 0.00000  0.02219  0.35941  0.86255  0.99993  0.40210
+        Ability         | 0.00012  0.21369  0.57847  0.69513  0.93050  0.33468
+        Difficulty      | 0.03876  0.27725  0.58860  0.84598  0.96604  0.30748
+        Discrimination  | 0.25266  0.73648  1.04295  1.35130  2.09018  0.47445
+        pij             | 0.00000  0.04613  0.40412  0.81140  0.99958  0.36590
         -----
-        Pseudo-R2       | 0.90381
+        Pseudo-R2       | 0.88788
         
 ```
 
@@ -232,7 +270,7 @@ import matplotlib.pyplot as plt
 ```
 
 ```py
-b4.plot(xaxis='discrimination',
+bgd.plot(xaxis='discrimination',
         yaxis='difficulty',
         ann=True,
         kwargs={'color': 'red'},
@@ -243,7 +281,7 @@ plt.show()
 <img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/dis_diff_ex.png">
 
 ```py
-b4.plot(xaxis='difficulty', 
+bgd.plot(xaxis='difficulty', 
         yaxis='average_item',
         ann=True,
         kwargs={'color': 'blue'},
@@ -256,7 +294,7 @@ plt.show()
 
 
 ```py
-b4.plot(xaxis='ability',
+bgd.plot(xaxis='ability',
         yaxis='average_response',
         ann=True, 
         font_size=16, 
@@ -269,7 +307,7 @@ plt.show()
 # Using Boxplot Feature
 
 ```py
-b4.boxplot(y='ability',
+bgd.boxplot(y='ability',
              kwargs={'linewidth': 4},
              font_size=16)
 ```
@@ -278,13 +316,13 @@ b4.boxplot(y='ability',
 
 
 ```py
-b4.boxplot(x='difficulty',
+bgd.boxplot(x='difficulty',
              font_size=16)
 ```
 <img alt = "assets/ab_av_ex5.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex5.png">
 
 ```py
-b4.boxplot(y='discrimination',
+bgd.boxplot(y='discrimination',
              font_size=16)
 ```
 

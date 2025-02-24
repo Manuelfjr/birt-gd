@@ -88,6 +88,70 @@ where,
 
 E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, &omega;<sub>j</sub>, &beta;<sub>j</sub>] = 1/(1 + ( (&delta;<sub>j</sub>)/(1 - &delta;<sub>j</sub>) )<sup>&omega;<sub>j</sub>, &beta;<sub>j</sub></sup> &#xd7; ( (&theta;<sub>i</sub>)/(1 - &theta;<sub>i</sub>) )<sup> - &omega;<sub>j</sub>, &beta;<sub>j</sub></sup> )
 
+# How to use locally
+
+
+## 1) Clone the respository
+
+```bash
+git clone https://github.com/Manuelfjr/birt-gd
+```
+
+## 2) Using enviroments
+
+### 2.1) Using virtualenvs
+
+Install virtualenv if you haven't already:
+
+```bash
+pip install virtualenv
+```
+
+Create a virtual environment
+
+```bash
+virtualenv venv
+```
+
+* **On macOS/Linux**
+
+```bash
+source venv/bin/activate
+```
+
+* **On Windows**
+
+```bash
+venv\Scripts\activate
+```
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## 2.2) Using Poetry (alternative)
+
+Install poetry if you haven't already:
+
+```bash
+pip install poetry
+```
+
+
+Set up the environment and install dependencies:
+
+```bash
+cd birt-gd
+poetry install
+```
+
+Activate the virtual environment (if needed):
+
+```bash
+poetry shell
+```
 
 # Installation
 ## Dependencies 

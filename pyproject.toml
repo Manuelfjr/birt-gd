@@ -18,7 +18,7 @@ scikit-learn = "^1.6.1"
 
 [tool.poetry]
 name = "birt-gd"
-version = "0.1.48"
+version = "0.1.50"
 description = "BIRT is an implementation of Beta3-irt using gradient descent."
 authors = ["Manuel Ferreira Junior <ferreira.jr.ufpb@gmail.com>"]
 license = "GPL-3.0"

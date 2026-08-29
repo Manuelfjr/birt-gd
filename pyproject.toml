@@ -6,7 +6,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.poetry.dependencies]
-python = ">=3.10"
+python = ">=3.11"
 ipykernel = "^6.29.5"
 tensorflow = "^2.20.0"
 keras = "^3.14.0"

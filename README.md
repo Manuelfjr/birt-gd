@@ -47,8 +47,9 @@ pip install birt-gd
 
 ### Requirements
 
-- Python >= 3.10
-- tensorflow ^2.18.0
+- Python >= 3.11 (security-patched `keras` releases dropped 3.10)
+- tensorflow ^2.20.0
+- keras ^3.14.0
 - pandas ^2.2.3
 - scikit-learn ^1.6.1
 - matplotlib ^3.10.0

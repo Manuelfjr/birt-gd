@@ -1,320 +1,106 @@
-[![https://badgen.net/pypi/v/birt-gd](https://badgen.net/pypi/v/birt-gd)](https://pypi.org/project/birt-gd/#history)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/birt-gd?style=flat-square&color=darkgreen)](https://pypi.org/project/birt-gd/)
-[![PyPI - Downloads](https://img.shields.io/pypi/dw/birt-gd?style=flat-square&color=darkgreen)](https://pypi.org/project/birt-gd/)
-[![PyPI - Downloads](https://img.shields.io/pypi/dd/birt-gd?style=flat-square&color=darkgreen)](https://pypi.org/project/birt-gd/)
-[![license: GPLv3](https://img.shields.io/badge/license-GPLv3-red.svg?&logo=license&color=blue)](https://github.com/Manuelfjr/birt-gd/blob/main/LICENSE)
-[![Docs](https://img.shields.io/badge/docs-birtgd-blue?&logo)](https://github.com/Manuelfjr/birt-gd)
-[![Author](https://img.shields.io/badge/author-manuelfjr-blue?&logo=github)](https://github.com/Manuelfjr)
-[![Author2](https://img.shields.io/badge/author-tmfilho-blue?&logo=github)](https://github.com/tmfilho)
-[![https://badgen.net/github/open-issues/manuelfjr/birt-gd](https://badgen.net/github/open-issues/manuelfjr/birt-gd)](https://github.com/Manuelfjr/birt-gd/issues?q=is%3Aopen+is%3Aissue)
-[![https://badgen.net/github/closed-issues/manuelfjr/birt-gd](https://badgen.net/github/closed-issues/manuelfjr/birt-gd)](https://github.com/Manuelfjr/birt-gd/issues?q=is%3Aissue+is%3Aclosed)
+[![PyPI version](https://badgen.net/pypi/v/birt-gd)](https://pypi.org/project/birt-gd/#history)
+[![Total downloads](https://static.pepy.tech/badge/birt-gd)](https://pepy.tech/project/birt-gd)
+[![PyPI - Downloads/month](https://img.shields.io/pypi/dm/birt-gd?style=flat-square&color=darkgreen)](https://pypi.org/project/birt-gd/)
+[![PyPI - Downloads/week](https://img.shields.io/pypi/dw/birt-gd?style=flat-square&color=darkgreen)](https://pypi.org/project/birt-gd/)
+[![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
+[![Open issues](https://badgen.net/github/open-issues/manuelfjr/birt-gd)](https://github.com/Manuelfjr/birt-gd/issues?q=is%3Aopen+is%3Aissue)
+[![Closed issues](https://badgen.net/github/closed-issues/manuelfjr/birt-gd)](https://github.com/Manuelfjr/birt-gd/issues?q=is%3Aissue+is%3Aclosed)
 
+<a href="https://www.buymeacoffee.com/manuelfjr" target="_blank"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-5F7FFF?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee"></a>
 
-<a href="https://www.buymeacoffee.com/manuelfjr" target="_blank"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-5F7FFF?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" target="_blank"></a>
-<!-- PyPi Status
-![PyPI - Status](https://img.shields.io/pypi/status/pandas)
--->
+# birt-gd
 
-<!--
-![Py Coverage](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_94.png)
--->
+**BIRT** implements &beta;&sup3;-IRT and &beta;&#8308;-IRT (Beta Item Response Theory) fit by gradient descent in TensorFlow. Unlike classic IRT, which models binary correct/incorrect responses, Beta-IRT models a **continuous** response p<sub>ij</sub> &isin; (0, 1) &mdash; e.g. the probability that classifier/respondent *j* assigns to the correct class of item *i* &mdash; which makes it well suited to evaluating and comparing probabilistic classifiers, not just human test-takers.
 
-<!-- PyPi Downloads
-[![PyPi - Downloads](https://pypip.in/d/pandas/badge.png?&color=blue&logo=python)](https://pypi.org/project/pandas/#files)
+## Table of contents
 
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/scikit-learn?style=flat)](https://pypi.org/project/pandas/#files)
--->
+- [Background](#background)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Development](#development)
+- [Citation](#citation)
+- [Support](#support)
+- [License](#license)
+- [Author](#author) / [Contributors](#contributors)
 
-<!-- Latest PyPI version
-[![Latest PyPI version](https://img.shields.io/pypi/v/pandas?logo=pypi)](https://pypi.python.org/pypi/pandas)
--->
+## Background
 
-<!-- Release
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/pandas-dev/pandas)](https://GitHub.com/pandas-dev/pandas/releases/)
+Given a matrix *X* of response probabilities p<sub>ij</sub> &sim; &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>) &mdash; the probability of respondent *j* correctly classifying item *i* &mdash; the model estimates:
 
-[![GitHub release](https://img.shields.io/github/release/Manuelfjr/birt-sgd.svg)](https://GitHub.com/Manuelfjr/birt-sgd/releases/)
--->
+- **ability** (&theta;<sub>i</sub>) per respondent
+- **difficulty** (&delta;<sub>j</sub>) per item
+- **discrimination** (&omega;<sub>j</sub> / &beta;<sub>j</sub> for &beta;&#8308;-IRT, a single a<sub>j</sub> for &beta;&sup3;-IRT) per item
 
-<!-- Static download of pepy
-[![Downloads](https://static.pepy.tech/personalized-badge/pandas?period=total&units=international_system&left_color=grey&right_color=red&left_text=downloads)](https://pepy.tech/project/pandas)
--->
+using:
 
-<!-- Github downloads
-[![Github All Releases](https://img.shields.io/github/downloads/pandas-dev/pandas/total.svg?&logo=github&color=blue)]()
--->
+&theta;<sub>i</sub> = &sigma;(t<sub>i</sub>), &nbsp; &delta;<sub>j</sub> = &sigma;(d<sub>j</sub>), &nbsp; &omega;<sub>j</sub> = softplus(o<sub>j</sub>), &nbsp; &beta;<sub>j</sub> = tanh(b<sub>j</sub>)
 
-<!-- Lines of code
-![Lines of code](https://img.shields.io/tokei/lines/github/Manuelfjr/birt-sgd)
--->
+E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, &omega;<sub>j</sub>, &beta;<sub>j</sub>] = 1 / (1 + (&delta;<sub>j</sub>/(1-&delta;<sub>j</sub>))<sup>&omega;<sub>j</sub>&beta;<sub>j</sub></sup> &times; (&theta;<sub>i</sub>/(1-&theta;<sub>i</sub>))<sup>-&omega;<sub>j</sub>&beta;<sub>j</sub></sup>)
 
-<!-- Code size
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/pandas-dev/pandas)
--->
+&beta;&#8308;-IRT (`Beta4`) fits this with unconstrained gradient descent (link functions remove the bounded-parameter symmetry problem &beta;&sup3;-IRT has); `set_priors=True` (default) initializes abilities/difficulties from the data's own moments instead of random draws, which converges faster and more reliably. &beta;&sup3;-IRT (`Beta3`) is the earlier, single-discrimination-parameter model — kept for comparison/backwards compatibility. See [Citation](#citation) for the papers behind both.
 
-<!-- Github contributors
-![GitHub contributors](https://img.shields.io/github/contributors/pandas-dev/pandas)
--->
-
-<!--
-[![Downloads](https://pepy.tech/badge/pandas)](https://pepy.tech/project/pandas)    
--->
-
-# [birt-gd](https://pypi.org/project/birt-gd/)
-
-**BIRT** is an implementation of &beta;<sup>4</sup>-irt using gradient descent.
-
-The model expects to receive one dataset, being *X* a matrix (array or list) containing the probability p<sub>ij</sub>, where the  index references the item *j* and the columns represents the respondent *j*, such that p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>), the probability of the *i* model correctly classifying the *j* model. Being
-
-<!--
-The original &beta;<sup>3</sup>-irt model can be describe below: 
-
-p<sub>ij</sub> ~ &Beta;(&alpha;<sub>ij</sub>, &beta;<sub>ij</sub>)
-
-&alpha;<sub>ij</sub> = F<sub>&alpha;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = (&theta;<sub>i</sub>/&delta;<sub>j</sub>)<sup>a<sub>j</sub></sup>
-
-&beta;<sub>ij</sub> = F<sub>&beta;</sub>(&theta;<sub>i</sub>, &delta;<sub>j</sub>, a<sub>j</sub>) = ( (1 - &theta;<sub>i</sub>)/(1 - &delta;<sub>j</sub>) )<sup>a<sub>j</sub></sup>
-
-&theta;<sub>i</sub> ~ &Beta;(1,1), &delta;<sub>j</sub> ~ &Beta;(1,1), a<sub>j</sub> ~ N(1, &sigma;<sup>2</sup><sub>0</sub>)
--->
-&theta;<sub>i</sub> = &sigma;(t<sub>i</sub>) = 1/(1+e<sup>-t<sub>i</sub></sup>)
-
-&delta;<sub>j</sub> = &sigma;(d<sub>j</sub>) = 1/(1+e<sup>-d<sub>j</sub></sup>)
-
-&omega;<sub>j</sub> = softplus(o<sub>j</sub>) = ln(1 + e<sup>j</sup>)
-
-&beta;<sub>j</sub> = tanh(b<sub>j</sub>) = ( e<sup>b<sub>j</sub></sup>  - e<sup>-b<sub>j</sub></sup> )/( e<sup>b<sub>j</sub></sup>  + e<sup>-b<sub>j</sub></sup> )
-
-where,
-
-E[p<sub>ij</sub> | &theta;<sub>i</sub>, &delta;<sub>j</sub>, &omega;<sub>j</sub>, &beta;<sub>j</sub>] = 1/(1 + ( (&delta;<sub>j</sub>)/(1 - &delta;<sub>j</sub>) )<sup>&omega;<sub>j</sub>, &beta;<sub>j</sub></sup> &#xd7; ( (&theta;<sub>i</sub>)/(1 - &theta;<sub>i</sub>) )<sup> - &omega;<sub>j</sub>, &beta;<sub>j</sub></sup> )
-
-# How to use locally
-
-
-## 1) Clone the respository
-
-```bash
-git clone https://github.com/Manuelfjr/birt-gd
-```
-
-## 2) Using enviroments
-
-### 2.1) Using virtualenvs
-
-Install virtualenv if you haven't already:
-
-```bash
-pip install virtualenv
-```
-
-Create a virtual environment
-
-```bash
-virtualenv venv
-```
-
-* **On macOS/Linux**
-
-```bash
-source venv/bin/activate
-```
-
-* **On Windows**
-
-```bash
-venv\Scripts\activate
-```
-
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-## 2.2) Using Poetry (alternative)
-
-Install poetry if you haven't already:
-
-```bash
-pip install poetry
-```
-
-
-Set up the environment and install dependencies:
-
-```bash
-cd birt-gd
-poetry install
-```
-
-Activate the virtual environment (if needed):
-
-```bash
-poetry shell
-```
-
-# Installation
-## Dependencies 
-birt-gd requires:
-- Python (>=3.6.0)
-- numpy (>=1.19.5)
-- tqdm (>=4.59.0)
-- tensorflow (>=2.4.1)
-- pandas (>=1.2.3)
-- seaborn (>=0.11.0)
-- matplotlib (>=3.3.2)
-- scikit-learn (>=0.23.2)
-
-## User installation
+## Installation
 
 ```bash
 pip install birt-gd
 ```
 
-## Source code 
-You can check the code with 
-```bash
-git clone https://github.com/Manuelfjr/birt-gd
-```
+### Requirements
 
-# Usage
-Import the **BIRT's class**
+- Python >= 3.10
+- tensorflow ^2.18.0
+- pandas ^2.2.3
+- scikit-learn ^1.6.1
+- matplotlib ^3.10.0
+- seaborn ^0.13.2
+- tqdm ^4.67.1
+
+## Usage
 
 ```py
 from birt import Beta4
-```
+import pandas as pd
 
-```py
-data = pd.DataFrame(
-    {
-        'a': [0.99, 0.89, 0.87, 0.50],
-        'b': [0.32, 0.25, 0.45, 0.20],
-        'c': [0.50, 0.50, 0.50, 0.50]
-    }
-)
-```
+data = pd.DataFrame({
+    'a': [0.99, 0.89, 0.87, 0.50],
+    'b': [0.32, 0.25, 0.45, 0.20],
+    'c': [0.50, 0.50, 0.50, 0.50],
+})
 
-```py
 bgd = Beta4(
-    learning_rate=1, 
+    learning_rate=1,
     epochs=10000,
-    n_respondents=data.shape[1], 
+    n_respondents=data.shape[1],
     n_items=data.shape[0],
     n_inits=1000,
-    # n_workers=-1,
     random_seed=1,
     tol=10**(-5),
-    set_priors=True
+    set_priors=True,
 )
 bgd.fit(data.values)
+
+bgd.abilities        # array([0.626, 0.416, 0.474], dtype=float32)
+bgd.difficulties     # array([0.456, 0.478, 0.442, 0.608], dtype=float32)
+bgd.discriminations  # array([0.992, 1.000, 0.961, 0.792], dtype=float32)
+bgd.score            # Pseudo-R2, e.g. 0.888
 ```
 
-```
->>> 0%|          | 14/10000 [00:00<01:11, 139.04it/s]
->>> Model converged at the 24th epoch
->>> 0%|          | 24/10000 [00:00<01:03, 156.01it/s]
->>> W0000 00:00:1739567647.550733    4426 gpu_device.cc:2344] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
-Skipping registering GPU devices...
-```
-
-```py 
-bgd.abilities
-```
-
-```
->>> array([0.62599856, 0.4157101 , 0.4741606 ], dtype=float32)
-```
+`Beta3` shares the same interface (drop `set_priors`, since &beta;&sup3;-IRT has a single discrimination parameter):
 
 ```py
-bgd.difficulties
+from birt import Beta3
+
+b3 = Beta3(learning_rate=1, epochs=10000, n_respondents=data.shape[1], n_items=data.shape[0])
+b3.fit(data.values)
 ```
 
-```
->>> array([0.4555296 , 0.4779129 , 0.44193327, 0.6075782 ], dtype=float32)
-
-```
-
-
-```py
-bgd.discriminations
-```
-
-```
->>> array([0.99179965, 0.9999737 , 0.96063244, 0.79214346], dtype=float32)
-```
-
-# Summary data
-
-How to use the summary feature:
-
-* **Generate data**
-
-```py
-import numpy as np
-```
-
-```py
-m, n = 5, 20
-np.random.seed(1)
-abilities = [np.random.beta(1,i) for i in ([0.1, 10] + [1]*(m-2))]
-difficulties = [np.random.beta(1,i) for i in [10, 5] + [1]*(n-2)]
-discrimination = list(np.random.normal(1,1, size=n))
-pij = pd.DataFrame(columns=range(m), index=range(n))
-
-i,j = 0,0
-for theta in abilities:
-  for delta, a in zip(difficulties, discrimination):
-    alphaij = (theta/delta)**(a)
-    betaij = ((1-theta)/(1 - delta))**(a)
-    pij.loc[j,i] = np.random.beta(alphaij, betaij, size=1)[0]
-    j+=1
-  j = 0
-  i+=1
-pij = pij.astype(float)
-```
-
-* **Fitting the model**
-```py
-bgd = Beta4(
-        learning_rate=0.1, 
-        epochs=10000,
-        n_respondents=pij.shape[1],
-        n_items=pij.shape[0],
-        n_inits=1000, 
-        n_workers=-1,
-        random_seed=1,
-        tol=10**(-8),
-        set_priors=True
-    )
-bgd.fit(pij.values)
-```
-
-```
->>> 0%|          | 14/10000 [00:00<01:14, 134.16it/s]W0000 00:00:1739567855.178464    4426 gpu_device.cc:2344] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
-Skipping registering GPU devices...
->>> 100%|██████████| 10000/10000 [00:50<00:00, 199.07it/s]
-```
-
-
-* **Score (Pseudo - R<sup>2</sup>)**
-
-```py
-bgd.score
-```
-
-```py
->>> 0.8878812010701687
-```
-
-
-* **Summary**
+### Summary
 
 ```py
 bgd.summary()
 ```
 
-```py
-
+```
         ESTIMATES
         -----
                         | Min      1Qt      Median   3Qt      Max      Std.Dev
@@ -324,776 +110,86 @@ bgd.summary()
         pij             | 0.00000  0.04613  0.40412  0.81140  0.99958  0.36590
         -----
         Pseudo-R2       | 0.88788
-        
 ```
 
-# Using Scatterplot Feature
+### Plots
 
-```py
-import matplotlib.pyplot as plt
+`bgd.plot(xaxis=..., yaxis=..., ann=True, kwargs={'color': 'red'})` — scatter of any pair among `discrimination`, `difficulty`, `ability`, `average_response`, `average_item`.
+
+`bgd.boxplot(x=..., y=..., kwargs={...})` — boxplot of `ability`, `difficulty` or `discrimination`.
+
+<p float="left">
+  <img src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/dis_diff_ex.png" width="32%" alt="discrimination vs difficulty scatterplot">
+  <img src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/diff_av_ex2.png" width="32%" alt="difficulty vs average item scatterplot">
+  <img src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex3.png" width="32%" alt="ability vs average response scatterplot">
+</p>
+<p float="left">
+  <img src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex4.png" width="32%" alt="ability boxplot">
+  <img src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex5.png" width="32%" alt="difficulty boxplot">
+  <img src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex6.png" width="32%" alt="discrimination boxplot">
+</p>
+
+More end-to-end examples: [example/00_example.ipynb](example/00_example.ipynb).
+
+## Development
+
+```bash
+git clone https://github.com/Manuelfjr/birt-gd
+cd birt-gd
+poetry install
+poetry shell
 ```
 
-```py
-bgd.plot(xaxis='discrimination',
-        yaxis='difficulty',
-        ann=True,
-        kwargs={'color': 'red'},
-        font_size=22,font_ann_size=15)
-plt.show()
+`mc_analysis/` holds the Monte Carlo simulation study used to validate the model; it ships with the repo but not with the PyPI package.
+
+### Contributing
+
+Issues and pull requests are welcome at [github.com/Manuelfjr/birt-gd](https://github.com/Manuelfjr/birt-gd). There's no test suite yet, so please describe how a change was verified (e.g. output of the [Usage](#usage) example) in the PR description.
+
+## Citation
+
+`birt-gd` is the reference implementation for the following papers — please cite the one matching the model you use (`Beta4` &rarr; &beta;&#8308;-IRT, `Beta3` &rarr; &beta;&sup3;-IRT):
+
+```bibtex
+@article{ferreirajunior2023beta4irt,
+  title   = {{$\beta^4$-IRT}: A New {$\beta^3$-IRT} with Enhanced Discrimination Estimation},
+  author  = {Ferreira-Junior, Manuel and Reinaldo, Jessica T. S. and Silva Filho, Telmo M. and Lima Neto, Eufrasio A. and Prudencio, Ricardo B. C.},
+  journal = {arXiv preprint arXiv:2303.17731},
+  year    = {2023}
+}
+
+@inproceedings{chen2019beta3irt,
+  title     = {{$\beta^3$-IRT}: A New Item Response Model and its Applications},
+  author    = {Chen, Yu and Silva Filho, Telmo and Prudencio, Ricardo B. C. and Diethe, Tom and Flach, Peter},
+  booktitle = {Proceedings of the 22nd International Conference on Artificial Intelligence and Statistics (AISTATS)},
+  year      = {2019}
+}
 ```
 
-<img alt = "assets/dis_diff_ex.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/dis_diff_ex.png">
-
-```py
-bgd.plot(xaxis='difficulty', 
-        yaxis='average_item',
-        ann=True,
-        kwargs={'color': 'blue'},
-        font_size=22,
-        font_ann_size=17)
-plt.show()
-```
-
-<img alt = "assets/diff_av_ex2.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/diff_av_ex2.png">
-
-
-```py
-bgd.plot(xaxis='ability',
-        yaxis='average_response',
-        ann=True, 
-        font_size=16, 
-        font_ann_size=16)
-plt.show()
-```
-
-<img alt = "assets/ab_av_ex3.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ab_av_ex3.png">
-
-# Using Boxplot Feature
-
-```py
-bgd.boxplot(y='ability',
-             kwargs={'linewidth': 4},
-             font_size=16)
-```
-
-<img alt = "assets/ab_av_ex4.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex4.png">
-
-
-```py
-bgd.boxplot(x='difficulty',
-             font_size=16)
-```
-<img alt = "assets/ab_av_ex5.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex5.png">
-
-```py
-bgd.boxplot(y='discrimination',
-             font_size=16)
-```
-
-<img alt = "assets/ab_av_ex6.png" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/ex6.png">
-
-
-# Help and Support
-## Communication
+## Support
 
 - E-mail: [ferreira.jr.ufpb@gmail.com](mailto:ferreira.jr.ufpb@gmail.com)
-- Site: [https://manuelfjr.github.io/](https://manuelfjr.github.io/)
+- Site: [manuelfjr.github.io](https://manuelfjr.github.io/)
 
-# License
-[GNU General Public License v3.0](https://github.com/Manuelfjr/birt-sgd/blob/main/LICENSE)
+## License
 
-                    GNU GENERAL PUBLIC LICENSE
-                       Version 3, 29 June 2007
+[GNU General Public License v3.0](LICENSE) &copy; Manuel Ferreira Junior
 
- Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
- Everyone is permitted to copy and distribute verbatim copies
- of this license document, but changing it is not allowed.
+## Author
 
-                            Preamble
-
-  The GNU General Public License is a free, copyleft license for
-software and other kinds of works.
-
-  The licenses for most software and other practical works are designed
-to take away your freedom to share and change the works.  By contrast,
-the GNU General Public License is intended to guarantee your freedom to
-share and change all versions of a program--to make sure it remains free
-software for all its users.  We, the Free Software Foundation, use the
-GNU General Public License for most of our software; it applies also to
-any other work released this way by its authors.  You can apply it to
-your programs, too.
-
-  When we speak of free software, we are referring to freedom, not
-price.  Our General Public Licenses are designed to make sure that you
-have the freedom to distribute copies of free software (and charge for
-them if you wish), that you receive source code or can get it if you
-want it, that you can change the software or use pieces of it in new
-free programs, and that you know you can do these things.
-
-  To protect your rights, we need to prevent others from denying you
-these rights or asking you to surrender the rights.  Therefore, you have
-certain responsibilities if you distribute copies of the software, or if
-you modify it: responsibilities to respect the freedom of others.
-
-  For example, if you distribute copies of such a program, whether
-gratis or for a fee, you must pass on to the recipients the same
-freedoms that you received.  You must make sure that they, too, receive
-or can get the source code.  And you must show them these terms so they
-know their rights.
-
-  Developers that use the GNU GPL protect your rights with two steps:
-(1) assert copyright on the software, and (2) offer you this License
-giving you legal permission to copy, distribute and/or modify it.
-
-  For the developers' and authors' protection, the GPL clearly explains
-that there is no warranty for this free software.  For both users' and
-authors' sake, the GPL requires that modified versions be marked as
-changed, so that their problems will not be attributed erroneously to
-authors of previous versions.
-
-  Some devices are designed to deny users access to install or run
-modified versions of the software inside them, although the manufacturer
-can do so.  This is fundamentally incompatible with the aim of
-protecting users' freedom to change the software.  The systematic
-pattern of such abuse occurs in the area of products for individuals to
-use, which is precisely where it is most unacceptable.  Therefore, we
-have designed this version of the GPL to prohibit the practice for those
-products.  If such problems arise substantially in other domains, we
-stand ready to extend this provision to those domains in future versions
-of the GPL, as needed to protect the freedom of users.
-
-  Finally, every program is threatened constantly by software patents.
-States should not allow patents to restrict development and use of
-software on general-purpose computers, but in those that do, we wish to
-avoid the special danger that patents applied to a free program could
-make it effectively proprietary.  To prevent this, the GPL assures that
-patents cannot be used to render the program non-free.
-
-  The precise terms and conditions for copying, distribution and
-modification follow.
-
-                       TERMS AND CONDITIONS
-
-  0. Definitions.
-
-  "This License" refers to version 3 of the GNU General Public License.
-
-  "Copyright" also means copyright-like laws that apply to other kinds of
-works, such as semiconductor masks.
-
-  "The Program" refers to any copyrightable work licensed under this
-License.  Each licensee is addressed as "you".  "Licensees" and
-"recipients" may be individuals or organizations.
-
-  To "modify" a work means to copy from or adapt all or part of the work
-in a fashion requiring copyright permission, other than the making of an
-exact copy.  The resulting work is called a "modified version" of the
-earlier work or a work "based on" the earlier work.
-
-  A "covered work" means either the unmodified Program or a work based
-on the Program.
-
-  To "propagate" a work means to do anything with it that, without
-permission, would make you directly or secondarily liable for
-infringement under applicable copyright law, except executing it on a
-computer or modifying a private copy.  Propagation includes copying,
-distribution (with or without modification), making available to the
-public, and in some countries other activities as well.
-
-  To "convey" a work means any kind of propagation that enables other
-parties to make or receive copies.  Mere interaction with a user through
-a computer network, with no transfer of a copy, is not conveying.
-
-  An interactive user interface displays "Appropriate Legal Notices"
-to the extent that it includes a convenient and prominently visible
-feature that (1) displays an appropriate copyright notice, and (2)
-tells the user that there is no warranty for the work (except to the
-extent that warranties are provided), that licensees may convey the
-work under this License, and how to view a copy of this License.  If
-the interface presents a list of user commands or options, such as a
-menu, a prominent item in the list meets this criterion.
-
-  1. Source Code.
-
-  The "source code" for a work means the preferred form of the work
-for making modifications to it.  "Object code" means any non-source
-form of a work.
-
-  A "Standard Interface" means an interface that either is an official
-standard defined by a recognized standards body, or, in the case of
-interfaces specified for a particular programming language, one that
-is widely used among developers working in that language.
-
-  The "System Libraries" of an executable work include anything, other
-than the work as a whole, that (a) is included in the normal form of
-packaging a Major Component, but which is not part of that Major
-Component, and (b) serves only to enable use of the work with that
-Major Component, or to implement a Standard Interface for which an
-implementation is available to the public in source code form.  A
-"Major Component", in this context, means a major essential component
-(kernel, window system, and so on) of the specific operating system
-(if any) on which the executable work runs, or a compiler used to
-produce the work, or an object code interpreter used to run it.
-
-  The "Corresponding Source" for a work in object code form means all
-the source code needed to generate, install, and (for an executable
-work) run the object code and to modify the work, including scripts to
-control those activities.  However, it does not include the work's
-System Libraries, or general-purpose tools or generally available free
-programs which are used unmodified in performing those activities but
-which are not part of the work.  For example, Corresponding Source
-includes interface definition files associated with source files for
-the work, and the source code for shared libraries and dynamically
-linked subprograms that the work is specifically designed to require,
-such as by intimate data communication or control flow between those
-subprograms and other parts of the work.
-
-  The Corresponding Source need not include anything that users
-can regenerate automatically from other parts of the Corresponding
-Source.
-
-  The Corresponding Source for a work in source code form is that
-same work.
-
-  2. Basic Permissions.
-
-  All rights granted under this License are granted for the term of
-copyright on the Program, and are irrevocable provided the stated
-conditions are met.  This License explicitly affirms your unlimited
-permission to run the unmodified Program.  The output from running a
-covered work is covered by this License only if the output, given its
-content, constitutes a covered work.  This License acknowledges your
-rights of fair use or other equivalent, as provided by copyright law.
-
-  You may make, run and propagate covered works that you do not
-convey, without conditions so long as your license otherwise remains
-in force.  You may convey covered works to others for the sole purpose
-of having them make modifications exclusively for you, or provide you
-with facilities for running those works, provided that you comply with
-the terms of this License in conveying all material for which you do
-not control copyright.  Those thus making or running the covered works
-for you must do so exclusively on your behalf, under your direction
-and control, on terms that prohibit them from making any copies of
-your copyrighted material outside their relationship with you.
-
-  Conveying under any other circumstances is permitted solely under
-the conditions stated below.  Sublicensing is not allowed; section 10
-makes it unnecessary.
-
-  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
-
-  No covered work shall be deemed part of an effective technological
-measure under any applicable law fulfilling obligations under article
-11 of the WIPO copyright treaty adopted on 20 December 1996, or
-similar laws prohibiting or restricting circumvention of such
-measures.
-
-  When you convey a covered work, you waive any legal power to forbid
-circumvention of technological measures to the extent such circumvention
-is effected by exercising rights under this License with respect to
-the covered work, and you disclaim any intention to limit operation or
-modification of the work as a means of enforcing, against the work's
-users, your or third parties' legal rights to forbid circumvention of
-technological measures.
-
-  4. Conveying Verbatim Copies.
-
-  You may convey verbatim copies of the Program's source code as you
-receive it, in any medium, provided that you conspicuously and
-appropriately publish on each copy an appropriate copyright notice;
-keep intact all notices stating that this License and any
-non-permissive terms added in accord with section 7 apply to the code;
-keep intact all notices of the absence of any warranty; and give all
-recipients a copy of this License along with the Program.
-
-  You may charge any price or no price for each copy that you convey,
-and you may offer support or warranty protection for a fee.
-
-  5. Conveying Modified Source Versions.
-
-  You may convey a work based on the Program, or the modifications to
-produce it from the Program, in the form of source code under the
-terms of section 4, provided that you also meet all of these conditions:
-
-    a) The work must carry prominent notices stating that you modified
-    it, and giving a relevant date.
-
-    b) The work must carry prominent notices stating that it is
-    released under this License and any conditions added under section
-    7.  This requirement modifies the requirement in section 4 to
-    "keep intact all notices".
-
-    c) You must license the entire work, as a whole, under this
-    License to anyone who comes into possession of a copy.  This
-    License will therefore apply, along with any applicable section 7
-    additional terms, to the whole of the work, and all its parts,
-    regardless of how they are packaged.  This License gives no
-    permission to license the work in any other way, but it does not
-    invalidate such permission if you have separately received it.
-
-    d) If the work has interactive user interfaces, each must display
-    Appropriate Legal Notices; however, if the Program has interactive
-    interfaces that do not display Appropriate Legal Notices, your
-    work need not make them do so.
-
-  A compilation of a covered work with other separate and independent
-works, which are not by their nature extensions of the covered work,
-and which are not combined with it such as to form a larger program,
-in or on a volume of a storage or distribution medium, is called an
-"aggregate" if the compilation and its resulting copyright are not
-used to limit the access or legal rights of the compilation's users
-beyond what the individual works permit.  Inclusion of a covered work
-in an aggregate does not cause this License to apply to the other
-parts of the aggregate.
-
-  6. Conveying Non-Source Forms.
-
-  You may convey a covered work in object code form under the terms
-of sections 4 and 5, provided that you also convey the
-machine-readable Corresponding Source under the terms of this License,
-in one of these ways:
-
-    a) Convey the object code in, or embodied in, a physical product
-    (including a physical distribution medium), accompanied by the
-    Corresponding Source fixed on a durable physical medium
-    customarily used for software interchange.
-
-    b) Convey the object code in, or embodied in, a physical product
-    (including a physical distribution medium), accompanied by a
-    written offer, valid for at least three years and valid for as
-    long as you offer spare parts or customer support for that product
-    model, to give anyone who possesses the object code either (1) a
-    copy of the Corresponding Source for all the software in the
-    product that is covered by this License, on a durable physical
-    medium customarily used for software interchange, for a price no
-    more than your reasonable cost of physically performing this
-    conveying of source, or (2) access to copy the
-    Corresponding Source from a network server at no charge.
-
-    c) Convey individual copies of the object code with a copy of the
-    written offer to provide the Corresponding Source.  This
-    alternative is allowed only occasionally and noncommercially, and
-    only if you received the object code with such an offer, in accord
-    with subsection 6b.
-
-    d) Convey the object code by offering access from a designated
-    place (gratis or for a charge), and offer equivalent access to the
-    Corresponding Source in the same way through the same place at no
-    further charge.  You need not require recipients to copy the
-    Corresponding Source along with the object code.  If the place to
-    copy the object code is a network server, the Corresponding Source
-    may be on a different server (operated by you or a third party)
-    that supports equivalent copying facilities, provided you maintain
-    clear directions next to the object code saying where to find the
-    Corresponding Source.  Regardless of what server hosts the
-    Corresponding Source, you remain obligated to ensure that it is
-    available for as long as needed to satisfy these requirements.
-
-    e) Convey the object code using peer-to-peer transmission, provided
-    you inform other peers where the object code and Corresponding
-    Source of the work are being offered to the general public at no
-    charge under subsection 6d.
-
-  A separable portion of the object code, whose source code is excluded
-from the Corresponding Source as a System Library, need not be
-included in conveying the object code work.
-
-  A "User Product" is either (1) a "consumer product", which means any
-tangible personal property which is normally used for personal, family,
-or household purposes, or (2) anything designed or sold for incorporation
-into a dwelling.  In determining whether a product is a consumer product,
-doubtful cases shall be resolved in favor of coverage.  For a particular
-product received by a particular user, "normally used" refers to a
-typical or common use of that class of product, regardless of the status
-of the particular user or of the way in which the particular user
-actually uses, or expects or is expected to use, the product.  A product
-is a consumer product regardless of whether the product has substantial
-commercial, industrial or non-consumer uses, unless such uses represent
-the only significant mode of use of the product.
-
-  "Installation Information" for a User Product means any methods,
-procedures, authorization keys, or other information required to install
-and execute modified versions of a covered work in that User Product from
-a modified version of its Corresponding Source.  The information must
-suffice to ensure that the continued functioning of the modified object
-code is in no case prevented or interfered with solely because
-modification has been made.
-
-  If you convey an object code work under this section in, or with, or
-specifically for use in, a User Product, and the conveying occurs as
-part of a transaction in which the right of possession and use of the
-User Product is transferred to the recipient in perpetuity or for a
-fixed term (regardless of how the transaction is characterized), the
-Corresponding Source conveyed under this section must be accompanied
-by the Installation Information.  But this requirement does not apply
-if neither you nor any third party retains the ability to install
-modified object code on the User Product (for example, the work has
-been installed in ROM).
-
-  The requirement to provide Installation Information does not include a
-requirement to continue to provide support service, warranty, or updates
-for a work that has been modified or installed by the recipient, or for
-the User Product in which it has been modified or installed.  Access to a
-network may be denied when the modification itself materially and
-adversely affects the operation of the network or violates the rules and
-protocols for communication across the network.
-
-  Corresponding Source conveyed, and Installation Information provided,
-in accord with this section must be in a format that is publicly
-documented (and with an implementation available to the public in
-source code form), and must require no special password or key for
-unpacking, reading or copying.
-
-  7. Additional Terms.
-
-  "Additional permissions" are terms that supplement the terms of this
-License by making exceptions from one or more of its conditions.
-Additional permissions that are applicable to the entire Program shall
-be treated as though they were included in this License, to the extent
-that they are valid under applicable law.  If additional permissions
-apply only to part of the Program, that part may be used separately
-under those permissions, but the entire Program remains governed by
-this License without regard to the additional permissions.
-
-  When you convey a copy of a covered work, you may at your option
-remove any additional permissions from that copy, or from any part of
-it.  (Additional permissions may be written to require their own
-removal in certain cases when you modify the work.)  You may place
-additional permissions on material, added by you to a covered work,
-for which you have or can give appropriate copyright permission.
-
-  Notwithstanding any other provision of this License, for material you
-add to a covered work, you may (if authorized by the copyright holders of
-that material) supplement the terms of this License with terms:
-
-    a) Disclaiming warranty or limiting liability differently from the
-    terms of sections 15 and 16 of this License; or
-
-    b) Requiring preservation of specified reasonable legal notices or
-    author attributions in that material or in the Appropriate Legal
-    Notices displayed by works containing it; or
-
-    c) Prohibiting misrepresentation of the origin of that material, or
-    requiring that modified versions of such material be marked in
-    reasonable ways as different from the original version; or
-
-    d) Limiting the use for publicity purposes of names of licensors or
-    authors of the material; or
-
-    e) Declining to grant rights under trademark law for use of some
-    trade names, trademarks, or service marks; or
-
-    f) Requiring indemnification of licensors and authors of that
-    material by anyone who conveys the material (or modified versions of
-    it) with contractual assumptions of liability to the recipient, for
-    any liability that these contractual assumptions directly impose on
-    those licensors and authors.
-
-  All other non-permissive additional terms are considered "further
-restrictions" within the meaning of section 10.  If the Program as you
-received it, or any part of it, contains a notice stating that it is
-governed by this License along with a term that is a further
-restriction, you may remove that term.  If a license document contains
-a further restriction but permits relicensing or conveying under this
-License, you may add to a covered work material governed by the terms
-of that license document, provided that the further restriction does
-not survive such relicensing or conveying.
-
-  If you add terms to a covered work in accord with this section, you
-must place, in the relevant source files, a statement of the
-additional terms that apply to those files, or a notice indicating
-where to find the applicable terms.
-
-  Additional terms, permissive or non-permissive, may be stated in the
-form of a separately written license, or stated as exceptions;
-the above requirements apply either way.
-
-  8. Termination.
-
-  You may not propagate or modify a covered work except as expressly
-provided under this License.  Any attempt otherwise to propagate or
-modify it is void, and will automatically terminate your rights under
-this License (including any patent licenses granted under the third
-paragraph of section 11).
-
-  However, if you cease all violation of this License, then your
-license from a particular copyright holder is reinstated (a)
-provisionally, unless and until the copyright holder explicitly and
-finally terminates your license, and (b) permanently, if the copyright
-holder fails to notify you of the violation by some reasonable means
-prior to 60 days after the cessation.
-
-  Moreover, your license from a particular copyright holder is
-reinstated permanently if the copyright holder notifies you of the
-violation by some reasonable means, this is the first time you have
-received notice of violation of this License (for any work) from that
-copyright holder, and you cure the violation prior to 30 days after
-your receipt of the notice.
-
-  Termination of your rights under this section does not terminate the
-licenses of parties who have received copies or rights from you under
-this License.  If your rights have been terminated and not permanently
-reinstated, you do not qualify to receive new licenses for the same
-material under section 10.
-
-  9. Acceptance Not Required for Having Copies.
-
-  You are not required to accept this License in order to receive or
-run a copy of the Program.  Ancillary propagation of a covered work
-occurring solely as a consequence of using peer-to-peer transmission
-to receive a copy likewise does not require acceptance.  However,
-nothing other than this License grants you permission to propagate or
-modify any covered work.  These actions infringe copyright if you do
-not accept this License.  Therefore, by modifying or propagating a
-covered work, you indicate your acceptance of this License to do so.
-
-  10. Automatic Licensing of Downstream Recipients.
-
-  Each time you convey a covered work, the recipient automatically
-receives a license from the original licensors, to run, modify and
-propagate that work, subject to this License.  You are not responsible
-for enforcing compliance by third parties with this License.
-
-  An "entity transaction" is a transaction transferring control of an
-organization, or substantially all assets of one, or subdividing an
-organization, or merging organizations.  If propagation of a covered
-work results from an entity transaction, each party to that
-transaction who receives a copy of the work also receives whatever
-licenses to the work the party's predecessor in interest had or could
-give under the previous paragraph, plus a right to possession of the
-Corresponding Source of the work from the predecessor in interest, if
-the predecessor has it or can get it with reasonable efforts.
-
-  You may not impose any further restrictions on the exercise of the
-rights granted or affirmed under this License.  For example, you may
-not impose a license fee, royalty, or other charge for exercise of
-rights granted under this License, and you may not initiate litigation
-(including a cross-claim or counterclaim in a lawsuit) alleging that
-any patent claim is infringed by making, using, selling, offering for
-sale, or importing the Program or any portion of it.
-
-  11. Patents.
-
-  A "contributor" is a copyright holder who authorizes use under this
-License of the Program or a work on which the Program is based.  The
-work thus licensed is called the contributor's "contributor version".
-
-  A contributor's "essential patent claims" are all patent claims
-owned or controlled by the contributor, whether already acquired or
-hereafter acquired, that would be infringed by some manner, permitted
-by this License, of making, using, or selling its contributor version,
-but do not include claims that would be infringed only as a
-consequence of further modification of the contributor version.  For
-purposes of this definition, "control" includes the right to grant
-patent sublicenses in a manner consistent with the requirements of
-this License.
-
-  Each contributor grants you a non-exclusive, worldwide, royalty-free
-patent license under the contributor's essential patent claims, to
-make, use, sell, offer for sale, import and otherwise run, modify and
-propagate the contents of its contributor version.
-
-  In the following three paragraphs, a "patent license" is any express
-agreement or commitment, however denominated, not to enforce a patent
-(such as an express permission to practice a patent or covenant not to
-sue for patent infringement).  To "grant" such a patent license to a
-party means to make such an agreement or commitment not to enforce a
-patent against the party.
-
-  If you convey a covered work, knowingly relying on a patent license,
-and the Corresponding Source of the work is not available for anyone
-to copy, free of charge and under the terms of this License, through a
-publicly available network server or other readily accessible means,
-then you must either (1) cause the Corresponding Source to be so
-available, or (2) arrange to deprive yourself of the benefit of the
-patent license for this particular work, or (3) arrange, in a manner
-consistent with the requirements of this License, to extend the patent
-license to downstream recipients.  "Knowingly relying" means you have
-actual knowledge that, but for the patent license, your conveying the
-covered work in a country, or your recipient's use of the covered work
-in a country, would infringe one or more identifiable patents in that
-country that you have reason to believe are valid.
-
-  If, pursuant to or in connection with a single transaction or
-arrangement, you convey, or propagate by procuring conveyance of, a
-covered work, and grant a patent license to some of the parties
-receiving the covered work authorizing them to use, propagate, modify
-or convey a specific copy of the covered work, then the patent license
-you grant is automatically extended to all recipients of the covered
-work and works based on it.
-
-  A patent license is "discriminatory" if it does not include within
-the scope of its coverage, prohibits the exercise of, or is
-conditioned on the non-exercise of one or more of the rights that are
-specifically granted under this License.  You may not convey a covered
-work if you are a party to an arrangement with a third party that is
-in the business of distributing software, under which you make payment
-to the third party based on the extent of your activity of conveying
-the work, and under which the third party grants, to any of the
-parties who would receive the covered work from you, a discriminatory
-patent license (a) in connection with copies of the covered work
-conveyed by you (or copies made from those copies), or (b) primarily
-for and in connection with specific products or compilations that
-contain the covered work, unless you entered into that arrangement,
-or that patent license was granted, prior to 28 March 2007.
-
-  Nothing in this License shall be construed as excluding or limiting
-any implied license or other defenses to infringement that may
-otherwise be available to you under applicable patent law.
-
-  12. No Surrender of Others' Freedom.
-
-  If conditions are imposed on you (whether by court order, agreement or
-otherwise) that contradict the conditions of this License, they do not
-excuse you from the conditions of this License.  If you cannot convey a
-covered work so as to satisfy simultaneously your obligations under this
-License and any other pertinent obligations, then as a consequence you may
-not convey it at all.  For example, if you agree to terms that obligate you
-to collect a royalty for further conveying from those to whom you convey
-the Program, the only way you could satisfy both those terms and this
-License would be to refrain entirely from conveying the Program.
-
-  13. Use with the GNU Affero General Public License.
-
-  Notwithstanding any other provision of this License, you have
-permission to link or combine any covered work with a work licensed
-under version 3 of the GNU Affero General Public License into a single
-combined work, and to convey the resulting work.  The terms of this
-License will continue to apply to the part which is the covered work,
-but the special requirements of the GNU Affero General Public License,
-section 13, concerning interaction through a network will apply to the
-combination as such.
-
-  14. Revised Versions of this License.
-
-  The Free Software Foundation may publish revised and/or new versions of
-the GNU General Public License from time to time.  Such new versions will
-be similar in spirit to the present version, but may differ in detail to
-address new problems or concerns.
-
-  Each version is given a distinguishing version number.  If the
-Program specifies that a certain numbered version of the GNU General
-Public License "or any later version" applies to it, you have the
-option of following the terms and conditions either of that numbered
-version or of any later version published by the Free Software
-Foundation.  If the Program does not specify a version number of the
-GNU General Public License, you may choose any version ever published
-by the Free Software Foundation.
-
-  If the Program specifies that a proxy can decide which future
-versions of the GNU General Public License can be used, that proxy's
-public statement of acceptance of a version permanently authorizes you
-to choose that version for the Program.
-
-  Later license versions may give you additional or different
-permissions.  However, no additional obligations are imposed on any
-author or copyright holder as a result of your choosing to follow a
-later version.
-
-  15. Disclaimer of Warranty.
-
-  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
-APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
-HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
-OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
-IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
-ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
-
-  16. Limitation of Liability.
-
-  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
-THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
-GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
-USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
-DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
-PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
-EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGES.
-
-  17. Interpretation of Sections 15 and 16.
-
-  If the disclaimer of warranty and limitation of liability provided
-above cannot be given local legal effect according to their terms,
-reviewing courts shall apply local law that most closely approximates
-an absolute waiver of all civil liability in connection with the
-Program, unless a warranty or assumption of liability accompanies a
-copy of the Program in return for a fee.
-
-                     END OF TERMS AND CONDITIONS
-
-            How to Apply These Terms to Your New Programs
-
-  If you develop a new program, and you want it to be of the greatest
-possible use to the public, the best way to achieve this is to make it
-free software which everyone can redistribute and change under these terms.
-
-  To do so, attach the following notices to the program.  It is safest
-to attach them to the start of each source file to most effectively
-state the exclusion of warranty; and each file should have at least
-the "copyright" line and a pointer to where the full notice is found.
-
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2021 Manuel Ferreira Junior
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-Also add information on how to contact you by electronic and paper mail.
-
-  If the program does terminal interaction, make it output a short
-notice like this when it starts in an interactive mode:
-
-    birt-gd  Copyright (C) 2021  Manuel Ferreira Junior
-    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-    This is free software, and you are welcome to redistribute it
-    under certain conditions; type `show c' for details.
-
-The hypothetical commands `show w' and `show c' should show the appropriate
-parts of the General Public License.  Of course, your program's commands
-might be different; for a GUI interface, you would use an "about box".
-
-  You should also get your employer (if you work as a programmer) or school,
-if any, to sign a "copyright disclaimer" for the program, if necessary.
-For more information on this, and how to apply and follow the GNU GPL, see
-<https://www.gnu.org/licenses/>.
-
-  The GNU General Public License does not permit incorporating your program
-into proprietary programs.  If your program is a subroutine library, you
-may consider it more useful to permit linking proprietary applications with
-the library.  If this is what you want to do, use the GNU Lesser General
-Public License instead of this License.  But first, please read
-<https://www.gnu.org/licenses/why-not-lgpl.html>.
-
-# Author
-</table>
-<table  justify-self="center">
+<table>
   <tr>
-    <td width=5% align="center"><a href="https://manuelfjr.github.io/"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/author.jpg" width="100px;" alt=""/><br /><sub><b>Manuel Ferreira Junior</b></sub></a><br /><a href="https://manuelfjr.github.io/" title=""></a></td>
-  </tr> 
+    <td align="center" width="120"><a href="https://manuelfjr.github.io/"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/author.jpg" width="100px;" alt="Manuel Ferreira Junior"/><br /><sub><b>Manuel Ferreira Junior</b></sub></a></td>
+  </tr>
 </table>
 
-# Contributors
+## Contributors
 
-</table>
-<table  justify-self="center">
+<table>
   <tr>
-    <td width=5% align="center"><a href="https://github.com/tmfilho"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor1.jpeg" width="100px;" alt=""/><br /><sub><b>Telmo de Menezes e Silva Filho</b></sub></a><br /><a href="https://github.com/tmfilho" title=""></a></td>
-    <td width=5% align="center"><a href="https://github.com/jessicareinaldo"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor2.jpeg" width="100px;" alt=""/><br /><sub><b>Jessica Reinaldo</b></sub></a><br /><a href="https://github.com/jessicareinaldo" title=""></a></td>
-    <td width=5% align="center"><a href="http://lattes.cnpq.br/2984888073123287"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor3.jpg" width="100px;" alt=""/><br /><sub><b>Ricardo Prudêncio</b></sub></a><br /><a href="http://lattes.cnpq.br/2984888073123287" title=""></a></td>
-    <td width=5% align="center"><a href="http://lattes.cnpq.br/5580004940091667"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor4.jpg" width="100px;" alt=""/><br /><sub><b>Eufrásio de Andrade Lima Neto</b></sub></a><br /><a href="http://lattes.cnpq.br/5580004940091667" title=""></a></td>
-  </tr> 
+    <td align="center" width="120"><a href="https://github.com/tmfilho"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor1.jpeg" width="100px;" alt="Telmo de Menezes e Silva Filho"/><br /><sub><b>Telmo de Menezes e Silva Filho</b></sub></a></td>
+    <td align="center" width="120"><a href="https://flach.github.io/"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor5.jpg" width="100px;" alt="Peter Flach"/><br /><sub><b>Peter Flach</b></sub></a></td>
+    <td align="center" width="120"><a href="http://lattes.cnpq.br/2984888073123287"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor3.jpg" width="100px;" alt="Ricardo Prudêncio"/><br /><sub><b>Ricardo Prud&ecirc;ncio</b></sub></a></td>
+    <td align="center" width="120"><a href="http://lattes.cnpq.br/5580004940091667"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor4.jpg" width="100px;" alt="Eufrásio de Andrade Lima Neto"/><br /><sub><b>Eufr&aacute;sio de Andrade Lima Neto</b></sub></a></td>
+  </tr>
 </table>
-

@@ -82,6 +82,9 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Scratch/smoke-test notebooks (e.g. example/99_smoke_test.ipynb)
+99_*.ipynb
+
 # IPython
 profile_default/
 ipython_config.py

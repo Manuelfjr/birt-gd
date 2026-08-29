@@ -188,7 +188,7 @@ Issues and pull requests are welcome at [github.com/Manuelfjr/birt-gd](https://g
 <table>
   <tr>
     <td align="center" width="120"><a href="https://github.com/tmfilho"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor1.jpeg" width="100px;" alt="Telmo de Menezes e Silva Filho"/><br /><sub><b>Telmo de Menezes e Silva Filho</b></sub></a></td>
-    <td align="center" width="120"><a href="https://flach.github.io/"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor5.jpg" width="100px;" alt="Peter Flach"/><br /><sub><b>Peter Flach</b></sub></a></td>
+    <td align="center" width="120"><a href="https://flach.github.io/"><img style="border-radius: 50%;" src="https://github.com/Manuelfjr/birt-gd/blob/main/assets/coauthor5.jpg?raw=true" width="100px;" alt="Peter Flach"/><br /><sub><b>Peter Flach</b></sub></a></td>
     <td align="center" width="120"><a href="http://lattes.cnpq.br/2984888073123287"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor3.jpg" width="100px;" alt="Ricardo Prudêncio"/><br /><sub><b>Ricardo Prud&ecirc;ncio</b></sub></a></td>
     <td align="center" width="120"><a href="http://lattes.cnpq.br/5580004940091667"><img style="border-radius: 50%;" src="https://raw.githubusercontent.com/Manuelfjr/birt-gd/main/assets/coauthor4.jpg" width="100px;" alt="Eufrásio de Andrade Lima Neto"/><br /><sub><b>Eufr&aacute;sio de Andrade Lima Neto</b></sub></a></td>
   </tr>
